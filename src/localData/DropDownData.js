@@ -54,3 +54,14 @@ export const serverName = [
     { value: "WEBSPHERE", label: "WildFly/JBOSS/WebSphere" },
     { value: "TOMCAT", label: "Tomcat" }
 ]
+
+export const serviceCategories = [
+    { value: "Alert Service", label: "Alert Service" },
+    { value: "CHI Service", label: "CHI Service" },
+    { value: "Dashboard Parameter Data Service", label: "Dashboard Parameter Data Service" },
+    { value: "Dashboard Widget Data Service", label: "Dashboard Widget Data Service" },
+    { value: "Mobile App Service", label: "Mobile App Service" },
+    { value: "Niti Aayog Service", label: "Niti Aayog Service" },
+    { value: "O2 Alert services", label: "O2 Alert services" },
+  ];
+  

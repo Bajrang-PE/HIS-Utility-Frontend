@@ -30,14 +30,7 @@
     border-radius: 5px;
 }
 
-/* Dropdown menu style */
-/* .navbar-nav .dropdown-menu {
-    background-color: #2C2C2C; 
-    border-radius: 5px;
-    animation: fadeIn 0.5s ease-in-out;
-    margin-top: 10px;
-} */
-.navbar-nav .dropdown-menu {
+.navbar-nav .drpb-menu {
     background-color: #2C2C2C;
     border-radius: 5px;
     animation: slideInFromRight 0.5s ease-in-out;
@@ -59,14 +52,14 @@
 
 
 /* Style for each item inside the dropdown menu */
-.dropdown-menu .dropdown-item {
+.drpb-menu .dropdown-item {
     font-size: 0.95rem;
     color: #E0E0E0; 
     padding: 10px 20px;
     transition: all 0.3s ease;
 }
 
-.dropdown-menu .dropdown-item:hover {
+.drpb-menu .dropdown-item:hover {
     background-color: #FBC02D; 
     color: #2C2C2C !important;
     transform: translateX(8px);

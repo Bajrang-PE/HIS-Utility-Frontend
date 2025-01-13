@@ -12,6 +12,7 @@ const ServiceUserMaster = () => {
   })
   const [previlegeFor, setPrevilegeFor] = useState('all')
   const [rows, setRows] = useState([{ serviceName: "", numberOfUse: "" }]);
+
   const handleValueChange = (e) => {
     const { name, value } = e.target;
     if (name) {
@@ -41,8 +42,8 @@ const ServiceUserMaster = () => {
     <div>
       <NavbarHeader />
       <div className='main-master-page'>
-        <GlobalButtonGroup />
-        <div className='form-card m-auto p-2'>
+      <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={null} onOpen={null} onReset={null} onParams={null} onWeb={null} />
+        <div className='form-card m-auto p-3'>
           <b><h6 className='header-devider mt-0 mb-1'>Service User Master</h6></b>
           {/* SECTION DEVIDER*/}
           <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>

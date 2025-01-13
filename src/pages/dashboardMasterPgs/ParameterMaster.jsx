@@ -45,7 +45,7 @@ const ParameterMaster = () => {
     <>
       <NavbarHeader />
       <div className='main-master-page'>
-        <GlobalButtonGroup />
+      <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={null} onOpen={null} onReset={null} onParams={null} onWeb={null} />
         <div className='form-card m-auto p-2'>
           <div className='p-1'>
             <b><h6 className='header-devider m-0'> Parameter Master</h6></b>

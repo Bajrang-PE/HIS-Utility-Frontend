@@ -5,6 +5,8 @@ import DbConfigMaster from './pages/dashboardMasterPgs/DbConfigMaster';
 import ParameterMaster from './pages/dashboardMasterPgs/ParameterMaster';
 import DbSubmenuMaster from './pages/webServiceMasterPgs/DbSubmenuMaster';
 import ServiceUserMaster from './pages/webServiceMasterPgs/ServiceUserMaster';
+import DataServiceMaster from './pages/webServiceMasterPgs/DataServiceMaster';
+import WidgetMaster from './pages/dashboardMasterPgs/WidgetMaster';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
           <Route exact path="/parameter-master" name="login" element={<ParameterMaster />} />
           <Route exact path="/dashboard-submenu-master" name="login" element={<DbSubmenuMaster />} />
           <Route exact path="/service-user-master" name="login" element={<ServiceUserMaster />} />
+          <Route exact path="/data-service-master" name="login" element={<DataServiceMaster />} />
+          <Route exact path="/widget-master" name="login" element={<WidgetMaster />} />
           {/* <Route exact path="*" name='Home' element={<Auth comp={DefaultLayout}/>} /> */}
         </Routes>
       {/* </Suspense> */}
