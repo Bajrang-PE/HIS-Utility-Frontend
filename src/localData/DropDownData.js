@@ -64,4 +64,11 @@ export const serviceCategories = [
     { value: "Niti Aayog Service", label: "Niti Aayog Service" },
     { value: "O2 Alert services", label: "O2 Alert services" },
   ];
+
+ export const widgetTypeOptions = [
+    { value: "columnBased", label: "Column Based" },
+    { value: "singleQueryParent", label: "Single Query Parent" },
+    { value: "singleQueryChild", label: "Single Query Child" },
+  ];
+  
   

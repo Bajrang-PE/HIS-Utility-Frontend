@@ -1,11 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import InputSelect from '../../commons/InputSelect'
 import InputField from '../../commons/InputField'
-import { itemForDashboard } from '../../../localData/DropDownData'
+import { itemForDashboard, widgetTypeOptions } from '../../../localData/DropDownData'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd } from '@fortawesome/free-solid-svg-icons'
+import { faAdd, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
-const AboutWidget = () => {
+const AboutWidget = (props) => {
+    const { handleValueChange, handleRadioChange, radioValues, values } = props;
+
+    const [rows, setRows] = useState([{ columnNo: "", widget: "" }]);
+
+    const handleInputChange = (index, field, value) => {
+        const updatedRows = [...rows];
+        updatedRows[index][field] = value;
+        setRows(updatedRows);
+    };
+
+    // Add a new row
+    const handleAddRow = () => {
+        setRows([...rows, { serviceName: "", numberOfUse: "" }]);
+    };
+
+    // Remove a row
+    const handleRemoveRow = (index) => {
+        const updatedRows = rows.filter((_, i) => i !== index);
+        setRows(updatedRows);
+    };
+
     return (
         <>
             <b><h6 className='header-devider m-0'>Widget Master - Basic Details</h6></b>
@@ -17,13 +38,13 @@ const AboutWidget = () => {
                         <label className="col-sm-5 col-form-label pe-0 required-label">Widget For : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
-                                id="parameterFor"
-                                name="parameterFor"
+                                id="widgetFor"
+                                name="widgetFor"
                                 placeholder="Select value..."
                                 options={itemForDashboard}
                                 className="backcolorinput"
-                            // value={values?.parameterFor}
-                            // onChange={handleValueChange}
+                                value={values?.widgetFor}
+                                onChange={handleValueChange}
                             />
                         </div>
                     </div>
@@ -35,12 +56,12 @@ const AboutWidget = () => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput"
-                                id="parameterType"
-                                name="parameterType"
-                            // placeholder="Select value..."
-                            // options={parameterType}
-                            // value={values?.parameterType}
-                            // onChange={handleValueChange}
+                                id="widgetType"
+                                name="widgetType"
+                                placeholder="Select value..."
+                                options={widgetTypeOptions}
+                                value={values?.widgetType}
+                                onChange={handleValueChange}
                             />
                         </div>
                     </div>
@@ -48,7 +69,7 @@ const AboutWidget = () => {
             </div>
 
             {/* SECTION DEVIDER for child details single query selected*/}
-            <div className="">
+            {/* <div className="">
                 <b>Child details:-</b><br />
                 <div className="row mx-0 mb-1 header-devider p-0">
                     <div className="col-4 text-center">
@@ -61,7 +82,6 @@ const AboutWidget = () => {
 
                     </div>
                 </div>
-                {/* {rows.map((row, index) => ( */}
                 <div className="row mb-1">
                     <div className="col-4">
                         <InputField
@@ -90,7 +110,69 @@ const AboutWidget = () => {
                         </button>
                     </div>
                 </div>
-            </div>
+            </div> */}
+            {values?.widgetType === "singleQueryParent" &&
+                <div className="table-responsive row p-1">
+                    <table className="table table-borderless text-center mb-0">
+                        <thead className="text-white">
+                            <tr className='header-devider m-0'>
+                                <th style={{ width: "35%" }}>Column No.</th>
+                                <th style={{ width: "45%" }}>Widget</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <InputField
+                                        type="text"
+                                        className="backcolorinput"
+                                        name='serviceRefName'
+                                        id='serviceRefName'
+                                    // value={serverDetails?.serviceRefName}
+                                    // onChange={handleServerChange}
+                                    />
+                                </td>
+                                <td>
+                                    <InputSelect
+                                        // type="text"
+                                        className="backcolorinput"
+                                        name='serverUrl'
+                                        id='serverUrl'
+                                        options={[]}
+                                    // value={serverDetails?.serverUrl}
+                                    // onChange={handleServerChange}
+                                    />
+                                </td>
+                                <td className='px-0 action-buttons'>
+                                    <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={handleAddRow}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />Add</button>
+                                </td>
+                            </tr>
+                            {rows.map((row, index) => (
+                                <tr className='table-row-form text-start' key={index}>
+                                    <td>{"localhost"}</td>
+                                    <td>{"http://localhost:8080"}</td>
+                                    <td className=''>
+                                        <div className='text-center'>
+                                            <button
+                                                className="btn btn-warning btn-sm me-1 py-0 px-1"
+                                                onClick={() => alert("Edit feature coming soon!")}
+                                            >
+                                                <FontAwesomeIcon icon={faEdit} className="dropdown-gear-icon" size='xs' />
+                                            </button>
+                                            <button
+                                                className="btn btn-danger btn-sm ms-1 py-0 px-1"
+                                                onClick={() => handleRemoveRow(index)}
+                                            >
+                                                <FontAwesomeIcon icon={faTrash} className="dropdown-gear-icon" size='xs' />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>}
 
             {/* SECTION DEVIDER widget viewed and is visible*/}
             <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
@@ -105,11 +187,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeQuery"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("query")}
-                                // checked={selectedMode === "query"}
+                                    id="widgetViewedTabular"
+                                    name="widgetViewed"
+                                    value={"tabular"}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetViewed === "tabular"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Tabular
@@ -119,11 +201,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeProcedure"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("procedure")}
-                                // checked={selectedMode === "procedure"}
+                                    id="widgetViewedGraph"
+                                    name="widgetViewed"
+                                    value={"graph"}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetViewed === "graph"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Graph
@@ -133,11 +215,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeFunction"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("function")}
-                                // checked={selectedMode === "function"}
+                                    id="widgetViewedKpi"
+                                    name="widgetViewed"
+                                    value={"kpi"}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetViewed === "kpi"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     KPI
@@ -147,11 +229,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeHtml"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("html")}
-                                // checked={selectedMode === "html"}
+                                    id="widgetViewedMap"
+                                    name="widgetViewed"
+                                    value={"map"}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetViewed === "map"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Map
@@ -161,11 +243,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeProcedureDml"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("procedureDml")}
-                                // checked={selectedMode === "procedureDml"}
+                                    id="widgetViewedNewsTicker"
+                                    name="widgetViewed"
+                                    value={"newsTicker"}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetViewed === "newsTicker"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     News Ticker
@@ -175,11 +257,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeFunctionDml"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("functionDml")}
-                                // checked={selectedMode === "functionDml"}
+                                    id="widgetViewedOtherLink"
+                                    name="widgetViewed"
+                                    value={"otherLink"}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetViewed === "otherLink"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Other Link
@@ -189,11 +271,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeFunctionDml"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("functionDml")}
-                                // checked={selectedMode === "functionDml"}
+                                    id="widgetViewedIframe"
+                                    name="widgetViewed"
+                                    value={"iframe"}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetViewed === "iframe"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Iframe
@@ -214,11 +296,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isWidgetNameVisible"
+                                    id="isWidgetNameVisibleYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isWidgetNameVisible === "yes"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -228,11 +310,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isWidgetNameVisible"
+                                    id="isWidgetNameVisibleNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isWidgetNameVisible === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -254,10 +336,10 @@ const AboutWidget = () => {
                                 type="text"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='serviceDisplayName'
-                                id="serviceDisplayName"
-                            // onChange={handleValueChange}
-                            // value={values?.serviceDisplayName}
+                                name='widgetNameDisplay'
+                                id="widgetNameDisplay"
+                                onChange={handleValueChange}
+                                value={values?.widgetNameDisplay}
                             />
                         </div>
                     </div>
@@ -271,10 +353,10 @@ const AboutWidget = () => {
                                 type="text"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='serviceCallingName'
-                                id="serviceCallingName"
-                            // onChange={handleValueChange}
-                            // value={values?.serviceCallingName}
+                                name='widgetNameInternal'
+                                id="widgetNameInternal"
+                                onChange={handleValueChange}
+                                value={values?.widgetNameInternal}
                             />
                         </div>
                     </div>
@@ -289,13 +371,13 @@ const AboutWidget = () => {
                         <label className="col-sm-5 col-form-label pe-0">Widget Refresh Time : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
-                                id="parameterFor"
-                                name="parameterFor"
+                                id="widgetRefreshTime"
+                                name="widgetRefreshTime"
                                 placeholder="Select value..."
-                                // options={itemForDashboard}
+                                options={[]}
                                 className="backcolorinput"
-                            // value={values?.parameterFor}
-                            // onChange={handleValueChange}
+                                value={values?.widgetRefreshTime}
+                                onChange={handleValueChange}
                             />
                         </div>
                     </div>
@@ -307,12 +389,12 @@ const AboutWidget = () => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput"
-                                id="parameterType"
-                                name="parameterType"
-                            // placeholder="Select value..."
-                            // options={parameterType}
-                            // value={values?.parameterType}
-                            // onChange={handleValueChange}
+                                id="widgetRefreshDelayTime"
+                                name="widgetRefreshDelayTime"
+                                placeholder="Select value..."
+                                options={[]}
+                                value={values?.widgetRefreshDelayTime}
+                                onChange={handleValueChange}
                             />
                         </div>
                     </div>
@@ -332,11 +414,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeQuery"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("query")}
-                                // checked={selectedMode === "query"}
+                                    id="selectedModeQueryQuery"
+                                    name="selectedModeQuery"
+                                    value={'query'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.selectedModeQuery === "query"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     By Query
@@ -346,11 +428,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeProcedure"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("procedure")}
-                                // checked={selectedMode === "procedure"}
+                                    id="selectedModeQueryProcedure"
+                                    name="selectedModeQuery"
+                                    value={'procedure'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.selectedModeQuery === "procedure"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     By Procedure
@@ -360,11 +442,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeFunction"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("function")}
-                                // checked={selectedMode === "function"}
+                                    id="selectedModeQueryWebService"
+                                    name="selectedModeQuery"
+                                    value={'webService'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.selectedModeQuery === "webService"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     By Webservice
@@ -374,11 +456,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeHtml"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("html")}
-                                // checked={selectedMode === "html"}
+                                    id="selectedModeQueryParent"
+                                    name="selectedModeQuery"
+                                    value={'parent'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.selectedModeQuery === "parent"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     By Parent
@@ -398,11 +480,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    id="widgetPurposeDownload"
+                                    name="widgetPurpose"
+                                    value={'download'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetPurpose === "download"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Download
@@ -412,11 +494,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    id="widgetPurposeHtml"
+                                    name="widgetPurpose"
+                                    value={'html'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetPurpose === "html"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     HTML
@@ -435,13 +517,13 @@ const AboutWidget = () => {
                         <label className="col-sm-5 col-form-label pe-0">Caching Status : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
-                                id="parameterWidth"
-                                name="parameterWidth"
-                                // options={parameterWidth}
+                                id="cachingStatus"
+                                name="cachingStatus"
+                                options={[]}
                                 placeholder="Select value..."
                                 className="backcolorinput"
-                            // onChange={handleValueChange}
-                            // value={values?.parameterWidth}
+                                onChange={handleValueChange}
+                                value={values?.cachingStatus}
                             />
                         </div>
                     </div>
@@ -457,11 +539,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    id="widgetHeadingAlignLeft"
+                                    name="widgetHeadingAlign"
+                                    value={'left'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetHeadingAlign === "left"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Left
@@ -471,11 +553,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    id="widgetHeadingAlignCenter"
+                                    name="widgetHeadingAlign"
+                                    value={'center'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetHeadingAlign === "center"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Center
@@ -485,11 +567,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    id="widgetHeadingAlignRight"
+                                    name="widgetHeadingAlign"
+                                    value={'right'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetHeadingAlign === "right"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Right
@@ -511,10 +593,10 @@ const AboutWidget = () => {
                                 type="text"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='parameterInternal'
-                                id="parameterInternal"
-                            // onChange={handleValueChange}
-                            // value={values?.parameterInternal}
+                                name='limit'
+                                id="limit"
+                                onChange={handleValueChange}
+                                value={values?.limit}
                             />
                         </div>
                     </div>
@@ -531,11 +613,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelYes"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(true)}
-                                // checked={showAsLabel}
+                                    id="isRecordLimitReqYes"
+                                    name="isRecordLimitReq"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isRecordLimitReq === "yes"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -545,11 +627,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelNo"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(false)}
-                                // checked={!showAsLabel}
+                                    id="isRecordLimitReqNo"
+                                    name="isRecordLimitReq"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isRecordLimitReq === "no"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -561,7 +643,7 @@ const AboutWidget = () => {
                 </div>
             </div>
 
-            {/* SECTION DEVIDER LIMIT and record required */}
+            {/* SECTION DEVIDER heading border margin */}
             <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
@@ -572,10 +654,10 @@ const AboutWidget = () => {
                                 type="color"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='parameterInternal'
-                                id="parameterInternal"
-                            // onChange={handleValueChange}
-                            // value={values?.parameterInternal}
+                                name='widgetHadingClr'
+                                id="widgetHadingClr"
+                                onChange={handleValueChange}
+                                value={values?.widgetHadingClr}
                             />
                         </div>
                     </div>
@@ -586,10 +668,10 @@ const AboutWidget = () => {
                                 type="text"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='parameterInternal'
-                                id="parameterInternal"
-                            // onChange={handleValueChange}
-                            // value={values?.parameterInternal}
+                                name='widgetTopMargin'
+                                id="widgetTopMargin"
+                                onChange={handleValueChange}
+                                value={values?.widgetTopMargin}
                             />
                         </div>
                     </div>
@@ -605,11 +687,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelYes"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(true)}
-                                // checked={showAsLabel}
+                                    name="isWidgetBorderReq"
+                                    id="isWidgetBorderReqYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isWidgetBorderReq === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -619,11 +701,11 @@ const AboutWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelNo"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(false)}
-                                // checked={!showAsLabel}
+                                    name="isWidgetBorderReq"
+                                    id="isWidgetBorderReqNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isWidgetBorderReq === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No

@@ -10,7 +10,8 @@ const GlobalButtonGroup = (props) => {
                 <button className='btn btn-sm' onClick={onSave}><FontAwesomeIcon icon={faFile}
                     className="dropdown-gear-icon me-1" />Save</button>}
             {isOpen &&
-                <button className='btn btn-sm ms-1' onClick={onOpen}><FontAwesomeIcon icon={faFolderOpen} className="dropdown-gear-icon me-1" />Open</button>}
+                <button className='btn btn-sm ms-1' onClick={onOpen}><FontAwesomeIcon icon={faFolderOpen} className="dropdown-gear-icon me-1" />Open</button>
+                }
             {isReset &&
                 <button className='btn btn-sm ms-1' onClick={onReset}><FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon me-1" />Reset</button>}
             {isParams &&

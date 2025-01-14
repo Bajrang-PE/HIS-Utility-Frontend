@@ -158,7 +158,8 @@ label {
   color: #2C2C2C;
   transform: rotate(360deg);
 }
-.action-buttons button:hover .dropdown-gear-icon{
+
+.action-buttons button:hover .dropdown-gear-icon {
   transform: rotate(360deg);
 }
 
@@ -176,13 +177,30 @@ label {
 }
 
 /* FOR GLOBAL BUTTON GROUP */
-.global-button-group button{
+.global-button-group button {
   border: 2px solid #FBC02D;
   border-radius: 35% 35% 0% 0%;
   background-color: #005b88;
   color: white;
   padding: 2px 5px;
 }
+
+.pre-nxt-btn button {
+  border: 2px solid #FBC02D;
+  /* border-radius: 35% 35% 0% 0%; */
+  background-color: #005b88;
+  color: white;
+  /* padding: 2px 5px; */
+}
+
+.pre-nxt-btn button:hover {
+  border: 2px solid #f7c852;
+  /* border-radius: 35% 35% 0% 0%; */
+  background-color: #059de9;
+  color: white;
+
+}
+
 .global-tab-group .nav-tab-btn {
   border: 1px solid #FBC02D;
   border-radius: 0% 30% 0% 30%;
@@ -192,7 +210,7 @@ label {
 }
 
 @media (max-width:475px) {
-  .global-button-group button{
+  .global-button-group button {
     border: 1px solid #FBC02D !important;
     border-radius: 35% 35% 0% 0%;
     background-color: #005b88;
@@ -207,10 +225,11 @@ label {
   transform: rotate(360deg);
 }
 
-.global-button-group button:hover{
+.global-button-group button:hover {
   border: 2px solid #005b88;
   background-color: #FBC02D;
 }
+
 .global-tab-group .nav-tab-btn:hover {
   padding: 2px 5px;
   border: 1px solid #FFEB3B;
@@ -218,7 +237,8 @@ label {
   background-color: #055275;
   color: rgb(243, 192, 81);
 }
-.active-tab{
+
+.active-tab {
   border: 1px solid #FFEB3B !important;
   background-color: #055275 !important;
   color: rgb(248, 208, 123) !important;

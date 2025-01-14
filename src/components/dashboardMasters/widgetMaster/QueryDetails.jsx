@@ -27,6 +27,7 @@ const QueryDetails = () => {
 
     return (
         <>
+           <b><h6 className='header-devider m-0'>Query or Procedure or Webservice Details</h6></b>
             <div className="table-responsive row p-1">
                 <table className="table table-borderless text-center mb-0">
                     <thead className="text-white">
