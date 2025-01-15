@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-const TabNav = ({ isTabNav, tabNavData, setTabIndex }) => {
-  const [activeTab, setActiveTab] = useState(tabNavData[0]?.value || null);
+const TabNav = ({ isTabNav, tabNavData, setTabIndex,tabIndex }) => {
+  
   const [visibleTabCount, setVisibleTabCount] = useState(4);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -28,8 +28,6 @@ const TabNav = ({ isTabNav, tabNavData, setTabIndex }) => {
   }, []);
 
   const handleTabClick = (value) => {
-    setActiveTab(value);
-    // setShowDropdown(!showDropdown)
     setTabIndex(value)
   };
 
@@ -43,7 +41,7 @@ const TabNav = ({ isTabNav, tabNavData, setTabIndex }) => {
             {tabNavData.slice(0, visibleTabCount).map((tab) => (
               <button
                 key={tab.value}
-                className={`btn btn-sm ms-1 nav-tab-btn ${activeTab === tab.value ? 'active-tab' : ''}`}
+                className={`btn btn-sm ms-1 nav-tab-btn ${tabIndex === tab.value ? 'active-tab' : ''}`}
                 onClick={() => handleTabClick(tab.value)}
               >
                 {tab.label}

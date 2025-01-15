@@ -3,12 +3,13 @@ import InputSelect from '../../commons/InputSelect'
 import InputField from '../../commons/InputField'
 import { itemForDashboard, widgetTypeOptions } from '../../../localData/DropDownData'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAdd, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faAdd, faEdit, faMinus, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const AboutWidget = (props) => {
     const { handleValueChange, handleRadioChange, radioValues, values } = props;
 
     const [rows, setRows] = useState([{ columnNo: "", widget: "" }]);
+    const [otherLinkData, setOtherLinkData] = useState([{ otherLinkName: "", otherLinkUrl: "" }]);
 
     const handleInputChange = (index, field, value) => {
         const updatedRows = [...rows];
@@ -52,7 +53,7 @@ const AboutWidget = (props) => {
                 {/* right columns */}
                 <div className='col-sm-6'>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">Widget Type : </label>
+                        <label className="col-sm-5 col-form-label pe-0">Widget Type : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput"
@@ -155,16 +156,16 @@ const AboutWidget = (props) => {
                                     <td className=''>
                                         <div className='text-center'>
                                             <button
-                                                className="btn btn-warning btn-sm me-1 py-0 px-1"
+                                                className="btn btn-secondary btn-sm me-1 py-0 px-1"
                                                 onClick={() => alert("Edit feature coming soon!")}
-                                            >
-                                                <FontAwesomeIcon icon={faEdit} className="dropdown-gear-icon" size='xs' />
+                                            >Edit
+                                                {/* <FontAwesomeIcon icon={faEdit} className="dropdown-gear-icon" size='xs' /> */}
                                             </button>
                                             <button
-                                                className="btn btn-danger btn-sm ms-1 py-0 px-1"
+                                                className="btn btn-secondary btn-sm ms-1 py-0 px-1"
                                                 onClick={() => handleRemoveRow(index)}
-                                            >
-                                                <FontAwesomeIcon icon={faTrash} className="dropdown-gear-icon" size='xs' />
+                                            >Delete
+                                                {/* <FontAwesomeIcon icon={faTrash} className="dropdown-gear-icon" size='xs' /> */}
                                             </button>
                                         </div>
                                     </td>
@@ -172,6 +173,7 @@ const AboutWidget = (props) => {
                             ))}
                         </tbody>
                     </table>
+                    <b><h6 className='header-devider mt-1'></h6></b>
                 </div>}
 
             {/* SECTION DEVIDER widget viewed and is visible*/}
@@ -288,7 +290,7 @@ const AboutWidget = (props) => {
                 {/* right columns */}
                 <div className='col-sm-6'>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
+                        <label className="col-sm-5 col-form-label pe-0 required-label">
                             Is Widget Name Visible? :
                         </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -347,7 +349,7 @@ const AboutWidget = (props) => {
                 {/* right columns */}
                 <div className='col-sm-6'>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Widget Name(Internal) : </label>
+                        <label className="col-sm-5 col-form-label pe-0 required-label">Widget Name(Internal) : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputField
                                 type="text"
@@ -396,114 +398,6 @@ const AboutWidget = (props) => {
                                 value={values?.widgetRefreshDelayTime}
                                 onChange={handleValueChange}
                             />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* SECTION DEVIDER widget mode of query and purpose*/}
-            <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
-                {/* //left columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Select Mode for Query :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="selectedModeQueryQuery"
-                                    name="selectedModeQuery"
-                                    value={'query'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.selectedModeQuery === "query"}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    By Query
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="selectedModeQueryProcedure"
-                                    name="selectedModeQuery"
-                                    value={'procedure'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.selectedModeQuery === "procedure"}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    By Procedure
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="selectedModeQueryWebService"
-                                    name="selectedModeQuery"
-                                    value={'webService'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.selectedModeQuery === "webService"}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    By Webservice
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="selectedModeQueryParent"
-                                    name="selectedModeQuery"
-                                    value={'parent'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.selectedModeQuery === "parent"}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    By Parent
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/* right columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Widget Purpose :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="widgetPurposeDownload"
-                                    name="widgetPurpose"
-                                    value={'download'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.widgetPurpose === "download"}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Download
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="widgetPurposeHtml"
-                                    name="widgetPurpose"
-                                    value={'html'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.widgetPurpose === "html"}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    HTML
-                                </label>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -575,6 +469,47 @@ const AboutWidget = (props) => {
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Right
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* SECTION DEVIDER widget purpose*/}
+            <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                <div className='col-sm-6'>
+                    <div className="form-group row">
+                        <label className="col-sm-5 col-form-label pe-0">
+                            Widget Purpose :
+                        </label>
+                        <div className="col-sm-7 ps-0 align-content-center">
+                            <div className="form-check form-check-inline">
+                                <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    id="widgetPurposeDownload"
+                                    name="widgetPurpose"
+                                    value={'download'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetPurpose === "download"}
+                                />
+                                <label className="form-check-label" htmlFor="dbYes">
+                                    Download
+                                </label>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    id="widgetPurposeHtml"
+                                    name="widgetPurpose"
+                                    value={'html'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetPurpose === "html"}
+                                />
+                                <label className="form-check-label" htmlFor="dbNo">
+                                    HTML
                                 </label>
                             </div>
                         </div>
@@ -713,9 +648,135 @@ const AboutWidget = (props) => {
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
+            {/* IF OTHER LINK SELECTED */}
+            {radioValues?.widgetViewed === "otherLink" &&
+                <div className="table-responsive row p-2">
+                    <table className="table table-borderless text-center mb-0">
+                        <thead className="text-white">
+                            <tr className='header-devider m-0'>
+                                <th style={{ width: "40%" }}>Other Link Name</th>
+                                <th style={{ width: "40%" }}>Other Link URL</th>
+                                <th >
+                                    <button
+                                        className="btn btn-secondary btn-sm"
+                                        // onClick={() => handleAddRow('procedure')}
+                                        style={{ padding: "0 4px" }}
+                                    >
+                                        <FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {otherLinkData.map((row, index) => (
+                                <tr>
+                                    <td>
+                                        <InputField
+                                            type="text"
+                                            className="backcolorinput"
+                                            name='serviceRefName'
+                                            id='serviceRefName'
+                                        // value={serverDetails?.serviceRefName}
+                                        // onChange={handleServerChange}
+                                        />
+                                    </td>
+
+
+                                    <td>
+                                        <InputField
+                                            type="text"
+                                            className="backcolorinput"
+                                            name='serviceRefName'
+                                            id='serviceRefName'
+                                        // value={serverDetails?.serviceRefName}
+                                        // onChange={handleServerChange}
+                                        />
+                                    </td>
+
+                                    <td className='px-0'>
+                                        {/* {procedureRows.length > 0 && ( */}
+                                        <div>
+                                            <button
+                                                className="btn btn-outline-secondary btn-sm ms-1"
+                                                // onClick={() => handleRemoveRow(index, "procedure")}
+                                                style={{ padding: "0 4px" }}
+                                            >
+                                                <FontAwesomeIcon icon={faMinus} className="dropdown-gear-icon" size='sm' />
+                                            </button>
+                                        </div>
+                                        {/* )} */}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            {/* IF IFRAME SELECTED */}
+            {radioValues?.widgetViewed === "iframe" &&
+                <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                    {/* //left columns */}
+                    <div className='col-sm-6'>
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">Enter URL for Iframe : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <InputField
+                                    type={'text'}
+                                    className="backcolorinput "
+                                    placeholder="Enter value..."
+                                    name='parentWidget'
+                                    id="parentWidget"
+                                // onChange={handleValueChange}
+                                // value={values?.parentWidget}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    {/* right columns */}
+                    <div className='col-sm-6'>
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Is SSO Url :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isWidgetBorderReq"
+                                        id="isWidgetBorderReqYes"
+                                        value={'yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isWidgetBorderReq === 'yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isWidgetBorderReq"
+                                        id="isWidgetBorderReqNo"
+                                        value={'no'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isWidgetBorderReq === 'no'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </>
     )
 }

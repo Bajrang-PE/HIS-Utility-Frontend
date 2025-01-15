@@ -2,7 +2,9 @@ import React from 'react'
 import { timeOutOptions } from '../../../localData/DropDownData'
 import InputSelect from '../../commons/InputSelect'
 
-const JndiDetails = () => {
+const JndiDetails = (props) => {
+    const { handleValueChange, handleRadioChange, radioValues, values } = props;
+
     return (
         <>
             {/* MAIN DEVIDER FOR JNDI */}
@@ -18,11 +20,11 @@ const JndiDetails = () => {
                             <InputSelect
                                 id="jndiSavingData"
                                 name="jndiSavingData"
-                                // placeholder="Select"
+                                placeholder="Select"
                                 options={[{ value: 'cdwh', label: "CDWH" }]}
                                 className="backcolorinput"
-                            // onChange={handleValueChange}
-                            // value={values?.jndiSavingData}
+                                onChange={handleValueChange}
+                                value={values?.jndiSavingData}
                             />
                         </div>
                     </div>
@@ -35,11 +37,11 @@ const JndiDetails = () => {
                             <InputSelect
                                 id="stmtTimeOut"
                                 name="stmtTimeOut"
-                                // placeholder="Select "
+                                placeholder="Select "
                                 options={timeOutOptions}
                                 className="backcolorinput"
-                            // onChange={handleValueChange}
-                            // value={values?.stmtTimeOut}
+                                onChange={handleValueChange}
+                                value={values?.stmtTimeOut}
                             />
                         </div>
                     </div>

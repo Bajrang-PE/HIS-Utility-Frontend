@@ -2,7 +2,8 @@ import React from 'react'
 import InputSelect from '../../commons/InputSelect'
 import InputField from '../../commons/InputField'
 
-const FooterDetails = () => {
+const FooterDetails = (props) => {
+    const { handleValueChange, handleRadioChange, radioValues, values } = props;
     return (
         <>
             {/* MAIN DEVIDER FOR JNDI */}
@@ -18,11 +19,11 @@ const FooterDetails = () => {
                             <textarea
                                 className="form-control backcolorinput"
                                 placeholder="Enter value..."
-                                name="query"
-                                id='query'
+                                name="lastUpdatedQuery"
+                                id='lastUpdatedQuery'
                                 rows="2"
-                            // onChange={handleValueChange}
-                            // value={values?.query}
+                                onChange={handleValueChange}
+                                value={values?.lastUpdatedQuery}
                             ></textarea>
                         </div>
                     </div>
@@ -31,13 +32,12 @@ const FooterDetails = () => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputField
                                 type='text'
-                                id="stmtTimeOut"
-                                name="stmtTimeOut"
+                                id="customMsgForNoData"
+                                name="customMsgForNoData"
                                 placeholder="Enter "
-                                // options={timeOutOptions}
                                 className="backcolorinput"
-                            // onChange={handleValueChange}     
-                            // value={values?.stmtTimeOut}
+                                onChange={handleValueChange}
+                                value={values?.customMsgForNoData}
                             />
                         </div>
                     </div>
@@ -50,11 +50,11 @@ const FooterDetails = () => {
                             <textarea
                                 className="form-control backcolorinput"
                                 placeholder="Enter value..."
-                                name="query"
-                                id='query'
+                                name="FooterText"
+                                id='FooterText'
                                 rows="2"
-                            // onChange={handleValueChange}
-                            // value={values?.query}
+                                onChange={handleValueChange}
+                                value={values?.FooterText}
                             ></textarea>
                         </div>
                     </div>

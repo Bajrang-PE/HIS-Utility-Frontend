@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const TableDetails = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
 
     const [rows, setRows] = useState([{ queryLabel: "", mainQuery: "", dataTableReq: "", tableDataDisplay: "" }]);
 
@@ -362,11 +362,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isIndexNumReq"
+                                    id="isIndexNumReqYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isIndexNumReq === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -376,11 +376,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isIndexNumReq"
+                                    id="isIndexNumReqNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isIndexNumReq === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -397,11 +397,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isSearchReq"
+                                    id="isSearchReqYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isSearchReq === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -411,11 +411,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isSearchReq"
+                                    id="isSearchReqNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isSearchReq === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -430,10 +430,10 @@ const TableDetails = (props) => {
                                 type="text"
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='pagePerBlock'
+                                id="pagePerBlock"
+                                onChange={handleValueChange}
+                                value={values?.pagePerBlock}
                             />
                         </div>
                     </div>
@@ -444,10 +444,10 @@ const TableDetails = (props) => {
                                 type="text"
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='DataScrollHeight'
+                                id="DataScrollHeight"
+                                onChange={handleValueChange}
+                                value={values?.DataScrollHeight}
                             />
                         </div>
                     </div>
@@ -460,11 +460,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isCardViewMobile"
+                                    id="isCardViewMobileYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isCardViewMobile === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -474,11 +474,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isCardViewMobile"
+                                    id="isCardViewMobileNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isCardViewMobile === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -500,11 +500,11 @@ const TableDetails = (props) => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
+                                name='parentWidget'
+                                id="parentWidget"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                onChange={handleValueChange}
+                                value={values?.parentWidget}
                             />
                         </div>
                     </div>
@@ -515,10 +515,10 @@ const TableDetails = (props) => {
                                 type='text'
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='columnNoToDisplay'
+                                id="columnNoToDisplay"
+                                onChange={handleValueChange}
+                                value={values?.columnNoToDisplay}
                             />
                         </div>
                     </div>
@@ -529,10 +529,10 @@ const TableDetails = (props) => {
                                 type='text'
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='leftClmNoToFixed'
+                                id="leftClmNoToFixed"
+                                onChange={handleValueChange}
+                                value={values?.leftClmNoToFixed}
                             />
                         </div>
                     </div>
@@ -540,14 +540,14 @@ const TableDetails = (props) => {
                         <label className="col-sm-5 col-form-label pe-0">Linked Widget : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <Select
-                                id='parentID'
-                                name='parentID'
+                                id='linkedWidget'
+                                name='linkedWidget'
                                 options={[{ value: 1, label: "No Parent" }, { value: 2, label: "State" }]}
                                 isMulti
                                 placeholder="Select value..."
                                 className="backcolorinput react-select-multi"
-                            // value={values?.parentID}
-                            // onChange={(e) => setValues({ ...values, ['parentID']: e })}
+                                value={values?.linkedWidget}
+                                onChange={(e) => setValues({ ...values, ['linkedWidget']: e })}
                             // isSearchable={true}
                             />
                         </div>
@@ -564,11 +564,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isShowPrntHeadChild"
+                                    id="isShowPrntHeadChildYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isShowPrntHeadChild === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -578,11 +578,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isShowPrntHeadChild"
+                                    id="isShowPrntHeadChildNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isShowPrntHeadChild === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -599,11 +599,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isShowPrntParamsChild"
+                                    id="isShowPrntParamsChildYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isShowPrntParamsChild === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -613,11 +613,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isShowPrntParamsChild"
+                                    id="isShowPrntParamsChildNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isShowPrntParamsChild === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -632,10 +632,10 @@ const TableDetails = (props) => {
                                 type='text'
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='rightClmNoToFixed'
+                                id="rightClmNoToFixed"
+                                onChange={handleValueChange}
+                                value={values?.rightClmNoToFixed}
                             />
                         </div>
                     </div>
@@ -645,19 +645,19 @@ const TableDetails = (props) => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
+                                name='actionBtnReq'
+                                id="actionBtnReq"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                onChange={handleValueChange}
+                                value={values?.actionBtnReq}
                             />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <b><h6 className='header-devider m-0'>Table - PDF</h6></b>
-            {/* SECTION DEVIDER parents and widgets*/}
+            <b><h6 className='header-devider mt-2'>Table - PDF</h6></b>
+            {/* SECTION DEVIDER pdf*/}
             <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
@@ -670,11 +670,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeQuery"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("query")}
-                                // checked={selectedMode === "query"}
+                                    name="printPdfIn"
+                                    id="printPdfInLandscape"
+                                    value={'landscape'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.printPdfIn === 'landscape'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Landscape
@@ -684,11 +684,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeProcedure"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("procedure")}
-                                // checked={selectedMode === "procedure"}
+                                    name="printPdfIn"
+                                    id="printPdfInPotrait"
+                                    value={'potrait'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.printPdfIn === 'potrait'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Potrait
@@ -705,11 +705,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeQuery"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("query")}
-                                // checked={selectedMode === "query"}
+                                    name="pdfTheme"
+                                    id="pdfThemeGrid"
+                                    value={'grid'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.pdfTheme === 'grid'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Grid
@@ -719,11 +719,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeProcedure"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("procedure")}
-                                // checked={selectedMode === "procedure"}
+                                    name="pdfTheme"
+                                    id="pdfThemeStriped"
+                                    value={'striped'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.pdfTheme === 'striped'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Striped
@@ -733,11 +733,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeProcedure"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("procedure")}
-                                // checked={selectedMode === "procedure"}
+                                    name="pdfTheme"
+                                    id="pdfThemePlain"
+                                    value={'plain'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.pdfTheme === 'plain'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Plain
@@ -752,10 +752,10 @@ const TableDetails = (props) => {
                                 type='color'
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='pdfTableHeadBarClr'
+                                id="pdfTableHeadBarClr"
+                                onChange={handleValueChange}
+                                value={values?.pdfTableHeadBarClr}
                             />
                         </div>
                     </div>
@@ -768,11 +768,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="showFilterDtlsInPdf"
+                                    id="showFilterDtlsInPdfYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.showFilterDtlsInPdf === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -782,11 +782,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="showFilterDtlsInPdf"
+                                    id="showFilterDtlsInPdfNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.showFilterDtlsInPdf === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -803,11 +803,12 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isReportPrintDtReq"
+                                    id="isReportPrintDtReqYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isReportPrintDtReq === 'yes'}
+
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -817,11 +818,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isReportPrintDtReq"
+                                    id="isReportPrintDtReqNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isReportPrintDtReq === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -838,11 +839,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isTableBorderReq"
+                                    id="isTableBorderReqYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isTableBorderReq === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -852,11 +853,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isTableBorderReq"
+                                    id="isTableBorderReqNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isTableBorderReq === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -873,11 +874,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isPositiveWidget"
+                                    id="isPositiveWidgetYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isPositiveWidget === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -887,11 +888,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isPositiveWidget"
+                                    id="isPositiveWidgetNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isPositiveWidget === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -908,11 +909,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isPopupBasedReq"
+                                    id="isPopupBasedReqYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isPopupBasedReq === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -922,11 +923,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isPopupBasedReq"
+                                    id="isPopupBasedReqNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isPopupBasedReq === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -944,10 +945,10 @@ const TableDetails = (props) => {
                                 type='text'
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='pdfTableFontSize'
+                                id="pdfTableFontSize"
+                                onChange={handleValueChange}
+                                value={values?.pdfTableFontSize}
                             />
                         </div>
                     </div>
@@ -960,11 +961,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isPdfHeadReqAllPgs"
+                                    id="isPdfHeadReqAllPgsYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isPdfHeadReqAllPgs === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -974,11 +975,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isPdfHeadReqAllPgs"
+                                    id="isPdfHeadReqAllPgsNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isPdfHeadReqAllPgs === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -993,10 +994,10 @@ const TableDetails = (props) => {
                                 type='color'
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='pdfTableHeadTxtFontClr'
+                                id="pdfTableHeadTxtFontClr"
+                                onChange={handleValueChange}
+                                value={values?.pdfTableHeadTxtFontClr}
                             />
                         </div>
                     </div>
@@ -1009,11 +1010,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isReportByJsPdfPlug"
+                                    id="isReportByJsPdfPlugYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isReportByJsPdfPlug === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1023,11 +1024,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isReportByJsPdfPlug"
+                                    id="isReportByJsPdfPlugNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isReportByJsPdfPlug === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1044,11 +1045,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isGlobalHeaderReq"
+                                    id="isGlobalHeaderReqYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isGlobalHeaderReq === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1058,11 +1059,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isGlobalHeaderReq"
+                                    id="isGlobalHeaderReqNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isGlobalHeaderReq === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1077,10 +1078,10 @@ const TableDetails = (props) => {
                                 type='text'
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='groupClmNoComma'
+                                id="groupClmNoComma"
+                                onChange={handleValueChange}
+                                value={values?.groupClmNoComma}
                             />
                         </div>
                     </div>
@@ -1093,11 +1094,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isDirectDownloadBtn"
+                                    id="isDirectDownloadBtnYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isDirectDownloadBtn === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1107,11 +1108,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isDirectDownloadBtn"
+                                    id="isDirectDownloadBtnNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isDirectDownloadBtn === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1128,11 +1129,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isTreeChildReq"
+                                    id="isTreeChildReqYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isTreeChildReq === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1142,11 +1143,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isTreeChildReq"
+                                    id="isTreeChildReqNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isTreeChildReq === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1228,13 +1229,13 @@ const TableDetails = (props) => {
                                 <td className=''>
                                     <div className='text-center'>
                                         <button
-                                            className="btn btn-warning btn-sm me-1 py-0 px-1"
+                                            className="btn btn-secondary btn-sm me-1 py-0 px-1"
                                             onClick={() => alert("Edit feature coming soon!")}
                                         >
                                             <FontAwesomeIcon icon={faEdit} className="dropdown-gear-icon" size='xs' />
                                         </button>
                                         <button
-                                            className="btn btn-danger btn-sm ms-1 py-0 px-1"
+                                            className="btn btn-secondary btn-sm ms-1 py-0 px-1"
                                             onClick={() => handleRemoveRow(index)}
                                         >
                                             <FontAwesomeIcon icon={faTrash} className="dropdown-gear-icon" size='xs' />
@@ -1261,11 +1262,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeQuery"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("query")}
-                                // checked={selectedMode === "query"}
+                                    name="treeChildDataBy"
+                                    id="treeChildDataByQuery"
+                                    value={'query'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.treeChildDataBy === 'query'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     By Query
@@ -1275,11 +1276,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeProcedure"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("procedure")}
-                                // checked={selectedMode === "procedure"}
+                                    name="treeChildDataBy"
+                                    id="treeChildDataByProcedure"
+                                    value={'procedure'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.treeChildDataBy === 'procedure'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     By Procedure
@@ -1296,11 +1297,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isDataTblReqTree"
+                                    id="isDataTblReqTreeYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isDataTblReqTree === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1310,11 +1311,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isDataTblReqTree"
+                                    id="isDataTblReqTreeNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isDataTblReqTree === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1331,11 +1332,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isPaginationReqTree"
+                                    id="isPaginationReqTreeYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isPaginationReqTree === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1345,11 +1346,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isPaginationReqTree"
+                                    id="isPaginationReqTreeNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isPaginationReqTree === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1366,8 +1367,8 @@ const TableDetails = (props) => {
                                 name="query"
                                 id='query'
                                 rows="2"
-                            // onChange={handleValueChange}
-                            // value={values?.query}
+                                onChange={handleValueChange}
+                                value={values?.query}
                             ></textarea>
                         </div>
                     </div>
@@ -1383,11 +1384,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeQuery"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("query")}
-                                // checked={selectedMode === "query"}
+                                    name="dataDisplay"
+                                    id="dataDisplayHorizontal"
+                                    value={'horizontal'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.dataDisplay === 'horizontal'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Horizontal
@@ -1397,11 +1398,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    id="selectedModeProcedure"
-                                    name="selectedMode"
-                                // value={selectedMode}
-                                // onChange={(e) => setSelectedMode("procedure")}
-                                // checked={selectedMode === "procedure"}
+                                    name="dataDisplay"
+                                    id="dataDisplayVertical"
+                                    value={'vertical'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.dataDisplay === 'vertical'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Vertical
@@ -1418,11 +1419,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataYes"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(true)}
-                                // checked={isCacheData}
+                                    name="isSearchReqTree"
+                                    id="isSearchReqTreeYes"
+                                    value={'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isSearchReqTree === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1432,11 +1433,11 @@ const TableDetails = (props) => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isCacheData"
-                                    id="isCacheDataNo"
-                                // value={isCacheData}
-                                // onChange={(e) => setIsCacheData(false)}
-                                // checked={!isCacheData}
+                                    name="isSearchReqTree"
+                                    id="isSearchReqTreeNo"
+                                    value={'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isSearchReqTree === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1451,10 +1452,10 @@ const TableDetails = (props) => {
                                 type='text'
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='recordsPerPageTreeCh'
+                                id="recordsPerPageTreeCh"
+                                onChange={handleValueChange}
+                                value={values?.recordsPerPageTreeCh}
                             />
                         </div>
                     </div>

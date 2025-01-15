@@ -70,7 +70,7 @@
   padding: 1px !important;
   font-size: medium;
   font-weight: 500;
-  border-radius: 2px;
+  /* border-radius: 2px; */
 }
 
 /* @media (max-width: 768px) {
@@ -130,6 +130,9 @@ label {
 @media (max-width: 768px) {
   label {
     padding-left: 0 !important;
+  }
+  .role-theme{
+    padding: 8px;
   }
 }
 
@@ -218,6 +221,7 @@ label {
     padding: 2px 2px !important;
     font-size: x-small;
   }
+
 }
 
 .global-button-group button:hover .dropdown-gear-icon {

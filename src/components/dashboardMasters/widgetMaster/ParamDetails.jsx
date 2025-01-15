@@ -5,7 +5,7 @@ import InputField from '../../commons/InputField';
 import InputSelect from '../../commons/InputSelect';
 
 const ParamDetails = (props) => {
-    const { availableOptions, setAvailableOptions, mapedDt, isMulti, selectedOptions, setSelectedOptions } = props;
+    const { availableOptions, setAvailableOptions, mapedDt, isMulti, selectedOptions, setSelectedOptions, handleValueChange, handleRadioChange, radioValues, values } = props;
 
     // const [selectedOptions, setSelectedOptions] = useState();
     const [leftSelectedValues, setLeftSelectedValues] = useState([]);
@@ -130,7 +130,7 @@ const ParamDetails = (props) => {
                 </div>
 
                 <div className='' style={{ width: "30%" }}>
-                <b><h6 className='mb-2 text-center'>Selected Parameter Name</h6></b>
+                    <b><h6 className='mb-2 text-center'>Selected Parameter Name</h6></b>
                     <select className="form-select form-select-sm backcolorinput" id='leftRightSelect1' multiple size="6" aria-label="size 4 select example" onChange={handleRightSelect}>
                         {selectedOptions?.map((opt, index) => (
                             <option value={opt.value} key={index}>{opt.label}</option>
@@ -149,11 +149,11 @@ const ParamDetails = (props) => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
+                                name='parameterOption'
+                                id="parameterOption"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                onChange={handleValueChange}
+                                value={values?.parameterOption}
                             />
                         </div>
                     </div>
@@ -164,10 +164,10 @@ const ParamDetails = (props) => {
                                 type='color'
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='paraComboBgColor'
+                                id="paraComboBgColor"
+                                onChange={handleValueChange}
+                                value={values?.paraComboBgColor}
                             />
                         </div>
                     </div>
@@ -178,10 +178,10 @@ const ParamDetails = (props) => {
                                 type='color'
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='paraLabelFontColor'
+                                id="paraLabelFontColor"
+                                onChange={handleValueChange}
+                                value={values?.paraLabelFontColor}
                             />
                         </div>
                     </div>
@@ -194,11 +194,11 @@ const ParamDetails = (props) => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
+                                name='widgetLoadOption'
+                                id="widgetLoadOption"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                onChange={handleValueChange}
+                                value={values?.widgetLoadOption}
                             />
                         </div>
                     </div>
@@ -209,10 +209,10 @@ const ParamDetails = (props) => {
                                 type='color'
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='mobilebgColor'
-                                id="mobilebgColor"
-                            // onChange={handleValueChange}
-                            // value={values?.mobilebgColor}
+                                name='paraComboFontColor'
+                                id="paraComboFontColor"
+                                onChange={handleValueChange}
+                                value={values?.paraComboFontColor}
                             />
                         </div>
                     </div>
