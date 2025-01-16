@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faEdit, faMinus, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const AboutWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values,dashboardForDt } = props;
 
     const [rows, setRows] = useState([{ columnNo: "", widget: "" }]);
     const [otherLinkData, setOtherLinkData] = useState([{ otherLinkName: "", otherLinkUrl: "" }]);
@@ -42,7 +42,7 @@ const AboutWidget = (props) => {
                                 id="widgetFor"
                                 name="widgetFor"
                                 placeholder="Select value..."
-                                options={itemForDashboard}
+                                options={dashboardForDt}
                                 className="backcolorinput"
                                 value={values?.widgetFor}
                                 onChange={handleValueChange}
@@ -729,10 +729,10 @@ const AboutWidget = (props) => {
                                     type={'text'}
                                     className="backcolorinput "
                                     placeholder="Enter value..."
-                                    name='parentWidget'
-                                    id="parentWidget"
-                                // onChange={handleValueChange}
-                                // value={values?.parentWidget}
+                                    name='urlForIframe'
+                                    id="urlForIframe"
+                                    onChange={handleValueChange}
+                                    value={values?.urlForIframe}
                                 />
                             </div>
                         </div>
@@ -748,11 +748,11 @@ const AboutWidget = (props) => {
                                     <input
                                         className="form-check-input"
                                         type="radio"
-                                        name="isWidgetBorderReq"
-                                        id="isWidgetBorderReqYes"
+                                        name="isSsoUrl"
+                                        id="isSsoUrlYes"
                                         value={'yes'}
                                         onChange={handleRadioChange}
-                                        checked={radioValues?.isWidgetBorderReq === 'yes'}
+                                        checked={radioValues?.isSsoUrl === 'yes'}
                                     />
                                     <label className="form-check-label" htmlFor="dbYes">
                                         Yes
@@ -762,11 +762,11 @@ const AboutWidget = (props) => {
                                     <input
                                         className="form-check-input"
                                         type="radio"
-                                        name="isWidgetBorderReq"
-                                        id="isWidgetBorderReqNo"
+                                        name="isSsoUrl"
+                                        id="isSsoUrlNo"
                                         value={'no'}
                                         onChange={handleRadioChange}
-                                        checked={radioValues?.isWidgetBorderReq === 'no'}
+                                        checked={radioValues?.isSsoUrl === 'no'}
                                     />
                                     <label className="form-check-label" htmlFor="dbNo">
                                         No

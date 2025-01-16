@@ -2,7 +2,9 @@ import React from 'react'
 import InputField from '../../commons/InputField'
 import InputSelect from '../../commons/InputSelect'
 
-const KpiWidget = () => {
+const KpiWidget = (props) => {
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+
     return (
         <div>
             <b><h6 className='header-devider m-0'>KPI Details</h6></b>
@@ -16,11 +18,11 @@ const KpiWidget = () => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
+                                name='kpiType'
+                                id="kpiType"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                onChange={handleValueChange}
+                                value={values?.kpiType}
                             />
                         </div>
                     </div>
@@ -30,11 +32,11 @@ const KpiWidget = () => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
+                                name='kpiIconType'
+                                id="kpiIconType"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                onChange={handleValueChange}
+                                value={values?.kpiIconType}
                             />
                         </div>
                     </div>
@@ -45,10 +47,10 @@ const KpiWidget = () => {
                                 type={'color'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='kpiDefaultBgColor'
+                                id="kpiDefaultBgColor"
+                                onChange={handleValueChange}
+                                value={values?.kpiDefaultBgColor}
                             />
                         </div>
                     </div>
@@ -59,27 +61,27 @@ const KpiWidget = () => {
                                 type={'color'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='kpiDefaultHoverBg'
+                                id="kpiDefaultHoverBg"
+                                onChange={handleValueChange}
+                                value={values?.kpiDefaultHoverBg}
                             />
                         </div>
                     </div>
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">
-                        Is Widget Shadow Required :
+                            Is Widget Shadow Required :
                         </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <div className="form-check form-check-inline">
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isShowPrntHeadChild"
-                                    id="isShowPrntHeadChildYes"
+                                    name="isWidgetShadowReq"
+                                    id="isWidgetShadowReqYes"
                                     value={'yes'}
-                                // onChange={handleRadioChange}
-                                // checked={radioValues?.isShowPrntHeadChild === 'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isWidgetShadowReq === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -89,11 +91,11 @@ const KpiWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isShowPrntHeadChild"
-                                    id="isShowPrntHeadChildNo"
+                                    name="isWidgetShadowReq"
+                                    id="isWidgetShadowReqNo"
                                     value={'no'}
-                                // onChange={handleRadioChange}
-                                // checked={radioValues?.isShowPrntHeadChild === 'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isWidgetShadowReq === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -107,11 +109,11 @@ const KpiWidget = () => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
+                                name='kpiBoxClickOptions'
+                                id="kpiBoxClickOptions"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                onChange={handleValueChange}
+                                value={values?.kpiBoxClickOptions}
                             />
                         </div>
                     </div>
@@ -122,10 +124,10 @@ const KpiWidget = () => {
                                 type={'text'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='kpiTabLinkName'
+                                id="kpiTabLinkName"
+                                onChange={handleValueChange}
+                                value={values?.kpiTabLinkName}
                             />
                         </div>
                     </div>
@@ -136,10 +138,10 @@ const KpiWidget = () => {
                                 type={'color'}
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='kpiLinkColor'
+                                id="kpiLinkColor"
+                                onChange={handleValueChange}
+                                value={values?.kpiLinkColor}
                             />
                         </div>
                     </div>
@@ -153,10 +155,10 @@ const KpiWidget = () => {
                                 type={'text'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='kpiBorderWidth'
+                                id="kpiBorderWidth"
+                                onChange={handleValueChange}
+                                value={values?.kpiBorderWidth}
                             />
                         </div>
                         <div className="col-sm-4 ps-0 align-content-center">
@@ -164,10 +166,10 @@ const KpiWidget = () => {
                                 type={'color'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='kpiBorderColor'
+                                id="kpiBorderColor"
+                                onChange={handleValueChange}
+                                value={values?.kpiBorderColor}
                             />
                         </div>
                     </div>
@@ -177,11 +179,11 @@ const KpiWidget = () => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
+                                name='kpiTabIconImage'
+                                id="kpiTabIconImage"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                onChange={handleValueChange}
+                                value={values?.kpiTabIconImage}
                             />
                         </div>
                     </div>
@@ -192,10 +194,10 @@ const KpiWidget = () => {
                                 type={'color'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='kpiDefaultFontColor'
+                                id="kpiDefaultFontColor"
+                                onChange={handleValueChange}
+                                value={values?.kpiDefaultFontColor}
                             />
                         </div>
                     </div>
@@ -206,27 +208,27 @@ const KpiWidget = () => {
                                 type={'color'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='kpiIconColor'
+                                id="kpiIconColor"
+                                onChange={handleValueChange}
+                                value={values?.kpiIconColor}
                             />
                         </div>
                     </div>
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">
-                        Download data from KPI :
+                            Download data from KPI :
                         </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <div className="form-check form-check-inline">
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isShowPrntHeadChild"
-                                    id="isShowPrntHeadChildYes"
+                                    name="isDownloadDataFromKpi"
+                                    id="isDownloadDataFromKpiYes"
                                     value={'yes'}
-                                // onChange={handleRadioChange}
-                                // checked={radioValues?.isShowPrntHeadChild === 'yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isDownloadDataFromKpi === 'yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -236,11 +238,11 @@ const KpiWidget = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="isShowPrntHeadChild"
-                                    id="isShowPrntHeadChildNo"
+                                    name="isDownloadDataFromKpi"
+                                    id="isDownloadDataFromKpiNo"
                                     value={'no'}
-                                // onChange={handleRadioChange}
-                                // checked={radioValues?.isShowPrntHeadChild === 'no'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isDownloadDataFromKpi === 'no'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -254,11 +256,11 @@ const KpiWidget = () => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
+                                name='kpiTabOpenOnClick'
+                                id="kpiTabOpenOnClick"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                onChange={handleValueChange}
+                                value={values?.kpiTabOpenOnClick}
                             />
                         </div>
                     </div>
@@ -269,10 +271,10 @@ const KpiWidget = () => {
                                 type={'text'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='kpiWidgetLinkName'
+                                id="kpiWidgetLinkName"
+                                onChange={handleValueChange}
+                                value={values?.kpiWidgetLinkName}
                             />
                         </div>
                     </div>
@@ -283,10 +285,10 @@ const KpiWidget = () => {
                                 type={'color'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='kpiLinkFontColor'
+                                id="kpiLinkFontColor"
+                                onChange={handleValueChange}
+                                value={values?.kpiLinkFontColor}
                             />
                         </div>
                     </div>

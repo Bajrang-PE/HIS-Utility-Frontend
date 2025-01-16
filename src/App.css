@@ -24,6 +24,7 @@
   color: white;
 }
 
+
 .App-link {
   color: #61dafb;
 }
@@ -61,6 +62,14 @@
   border: #4a3933;
   padding-bottom: 2px;
   border-radius: 2px;
+}
+
+.datatable-header{
+  /* background: #005b88; */
+  /* background-color: #005b88 !important; */
+  background: linear-gradient(135deg, #05213c, #05396c);
+  color: #FBC02D !important;
+  border-radius: 5px;
 }
 
 .header-devider th {
@@ -187,6 +196,18 @@ label {
   color: white;
   padding: 2px 5px;
 }
+.datatable-btns button{
+  border: 1px solid #FBC02D;
+  border-radius: 5px;
+  background-color: #005b88;
+  color: white;
+  padding: 2px 5px;
+}
+
+.datatable-btns button:hover{
+  border: 1px solid #005b88;
+  background-color: #FBC02D;
+}
 
 .pre-nxt-btn button {
   border: 2px solid #FBC02D;
@@ -224,7 +245,7 @@ label {
 
 }
 
-.global-button-group button:hover .dropdown-gear-icon {
+.global-button-group button:hover .dropdown-gear-icon,.datatable-btns button:hover .dropdown-gear-icon {
   color: #2C2C2C;
   transform: rotate(360deg);
 }
@@ -311,3 +332,12 @@ label {
   padding: 0.4rem;
   margin-bottom: 0.5rem;
 }
+
+.rdt_Pagination {
+  min-height: 0% !important;
+  /* background: #053f7a; */
+  /* color: white; */
+}
+/* .rdt_TableHeadRow {
+  min-height: 21px !important;
+} */

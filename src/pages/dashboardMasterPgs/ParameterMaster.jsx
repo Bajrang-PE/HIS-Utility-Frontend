@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import NavbarHeader from '../../components/headers/NavbarHeader'
 import InputSelect from '../../components/commons/InputSelect'
 import InputField from '../../components/commons/InputField'
@@ -7,14 +7,27 @@ import { faAdd, faDatabase, faFile, faMinus, faRefresh } from '@fortawesome/free
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import GlobalButtonGroup from '../../components/commons/GlobalButtonGroup'
 import { itemForDashboard, parameterAlignment, parameterType, parameterWidth, timeOutOptions, validationType } from '../../localData/DropDownData'
+import { HISContext } from '../../contextApi/HISContext'
+import GlobalDataTable from '../../components/commons/GlobalDataTable'
 
 const ParameterMaster = () => {
+
+  const { parameterData, getAllParameterData, showDataTable, setShowDataTable, dashboardForDt, getDashboardForDrpData } = useContext(HISContext);
+
   const [rows, setRows] = useState([{ value: "", text: "" }]);
   const [showAsLabel, setShowAsLabel] = useState(false);
   const [isMultiSelectReq, setIsMultiSelectReq] = useState(false);
   const [values, setValues] = useState({
     "parameterFor": "", "parameterType": "combo", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "", "stmtTimeOut": ""
   })
+
+  useEffect(() => {
+    if (values?.parameterFor) { getAllParameterData(values?.parameterFor); }
+  }, [values?.parameterFor])
+
+  useEffect(() => {
+    if (dashboardForDt?.length === 0) { getDashboardForDrpData(); }
+  }, [])
 
   const handleValueChange = (e) => {
     const { name, value } = e.target;
@@ -41,11 +54,63 @@ const ParameterMaster = () => {
     setRows(updatedRows);
   };
 
+  const onOpenDataTable = () => {
+    setShowDataTable(true)
+  }
+
+  const column = [
+    {
+      name: <input
+        type="checkbox"
+        // checked={selectAll}
+        // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
+        disabled={true}
+        className="form-check-input log-select"
+      />,
+      cell: row =>
+        <div style={{ position: 'absolute', top: 4, left: 10 }}>
+          <span className="btn btn-sm text-white px-1 py-0 mr-1" >
+            <input
+              type="checkbox"
+            // checked={selectedRows.includes(row.gnumUserId)}
+            // onChange={(e) => { handleRowSelect(row.gnumUserId) }}
+            />
+          </span>
+        </div>,
+      width: "8%"
+    },
+    {
+      name: 'ID',
+      selector: row => row.id,
+      sortable: true,
+      width: "8%"
+    },
+    {
+      name: 'Parameter Name',
+      selector: row => row?.jsonData?.parameterName,
+      sortable: true,
+    },
+    {
+      name: 'Display Name',
+      selector: row => row?.jsonData?.parameterDisplayName,
+      sortable: true,
+    },
+    {
+      name: 'Type',
+      selector: row => row?.jsonData?.parameterType,
+      sortable: true,
+    },
+    // {
+    //     name: 'Email',
+    //     selector: row => row.email,
+    // },
+  ]
+
   return (
     <>
       <NavbarHeader />
       <div className='main-master-page'>
-      <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={null} onOpen={null} onReset={null} onParams={null} onWeb={null} />
+        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={null} onOpen={onOpenDataTable} onReset={null} onParams={null} onWeb={null} />
         <div className='form-card m-auto p-2'>
           <div className='p-1'>
             <b><h6 className='header-devider m-0'> Parameter Master</h6></b>
@@ -61,7 +126,7 @@ const ParameterMaster = () => {
                       id="parameterFor"
                       name="parameterFor"
                       placeholder="Select value..."
-                      options={itemForDashboard}
+                      options={dashboardForDt}
                       className="backcolorinput"
                       value={values?.parameterFor}
                       onChange={handleValueChange}
@@ -736,6 +801,10 @@ const ParameterMaster = () => {
           <b><h6 className='header-devider m-0' style={{ padding: "10px" }}></h6></b>
           {/* </div> */}
         </div>
+
+        {showDataTable &&
+          <GlobalDataTable showDataTable={showDataTable} setShowDataTable={setShowDataTable} title={"Parameter List"} column={column} data={parameterData} onModify={null} onDelete={null} />
+        }
 
       </div>
     </>

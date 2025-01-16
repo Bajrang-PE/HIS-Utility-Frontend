@@ -2,7 +2,9 @@ import React from 'react'
 import InputField from '../../commons/InputField'
 import InputSelect from '../../commons/InputSelect'
 
-const NewsTickWidget = () => {
+const NewsTickWidget = (props) => {
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+
     return (
         <div>
             <b><h6 className='header-devider mb-1'>News Ticker Details</h6></b>
@@ -17,10 +19,10 @@ const NewsTickWidget = () => {
                                 type={'text'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                name='noOfNewsVisible'
+                                id="noOfNewsVisible"
+                                onChange={handleValueChange}
+                                value={values?.noOfNewsVisible}
                             />
                         </div>
                     </div>
@@ -30,11 +32,11 @@ const NewsTickWidget = () => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
+                                name='newsSpeed'
+                                id="newsSpeed"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                onChange={handleValueChange}
+                                value={values?.newsSpeed}
                             />
                         </div>
                     </div>
@@ -48,11 +50,11 @@ const NewsTickWidget = () => {
                             <InputSelect
                                 className="backcolorinput "
                                 placeholder="Enter value..."
-                                name='parentWidget'
-                                id="parentWidget"
+                                name='newsInterval'
+                                id="newsInterval"
                                 options={[]}
-                            // onChange={handleValueChange}
-                            // value={values?.parentWidget}
+                                onChange={handleValueChange}
+                                value={values?.newsInterval}
                             />
                         </div>
                     </div>
