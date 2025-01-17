@@ -9,17 +9,22 @@ import GlobalButtonGroup from '../../components/commons/GlobalButtonGroup'
 import { itemForDashboard, parameterAlignment, parameterType, parameterWidth, timeOutOptions, validationType } from '../../localData/DropDownData'
 import { HISContext } from '../../contextApi/HISContext'
 import GlobalDataTable from '../../components/commons/GlobalDataTable'
+import { ToastAlert } from '../../utils/commonFunction'
 
 const ParameterMaster = () => {
 
-  const { parameterData, getAllParameterData, showDataTable, setShowDataTable, dashboardForDt, getDashboardForDrpData } = useContext(HISContext);
+  const { parameterData, getAllParameterData, selectedOption, setSelectedOption, setShowDataTable, dashboardForDt, getDashboardForDrpData, actionMode, setActionMode,parameterDrpData } = useContext(HISContext);
 
-  const [rows, setRows] = useState([{ value: "", text: "" }]);
+  const [rows, setRows] = useState([{ optionValue: "", optionText: "" }]);
   const [showAsLabel, setShowAsLabel] = useState(false);
-  const [isMultiSelectReq, setIsMultiSelectReq] = useState(false);
+  const [isMultiSelectReq, setIsMultiSelectReq] = useState('No');
+  const [singleData, setSingleData] = useState([]);
   const [values, setValues] = useState({
     "parameterFor": "", "parameterType": "combo", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "", "stmtTimeOut": ""
   })
+  const [searchInput, setSearchInput] = useState('');
+  const [showParamsTable, setShowParamsTable] = useState(false);
+  const [showWebServiceTable, setShowWebServiceTable] = useState(false);
 
   useEffect(() => {
     if (values?.parameterFor) { getAllParameterData(values?.parameterFor); }
@@ -45,7 +50,7 @@ const ParameterMaster = () => {
 
   // Add a new row
   const handleAddRow = () => {
-    setRows([...rows, { value: "", text: "" }]);
+    setRows([...rows, { optionValue: "", optionText: "" }]);
   };
 
   // Remove a row
@@ -54,11 +59,130 @@ const ParameterMaster = () => {
     setRows(updatedRows);
   };
 
+  const handleUpdateData = () => {
+    if (selectedOption?.length > 0) {
+      const selectedRow = parameterData?.filter(dt => dt?.id === selectedOption[0]?.id)
+      setSingleData(selectedRow);
+      setActionMode('edit');
+      setShowParamsTable(false);
+      setShowDataTable(false);
+      setShowWebServiceTable(false);
+    } else {
+      ToastAlert('Please select a record', 'warning');
+    }
+  }
+
+  const returnAlignment = (val) => {
+    if (val === "left" || val === "Left") {
+      return "left";
+    } else if (val === 'right' || val === "Right") {
+      return 'right';
+    } else if (val === 'center' || val === "Center") {
+      return 'center';
+    }
+  }
+  useEffect(() => {
+    if (singleData?.length > 0) {
+      const jsonData = singleData[0]?.jsonData || {};
+      setIsMultiSelectReq(jsonData?.isMultipleSelectionRequired || "No")
+      setValues({
+        ...values,
+        parameterFor: singleData[0]?.dashboardFor || "",
+        parameterType: jsonData.parameterType || "",
+        parameterInternal: jsonData.parameterName || "",
+        parameterDisplay: jsonData.parameterDisplayName || "",
+        placeHolder: jsonData.placeHolder || "",
+
+        parameterWidth: jsonData.parameterParentWidth || "",
+        parameterAlignment: returnAlignment(jsonData.parentAlignment) || "",
+        paraLabelWidth: jsonData.parameterLabelWidth || "",
+        paraLabelAlignment: returnAlignment(jsonData.labelAlignment) || "",
+        paraControlWidth: jsonData.parameterControlWidth || "",
+        paraControlAlignment: returnAlignment(jsonData.controlAlignment) || "",
+
+        mandatory: jsonData.isMandatory || "",
+        defaultValueIfLeft: jsonData.defaultValueIfEmpty || "",
+        defaultValue: jsonData.defaultValue || "",
+        validation: jsonData.textBoxValidation || "",
+        maxLength: jsonData.textboxMaxlength || "",
+        minLength: jsonData.textboxMinlength || "",
+
+        parentID: jsonData.parentId || [],
+        modeForQuery: jsonData.modeForQuery || "",
+        query: jsonData.parameterQuery || "",
+        defaultOptValue: jsonData.defaultOption?.optionText || "",
+        defaultOptText: jsonData.defaultOption?.optionValue || "",
+        defOptFilterVal: jsonData.defaultOptionForFilter?.optionValue || "",
+        defOptFilterTxt: jsonData.defaultOptionForFilter?.optionText || "",
+        jndiSavingData: singleData[0]?.jndiIdForGettingData || "",
+        stmtTimeOut: singleData[0]?.statementTimeout || "",
+      });
+      ToastAlert("Data Fetched", "success");
+    }
+  }, [singleData]);
+
+
   const onOpenDataTable = () => {
     setShowDataTable(true)
+    setShowParamsTable(true)
+  }
+
+  const onOpenWebService = () => {
+    setShowDataTable(true);
+    setShowWebServiceTable(true);
+  }
+
+  const onTableClose = () => {
+    setShowParamsTable(false);
+    setShowWebServiceTable(false);
+    setSearchInput('');
+    setSelectedOption([]);
   }
 
   const column = [
+    {
+      name: <input
+        type="checkbox"
+        // checked={selectAll}
+        // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
+        disabled={true}
+        className="form-check-input log-select"
+      />,
+      cell: row =>
+        <div style={{ position: 'absolute', top: 4, left: 10 }}>
+          <span className="btn btn-sm text-white px-1 py-0 mr-1" >
+            <input
+              type="checkbox"
+              checked={selectedOption[0]?.id === row?.id}
+              onChange={(e) => { setSelectedOption([row]) }}
+            />
+          </span>
+        </div>,
+      width: "8%"
+    },
+    {
+      name: 'ID',
+      selector: row => row.id,
+      sortable: true,
+      width: "8%"
+    },
+    {
+      name: 'Parameter Name',
+      selector: row => row?.jsonData?.parameterName || "---",
+      sortable: true,
+    },
+    {
+      name: 'Display Name',
+      selector: row => row?.jsonData?.parameterDisplayName || "---",
+      sortable: true,
+    },
+    {
+      name: 'Type',
+      selector: row => parameterType?.filter(dt => dt?.value === row?.jsonData?.parameterType)[0]?.label || "---",
+      sortable: true,
+    },
+  ]
+  const webServiceColumn = [
     {
       name: <input
         type="checkbox"
@@ -80,37 +204,33 @@ const ParameterMaster = () => {
       width: "8%"
     },
     {
-      name: 'ID',
+      name: 'Service ID',
       selector: row => row.id,
       sortable: true,
-      width: "8%"
+      width: "10%"
     },
     {
-      name: 'Parameter Name',
+      name: 'Service Name',
       selector: row => row?.jsonData?.parameterName,
       sortable: true,
     },
     {
-      name: 'Display Name',
+      name: 'Service Display Name',
       selector: row => row?.jsonData?.parameterDisplayName,
       sortable: true,
     },
     {
-      name: 'Type',
+      name: 'Service Category',
       selector: row => row?.jsonData?.parameterType,
       sortable: true,
     },
-    // {
-    //     name: 'Email',
-    //     selector: row => row.email,
-    // },
   ]
 
   return (
     <>
       <NavbarHeader />
       <div className='main-master-page'>
-        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={null} onOpen={onOpenDataTable} onReset={null} onParams={null} onWeb={null} />
+        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={null} onOpen={onOpenDataTable} onReset={null} onParams={null} onWeb={onOpenWebService} />
         <div className='form-card m-auto p-2'>
           <div className='p-1'>
             <b><h6 className='header-devider m-0'> Parameter Master</h6></b>
@@ -130,6 +250,7 @@ const ParameterMaster = () => {
                       className="backcolorinput"
                       value={values?.parameterFor}
                       onChange={handleValueChange}
+                      disabled={actionMode === 'edit' ? true : false}
                     />
                   </div>
                 </div>
@@ -147,6 +268,7 @@ const ParameterMaster = () => {
                       options={parameterType}
                       value={values?.parameterType}
                       onChange={handleValueChange}
+                      disabled={actionMode === 'edit' ? true : false}
                     />
                   </div>
                 </div>
@@ -202,7 +324,7 @@ const ParameterMaster = () => {
                     />
                   </div>
                 </div>
-                {values?.parameterType === "combo" &&
+                {values?.parameterType === '1' &&
                   <div className="form-group row">
                     <label className="col-sm-5 col-form-label pe-0">
                       Show As Label If One Data Available :
@@ -348,7 +470,7 @@ const ParameterMaster = () => {
                       id="mandatory"
                       name="mandatory"
                       placeholder="Select "
-                      options={[{ value: 1, label: "Yes" }, { value: 0, label: "No" }]}
+                      options={[{ value: "Yes", label: "Yes" }, { value: "No", label: "No" }]}
                       className="backcolorinput"
                       onChange={handleValueChange}
                       value={values?.mandatory}
@@ -357,7 +479,7 @@ const ParameterMaster = () => {
                 </div>
               </div>
               {/* right columns */}
-              {(values?.parameterType === "textBox" || values?.parameterType === "datePick") &&
+              {(values?.parameterType === '2' || values?.parameterType === '3') &&
                 <div className='col-sm-6'>
                   <div className="form-group row" style={{ paddingBottom: "1px" }}>
                     <label className="col-sm-5 col-form-label fix-label pe-0 required-label">Default Value (If Left Empty) : </label>
@@ -378,7 +500,7 @@ const ParameterMaster = () => {
             </div>
 
             {/* SECTION DEVIDER default value to min length - text*/}
-            {values?.parameterType === "textBox" &&
+            {values?.parameterType === '2' &&
               <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
@@ -447,7 +569,7 @@ const ParameterMaster = () => {
             }
 
             {/* SECTION DEVIDER parent and mode query*/}
-            {(values?.parameterType !== "textBox" && values?.parameterType !== "datePick") &&
+            {(values?.parameterType !== '2' && values?.parameterType !== '3') &&
               <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
@@ -457,7 +579,7 @@ const ParameterMaster = () => {
                       <Select
                         id='parentID'
                         name='parentID'
-                        options={[{ value: 1, label: "No Parent" }, { value: 2, label: "State" }]}
+                        options={parameterDrpData}
                         isMulti
                         placeholder="Select value..."
                         className="backcolorinput react-select-multi"
@@ -490,12 +612,12 @@ const ParameterMaster = () => {
             }
 
             {/* SECTION DEVIDER query */}
-            {(values?.modeForQuery === "query" && values?.parameterType !== "textBox") &&
+            {(values?.modeForQuery === "query" && values?.parameterType !== '2') &&
               <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
                   <div className="form-group row">
-                    <label className="col-sm-5 col-form-label fix-label pe-0 required-label">{values?.parameterType === "datePick" ? "Query For Default Date" : "Query"}: </label>
+                    <label className="col-sm-5 col-form-label fix-label pe-0 required-label">{values?.parameterType === "3" ? "Query For Default Date" : "Query"}: </label>
                     <div className="col-sm-7 ps-0 align-content-center">
                       <textarea
                         className="form-control backcolorinput"
@@ -517,7 +639,7 @@ const ParameterMaster = () => {
             }
 
             {/* SECTION DEVIDER for date limits*/}
-            {values?.parameterType === "datePick" &&
+            {values?.parameterType === '3' &&
               <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
@@ -613,8 +735,8 @@ const ParameterMaster = () => {
                           type="text"
                           className="backcolorinput"
                           placeholder="Option Value"
-                          value={row.value}
-                          onChange={(e) => handleInputChange(index, "value", e.target.value)}
+                          value={row.optionValue}
+                          onChange={(e) => handleInputChange(index, "optionValue", e.target.value)}
                         />
                       </div>
                       <div className="col-4">
@@ -622,8 +744,8 @@ const ParameterMaster = () => {
                           type="text"
                           className="backcolorinput"
                           placeholder="Option Text"
-                          value={row.text}
-                          onChange={(e) => handleInputChange(index, "text", e.target.value)}
+                          value={row.optionText}
+                          onChange={(e) => handleInputChange(index, "optionText", e.target.value)}
                         />
                       </div>
                       <div className="col-2 d-flex">
@@ -644,7 +766,7 @@ const ParameterMaster = () => {
               </>
             }
             {/* SECTION DEVIDER for default values */}
-            {(values?.parameterType !== "textBox" && values?.parameterType !== "datePick") &&
+            {(values?.parameterType !== '2' && values?.parameterType !== '3') &&
               <div className="">
                 {/* HEADING TEXT */}
                 <div className="row">
@@ -713,7 +835,7 @@ const ParameterMaster = () => {
             }
 
             {/* SECTION DEVIDER is multiple req*/}
-            {(values?.parameterType !== "textBox" && values?.parameterType !== "datePick") &&
+            {(values?.parameterType !== '2' && values?.parameterType !== '3') &&
               <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
@@ -728,9 +850,9 @@ const ParameterMaster = () => {
                           type="radio"
                           name="isMultiSelectReq"
                           id="isMultiSelectReqYes"
-                          value={isMultiSelectReq}
-                          onChange={(e) => setIsMultiSelectReq(true)}
-                          checked={isMultiSelectReq}
+                          value={'Yes'}
+                          onChange={(e) => setIsMultiSelectReq('Yes')}
+                          checked={isMultiSelectReq === 'Yes'}
                         />
                         <label className="form-check-label" htmlFor="dbYes">
                           Yes
@@ -742,9 +864,9 @@ const ParameterMaster = () => {
                           type="radio"
                           name="isMultiSelectReq"
                           id="isMultiSelectReqNo"
-                          value={isMultiSelectReq}
-                          onChange={(e) => setIsMultiSelectReq(false)}
-                          checked={!isMultiSelectReq}
+                          value={'No'}
+                          onChange={(e) => setIsMultiSelectReq("No")}
+                          checked={isMultiSelectReq === 'No'}
                         />
                         <label className="form-check-label" htmlFor="dbNo">
                           No
@@ -802,8 +924,11 @@ const ParameterMaster = () => {
           {/* </div> */}
         </div>
 
-        {showDataTable &&
-          <GlobalDataTable showDataTable={showDataTable} setShowDataTable={setShowDataTable} title={"Parameter List"} column={column} data={parameterData} onModify={null} onDelete={null} />
+        {showParamsTable &&
+          <GlobalDataTable title={"Parameter List"} column={column} data={parameterData} onModify={handleUpdateData} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} />
+        }
+        {showWebServiceTable &&
+          <GlobalDataTable title={"Data Service List"} column={webServiceColumn} data={parameterData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} />
         }
 
       </div>

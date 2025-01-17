@@ -5,11 +5,11 @@ export const itemForDashboard = [
 ]
 
 export const parameterType = [
-    { value: 'combo', label: "Combo" },
-    { value: 'textBox', label: "TextBox" },
-    { value: 'datePick', label: "Date Pick" },
-    { value: 'checkbox', label: "CheckBox" },
-    { value: 'radio', label: "Radio Button" }
+    { value: '1', label: "Combo" },
+    { value: '2', label: "TextBox" },
+    { value: '3', label: "Date Pick" },
+    { value: '4', label: "CheckBox" },
+    { value: '5', label: "Radio Button" }
 ]
 
 export const parameterWidth = [
@@ -29,8 +29,8 @@ export const parameterWidth = [
 ];
 
 export const parameterAlignment = [
-    { value: "left", label: "Left" },
-    { value: "Center", label: "Center" },
+    { value: "left" || "Left", label: "Left" },
+    { value: "center", label: "Center" },
     { value: "right", label: "Right" }
 ]
 

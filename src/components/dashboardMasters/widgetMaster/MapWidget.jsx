@@ -1,8 +1,9 @@
 import React from 'react'
 import InputSelect from '../../commons/InputSelect'
+import Select from 'react-select';
 
 const MapWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, parentWidget,setValues } = props;
 
     return (
         <div>
@@ -63,7 +64,7 @@ const MapWidget = (props) => {
                 </div>
                 {/* right columns */}
                 <div className='col-sm-6'>
-                    <div className="form-group row">
+                    {/* <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Parent Widget : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
@@ -71,9 +72,26 @@ const MapWidget = (props) => {
                                 placeholder="Enter value..."
                                 name='parentWidgetMap'
                                 id="parentWidgetMap"
-                                options={[]}
+                                options={parentWidget}
                                 onChange={handleValueChange}
                                 value={values?.parentWidgetMap}
+
+                            />
+                        </div>
+                    </div> */}
+
+                    <div className="form-group row">
+                        <label className="col-sm-5 col-form-label pe-0">Parent Widget : </label>
+                        <div className="col-sm-7 ps-0 align-content-center">
+                            <Select
+                                id='parentWidgetMap'
+                                name='parentWidgetMap'
+                                options={parentWidget}
+                                placeholder="Select value..."
+                                className="backcolorinput react-select-multi"
+                                onChange={(e) => setValues({ ...values, ['parentWidgetMap']: e })}
+                                value={values?.parentWidgetMap}
+                            // isSearchable={true}
                             />
                         </div>
                     </div>

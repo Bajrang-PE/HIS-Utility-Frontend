@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-const TabNav = ({ isTabNav, tabNavData, setTabIndex,tabIndex }) => {
-  
+const TabNav = ({ isTabNav, tabNavData, tabName, setTabName,setTabIndex }) => {
+
   const [visibleTabCount, setVisibleTabCount] = useState(4);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -27,9 +27,11 @@ const TabNav = ({ isTabNav, tabNavData, setTabIndex,tabIndex }) => {
     };
   }, []);
 
-  const handleTabClick = (value) => {
-    setTabIndex(value)
+  const handleTabClick = (index,value) => {
+    setTabName(value);
+    setTabIndex(index+1);
   };
+  
 
   return (
     <>
@@ -38,11 +40,11 @@ const TabNav = ({ isTabNav, tabNavData, setTabIndex,tabIndex }) => {
           {/* Tabs for larger screens */}
           <div className="tabs d-none d-sm-flex justify-content-end">
             {/* MAIN LIST */}
-            {tabNavData.slice(0, visibleTabCount).map((tab) => (
+            {tabNavData.slice(0, visibleTabCount).map((tab,index) => (
               <button
                 key={tab.value}
-                className={`btn btn-sm ms-1 nav-tab-btn ${tabIndex === tab.value ? 'active-tab' : ''}`}
-                onClick={() => handleTabClick(tab.value)}
+                className={`btn btn-sm ms-1 nav-tab-btn ${tabName?.value === tab.value ? 'active-tab' : ''}`}
+                onClick={() => handleTabClick(index,tab)}
               >
                 {tab.label}
               </button>
@@ -61,11 +63,11 @@ const TabNav = ({ isTabNav, tabNavData, setTabIndex,tabIndex }) => {
                 {/* DROPDOWN LIST */}
                 {showDropdown && (
                   <div className="dropdown-menu show" style={{ right: 0, left: "auto" }}>
-                    {tabNavData.slice(visibleTabCount).map((tab) => (
+                    {tabNavData.slice(visibleTabCount).map((tab,index) => (
                       <button
                         key={tab.value}
                         className="dropdown-item"
-                        onClick={() => { handleTabClick(tab.value); setShowDropdown((prev) => !prev);}}
+                        onClick={() => { handleTabClick(index,tab); setShowDropdown((prev) => !prev); }}
                       >
                         {tab.label}
                       </button>
@@ -87,11 +89,11 @@ const TabNav = ({ isTabNav, tabNavData, setTabIndex,tabIndex }) => {
               </button>
               {showDropdown && (
                 <div className="dropdown-menu show" style={{ right: 0, left: "auto" }}>
-                  {tabNavData.map((tab) => (
+                  {tabNavData.map((tab,index) => (
                     <button
                       key={tab.value}
                       className="dropdown-item"
-                      onClick={() => handleTabClick(tab.value)}
+                      onClick={() => handleTabClick(index,tab)}
                     >
                       {tab.label}
                     </button>

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const TableDetails = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues,parentWidget } = props;
 
     const [rows, setRows] = useState([{ queryLabel: "", mainQuery: "", dataTableReq: "", tableDataDisplay: "" }]);
 
@@ -502,7 +502,7 @@ const TableDetails = (props) => {
                                 placeholder="Enter value..."
                                 name='parentWidget'
                                 id="parentWidget"
-                                options={[]}
+                                options={parentWidget}
                                 onChange={handleValueChange}
                                 value={values?.parentWidget}
                             />

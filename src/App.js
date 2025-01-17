@@ -7,6 +7,7 @@ import DbSubmenuMaster from './pages/webServiceMasterPgs/DbSubmenuMaster';
 import ServiceUserMaster from './pages/webServiceMasterPgs/ServiceUserMaster';
 import DataServiceMaster from './pages/webServiceMasterPgs/DataServiceMaster';
 import WidgetMaster from './pages/dashboardMasterPgs/WidgetMaster';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
           {/* <Route exact path="*" name='Home' element={<Auth comp={DefaultLayout}/>} /> */}
         </Routes>
       {/* </Suspense> */}
-      {/* <ToastContainer /> */}
+      <ToastContainer />
     </BrowserRouter>
   );
 }

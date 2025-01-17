@@ -4,7 +4,7 @@ import InputField from '../../commons/InputField'
 import Select from 'react-select'
 
 const GraphWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues,parentWidget } = props;
 
     return (
         <div>
@@ -574,7 +574,7 @@ const GraphWidget = (props) => {
                                 placeholder="Enter value..."
                                 name='parentWidgetGraph'
                                 id="parentWidgetGraph"
-                                options={[]}
+                                options={parentWidget}
                                 onChange={handleValueChange}
                                 value={values?.parentWidgetGraph}
                             />

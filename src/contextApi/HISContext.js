@@ -1,11 +1,14 @@
 import React, { createContext, useState } from 'react'
 import { fetchData } from '../utils/ApiHooks';
+import { DrpDataValLab } from '../utils/commonFunction';
 
 export const HISContext = createContext();
 
 const HISContextData = ({ children }) => {
   //GLOBALS
   const [showDataTable, setShowDataTable] = useState(false);
+  const [selectedOption, setSelectedOption] = useState([]);
+  const [actionMode, setActionMode] = useState('');
 
   // ALL DATA
   const [parameterData, setParameterData] = useState([]);
@@ -13,7 +16,9 @@ const HISContextData = ({ children }) => {
   // const [allWidgetData, setAllWidgetData] = useState([]);
 
   //DROPDOWN DATA
-  const [dashboardForDt, setDashboardForDt] = useState([])
+  const [dashboardForDt, setDashboardForDt] = useState([]);
+  const [parameterDrpData, setParameterDrpData] = useState([]);
+  const [widgetDrpData, setWidgetDrpData] = useState([]);
 
   // dropdowns api call
 
@@ -31,8 +36,10 @@ const HISContextData = ({ children }) => {
     fetchData("/hisutils/parameterAll", { 'masterName': dashFor }).then((data) => {
       if (data) {
         setParameterData(data);
+        setParameterDrpData(DrpDataValLab(data, 'parameterId', 'parameterName',true))
       } else {
         setParameterData([]);
+        setParameterDrpData([]);
       }
     })
   }
@@ -41,8 +48,10 @@ const HISContextData = ({ children }) => {
     fetchData("http://10.226.29.211:8025/hisutils/allWidgetConfiguration", { 'dashboardFor': dashFor }).then((data) => {
       if (data) {
         setAllWidgetData(data);
+        setWidgetDrpData(DrpDataValLab(data, 'rptId', 'rptName',false))
       } else {
         setAllWidgetData([]);
+        setWidgetDrpData([]);
       }
     })
   }
@@ -52,10 +61,14 @@ const HISContextData = ({ children }) => {
       //GLOBALS-----------------------------------
       // show table status
       showDataTable, setShowDataTable,
+      selectedOption, setSelectedOption,
+      actionMode, setActionMode,
 
       // DROP DOWNS-------------------------------
       // DASHBOARD FOR
       dashboardForDt, getDashboardForDrpData,
+      parameterDrpData,
+      widgetDrpData,
 
       // ALL DATA----------------------------------
       //PARAMETER DATA

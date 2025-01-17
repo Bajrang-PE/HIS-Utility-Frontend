@@ -30,6 +30,7 @@ const InputSelect = ({
                 className={`form-select form-select-sm ${className}`}
                 style={style}
                 multiple={multiple ? multiple : false}
+                
             >
                 {/* Render options dynamically */}
                 {placeholder && <option value={''}>{placeholder}</option>}

@@ -20,7 +20,7 @@ import { HISContext } from '../../contextApi/HISContext'
 const WidgetMaster = () => {
 
 
-  const { showDataTable, setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, } = useContext(HISContext);
+  const { setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, parameterData, getAllParameterData,widgetDrpData } = useContext(HISContext);
 
   const [values, setValues] = useState({
     "widgetFor": "",
@@ -177,12 +177,20 @@ const WidgetMaster = () => {
     isSsoUrl: "yes"
 
   })
-  const [isShowTable, setIsShowTable] = useState(false);
-  const [tabIndex, setTabIndex] = useState(1);
 
+  const [tabIndex, setTabIndex] = useState(1);
+  const [tabName, setTabName] = useState({ value: 1, label: "About Widget" });
+  const [showWidgetTable, setShowWidgetTable] = useState(false);
+  const [showParamsTable, setShowParamsTable] = useState(false);
+  const [showWebServiceTable, setShowWebServiceTable] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
 
   useEffect(() => {
-    if (values?.widgetFor) { getAllWidgetData(values?.widgetFor); }
+    if (values?.widgetFor) {
+      getAllWidgetData(values?.widgetFor);
+      getAllParameterData(values?.widgetFor);
+
+    }
   }, [values?.widgetFor])
 
   useEffect(() => {
@@ -259,106 +267,205 @@ const WidgetMaster = () => {
 
   const saveTabsData = () => {
     let nextTab = tabIndex + 1;
-    const tabAvail = tabNavMenus[tabIndex];
-    console.log(tabAvail, "tb")
-    while (tabIndex < tabNavMenus.length) {
-      nextTab++;
-      alert('a')
+    if (tabNavMenus?.length >= nextTab) {
+      setTabName(tabNavMenus[nextTab - 1])
+      setTabIndex(nextTab)
     }
+  }
 
-    // Update tabIndex only if the next tab exists
-    if (nextTab <= tabNavMenus.length) {
+  const previousTab = () => {
+    let nextTab = tabIndex - 1;
+    if (nextTab >= 1) {
+      setTabName(tabNavMenus[nextTab-1])
       setTabIndex(nextTab);
     }
-
-    // if (tabIndex < tabNavMenus?.length) {
-    //   setTabIndex(tabIndex + 1)
-    // }
   }
 
   const onOpenDataTable = () => {
-    setShowDataTable(true)
+    setShowDataTable(true);
+    setShowWidgetTable(true);
+  }
+  const onOpenParams = () => {
+    setShowDataTable(true);
+    setShowParamsTable(true);
+  }
+  const onOpenWebService = () => {
+    setShowDataTable(true);
+    setShowWebServiceTable(true);
   }
 
-  const column = [
-      {
-        name: <input
-          type="checkbox"
-          // checked={selectAll}
-          // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
-          disabled={true}
-          className="form-check-input log-select"
-        />,
-        cell: row =>
-          <div style={{ position: 'absolute', top: 4, left: 10 }}>
-            <span className="btn btn-sm text-white px-1 py-0 mr-1" >
-              <input
-                type="checkbox"
-              // checked={selectedRows.includes(row.gnumUserId)}
-              // onChange={(e) => { handleRowSelect(row.gnumUserId) }}
-              />
-            </span>
-          </div>,
-        width: "8%"
-      },
-      {
-        name: 'Widget ID',
-        selector: row => parseInt(row.rptId),
-        sortable: true,
-        width: "10%"
-      },
-      {
-        name: 'Widget Name',
-        selector: row => row?.rptName,
-        sortable: true,
-      },
-      {
-        name: 'Display Name',
-        selector: row => row?.rptDisplayName ,
-        sortable: true,
-      },
-      {
-        name: 'Type',
-        selector: row => row?.reportViewed,
-        sortable: true,
-      },
-      // {
-      //     name: 'Email',
-      //     selector: row => row.email,
-      // },
-    ]
+  const onTableClose = () => {
+    setShowWidgetTable(false);
+    setShowParamsTable(false);
+    setShowWebServiceTable(false);
+    setSearchInput('');
 
+  }
+  const widgetColumn = [
+    {
+      name: <input
+        type="checkbox"
+        // checked={selectAll}
+        // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
+        disabled={true}
+        className="form-check-input log-select"
+      />,
+      cell: row =>
+        <div style={{ position: 'absolute', top: 4, left: 10 }}>
+          <span className="btn btn-sm text-white px-1 py-0 mr-1" >
+            <input
+              type="checkbox"
+            // checked={selectedRows.includes(row.gnumUserId)}
+            // onChange={(e) => { handleRowSelect(row.gnumUserId) }}
+            />
+          </span>
+        </div>,
+      width: "8%"
+    },
+    {
+      name: 'Widget ID',
+      selector: row => parseInt(row.rptId),
+      sortable: true,
+      width: "10%"
+    },
+    {
+      name: 'Widget Name',
+      selector: row => row?.rptName,
+      sortable: true,
+    },
+    {
+      name: 'Display Name',
+      selector: row => row?.rptDisplayName,
+      sortable: true,
+    },
+    {
+      name: 'Type',
+      selector: row => row?.reportViewed,
+      sortable: true,
+    }
+  ]
+
+  const paramsColumn = [
+    {
+      name: <input
+        type="checkbox"
+        // checked={selectAll}
+        // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
+        disabled={true}
+        className="form-check-input log-select"
+      />,
+      cell: row =>
+        <div style={{ position: 'absolute', top: 4, left: 10 }}>
+          <span className="btn btn-sm text-white px-1 py-0 mr-1" >
+            <input
+              type="checkbox"
+            // checked={selectedRows.includes(row.gnumUserId)}
+            // onChange={(e) => { handleRowSelect(row.gnumUserId) }}
+            />
+          </span>
+        </div>,
+      width: "8%"
+    },
+    {
+      name: 'ID',
+      selector: row => row.id,
+      sortable: true,
+      width: "8%"
+    },
+    {
+      name: 'Parameter Name',
+      selector: row => row?.jsonData?.parameterName,
+      sortable: true,
+    },
+    {
+      name: 'Display Name',
+      selector: row => row?.jsonData?.parameterDisplayName,
+      sortable: true,
+    },
+    {
+      name: 'Type',
+      selector: row => row?.jsonData?.parameterType,
+      sortable: true,
+    },
+  ]
+
+  const webServiceColumn = [
+    {
+      name: <input
+        type="checkbox"
+        // checked={selectAll}
+        // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
+        disabled={true}
+        className="form-check-input log-select"
+      />,
+      cell: row =>
+        <div style={{ position: 'absolute', top: 4, left: 10 }}>
+          <span className="btn btn-sm text-white px-1 py-0 mr-1" >
+            <input
+              type="checkbox"
+            // checked={selectedRows.includes(row.gnumUserId)}
+            // onChange={(e) => { handleRowSelect(row.gnumUserId) }}
+            />
+          </span>
+        </div>,
+      width: "8%"
+    },
+    {
+      name: 'Service ID',
+      selector: row => row.id,
+      sortable: true,
+      width: "10%"
+    },
+    {
+      name: 'Service Name',
+      selector: row => row?.jsonData?.parameterName,
+      sortable: true,
+    },
+    {
+      name: 'Service Display Name',
+      selector: row => row?.jsonData?.parameterDisplayName,
+      sortable: true,
+    },
+    {
+      name: 'Service Category',
+      selector: row => row?.jsonData?.parameterType,
+      sortable: true,
+    },
+  ]
+console.log(values?.parentWidgetMap,'widgetDrpData')
   return (
     <>
       <NavbarHeader />
       <div className='main-master-page'>
         <div className='row w-100 m-0'>
-          <div className='col-sm-6 p-0'>
-            <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={true} onSave={null} onOpen={onOpenDataTable} onReset={null} onParams={null} onWeb={null} />
+          <div className='col-sm-6 p-0 global-button-group'>
+            {values?.widgetFor &&
+              <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={true} onSave={null} onOpen={onOpenDataTable} onReset={null} onParams={onOpenParams} onWeb={onOpenWebService} />
+            }
           </div>
           <div className='col-sm-6 p-0'>
-            <TabNav isTabNav={true} tabNavData={tabNavMenus} setTabIndex={setTabIndex} tabIndex={tabIndex} />
+            <TabNav isTabNav={true} tabNavData={tabNavMenus} setTabIndex={setTabIndex} tabName={tabName} setTabName={setTabName} />
           </div>
         </div>
         <div className='form-card m-auto p-2'>
           <div className='p-1'>
 
-            {tabIndex === 1 &&
-              <AboutWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} dashboardForDt={dashboardForDt}/>
+            {tabName?.value === 1 &&
+              <AboutWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} dashboardForDt={dashboardForDt} />
             }
 
-            {tabIndex === 2 &&
+            {tabName?.value === 2 &&
               <QueryDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />
             }
 
-            {tabIndex === 3 &&
+            {tabName?.value === 3 &&
               <>
                 {radioValues?.widgetViewed === "tabular" &&
-                  <TableDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />
+                  <TableDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} parentWidget={widgetDrpData} setValues={setValues}/>
                 }
 
                 {radioValues?.widgetViewed === "graph" &&
-                  <GraphWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} />
+                  <GraphWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} parentWidget={widgetDrpData}/>
                 }
 
                 {radioValues?.widgetViewed === "kpi" &&
@@ -366,7 +473,7 @@ const WidgetMaster = () => {
                 }
 
                 {radioValues?.widgetViewed === "map" &&
-                  <MapWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} />
+                  <MapWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} parentWidget={widgetDrpData}/>
                 }
 
                 {radioValues?.widgetViewed === "newsTicker" &&
@@ -376,17 +483,23 @@ const WidgetMaster = () => {
 
             }
 
-            {(tabIndex === 4 && (radioValues?.widgetViewed === "map" || radioValues?.widgetViewed === "graph" || radioValues?.widgetViewed === "tabular")) &&
+            {(tabName?.value === 4 && (radioValues?.widgetViewed === "map" || radioValues?.widgetViewed === "graph" || radioValues?.widgetViewed === "tabular")) &&
               <ParamDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />}
 
-            {tabIndex === 5 &&
+            {tabName?.value === 5 &&
               <JndiDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />}
 
-            {tabIndex === 6 &&
+            {tabName?.value === 6 &&
               <FooterDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />}
 
-            {showDataTable &&
-              <GlobalDataTable showDataTable={showDataTable} setShowDataTable={setShowDataTable} title={"Widget List"} column={column} data={allWidgetData} onModify={null} onDelete={null} />
+            {showWidgetTable &&
+              <GlobalDataTable title={"Widget List"} column={widgetColumn} data={allWidgetData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} />
+            }
+            {showParamsTable &&
+              <GlobalDataTable title={"Parameter List"} column={paramsColumn} data={parameterData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} />
+            }
+            {showWebServiceTable &&
+              <GlobalDataTable title={"Data Service List"} column={webServiceColumn} data={allWidgetData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} />
             }
 
 
@@ -394,17 +507,7 @@ const WidgetMaster = () => {
 
             <div className='text-center mt-2 pre-nxt-btn'>
               <button className='btn btn-sm ms-1'
-                // onClick={() => setTabIndex(tabIndex > 1 ? tabIndex - 1 : 1)} 
-                onClick={() => {
-                  let prevTabIndex = tabIndex - 1;
-
-                  // Find the previous valid tab index
-                  while (prevTabIndex > 0 && !tabNavMenus[prevTabIndex - 1]) {
-                    prevTabIndex--;
-                  }
-
-                  setTabIndex(prevTabIndex);
-                }}
+                onClick={previousTab}
                 disabled={tabIndex > 1 ? false : true}
               >
                 <FontAwesomeIcon icon={faArrowLeft} className="dropdown-gear-icon me-2" />
