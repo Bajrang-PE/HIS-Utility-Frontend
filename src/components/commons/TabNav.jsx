@@ -12,8 +12,10 @@ const TabNav = ({ isTabNav, tabNavData, tabName, setTabName,setTabIndex }) => {
         setVisibleTabCount(7);
       } else if (availableWidth >= 1200) {
         setVisibleTabCount(5);
-      } else if (availableWidth >= 768) {
+      } else if(availableWidth >= 1024){
         setVisibleTabCount(4);
+      } else if (availableWidth >= 768) {
+        setVisibleTabCount(3);
       } else {
         setVisibleTabCount(0);
       }
@@ -40,7 +42,7 @@ const TabNav = ({ isTabNav, tabNavData, tabName, setTabName,setTabIndex }) => {
           {/* Tabs for larger screens */}
           <div className="tabs d-none d-sm-flex justify-content-end">
             {/* MAIN LIST */}
-            {tabNavData.slice(0, visibleTabCount).map((tab,index) => (
+            {tabNavData?.slice(0, visibleTabCount)?.map((tab,index) => (
               <button
                 key={tab.value}
                 className={`btn btn-sm ms-1 nav-tab-btn ${tabName?.value === tab.value ? 'active-tab' : ''}`}
@@ -51,7 +53,7 @@ const TabNav = ({ isTabNav, tabNavData, tabName, setTabName,setTabIndex }) => {
             ))}
 
             {/* DROPDOWN BUTTON */}
-            {tabNavData.length > visibleTabCount && (
+            {tabNavData?.length > visibleTabCount && (
               <div className="dropdown">
                 <button
                   className="btn btn-sm dropdown-button nav-tab-btn ms-1"
@@ -63,7 +65,7 @@ const TabNav = ({ isTabNav, tabNavData, tabName, setTabName,setTabIndex }) => {
                 {/* DROPDOWN LIST */}
                 {showDropdown && (
                   <div className="dropdown-menu show" style={{ right: 0, left: "auto" }}>
-                    {tabNavData.slice(visibleTabCount).map((tab,index) => (
+                    {tabNavData?.slice(visibleTabCount)?.map((tab,index) => (
                       <button
                         key={tab.value}
                         className="dropdown-item"
@@ -79,17 +81,17 @@ const TabNav = ({ isTabNav, tabNavData, tabName, setTabName,setTabIndex }) => {
           </div>
 
           {/* Mobile view: Show only dropdown */}
-          <div className="tabs d-sm-none">
+          <div className="tabs d-sm-none ">
             <div className="dropdown">
               <button
-                className="btn btn-sm dropdown-button"
+                className="btn btn-sm dropdown-button nav-tab-btn ms-1 rounded-0"
                 onClick={() => setShowDropdown((prev) => !prev)}
               >
                 &#9662;
               </button>
               {showDropdown && (
                 <div className="dropdown-menu show" style={{ right: 0, left: "auto" }}>
-                  {tabNavData.map((tab,index) => (
+                  {tabNavData?.map((tab,index) => (
                     <button
                       key={tab.value}
                       className="dropdown-item"

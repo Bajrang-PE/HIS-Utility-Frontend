@@ -10,17 +10,19 @@ import { itemForDashboard, parameterAlignment, parameterType, parameterWidth, ti
 import { HISContext } from '../../contextApi/HISContext'
 import GlobalDataTable from '../../components/commons/GlobalDataTable'
 import { ToastAlert } from '../../utils/commonFunction'
+import DataServiceTable from '../../components/webServiceMasters/dataService/DataServiceTable'
+import { fetchPostData } from '../../utils/ApiHooks'
 
 const ParameterMaster = () => {
 
-  const { parameterData, getAllParameterData, selectedOption, setSelectedOption, setShowDataTable, dashboardForDt, getDashboardForDrpData, actionMode, setActionMode,parameterDrpData } = useContext(HISContext);
+  const { parameterData, getAllParameterData, selectedOption, setSelectedOption, setShowDataTable, dashboardForDt, getDashboardForDrpData, actionMode, setActionMode, parameterDrpData, getAllServiceData, dataServiceData } = useContext(HISContext);
 
   const [rows, setRows] = useState([{ optionValue: "", optionText: "" }]);
   const [showAsLabel, setShowAsLabel] = useState(false);
   const [isMultiSelectReq, setIsMultiSelectReq] = useState('No');
   const [singleData, setSingleData] = useState([]);
   const [values, setValues] = useState({
-    "parameterFor": "", "parameterType": "combo", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "", "stmtTimeOut": ""
+    "parameterFor": "", "parameterType": "1", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "1", "stmtTimeOut": "", "id": "", "shouldBeLess": "", "shouldBeGreater": "", "minDaysBefore": "", "maxDaysAfter": ""
   })
   const [searchInput, setSearchInput] = useState('');
   const [showParamsTable, setShowParamsTable] = useState(false);
@@ -32,6 +34,7 @@ const ParameterMaster = () => {
 
   useEffect(() => {
     if (dashboardForDt?.length === 0) { getDashboardForDrpData(); }
+    if (dataServiceData?.length === 0) { getAllServiceData(); }
   }, [])
 
   const handleValueChange = (e) => {
@@ -67,10 +70,101 @@ const ParameterMaster = () => {
       setShowParamsTable(false);
       setShowDataTable(false);
       setShowWebServiceTable(false);
+      setSelectedOption([]);
     } else {
       ToastAlert('Please select a record', 'warning');
     }
   }
+
+  const handleDeleteParams = (id) => {
+    if (selectedOption?.length > 0) {
+      const val = { "id": id };
+      fetchPostData("/hisutils/parameterDelete", val).then((data) => {
+        if (data) {
+          ToastAlert('Deleted Successfully!', 'success');
+          // setLoading(false);
+          setSelectedOption([]);
+        } else {
+          // setLoading(false);
+          ToastAlert('Deletion Failed!', 'error');
+        }
+      })
+    } else {
+      ToastAlert('Please select a record', 'warning');
+    }
+  }
+
+  const saveParametersData = () => {
+    const {
+      parameterFor, parameterType, parameterInternal, parameterDisplay, placeHolder, parameterWidth, parameterAlignment, paraLabelWidth, paraLabelAlignment, paraControlWidth, paraControlAlignment, mandatory, defaultValueIfLeft, defaultValue, validation, maxLength, minLength, parentID, modeForQuery, query, defaultOptValue, defaultOptText, defOptFilterVal, defOptFilterTxt, jndiSavingData, stmtTimeOut,
+    } = values;
+
+    const val = {
+      dashboardFor: parameterFor, masterName: "ParameterMst", entryUserId: 101, keyName: parameterDisplay,
+      jndiIdForGettingData: jndiSavingData, statementTimeout: stmtTimeOut,
+      jsonData: {
+        JNDIid: jndiSavingData, parentId: parentID, isMandatory: mandatory, modeForQuery: modeForQuery,
+        defaultOption: {
+          optionText: defaultOptText,
+          optionValue: defaultOptValue,
+        },
+        parameterName: parameterInternal, parameterType: parameterType, labelAlignment: paraLabelAlignment, parameterQuery: query, parentAlignment: parameterAlignment, controlAlignment: paraControlAlignment, statementTimeOut: stmtTimeOut, parameterLabelWidth: paraLabelWidth, parameterDisplayName: parameterDisplay, parameterParentWidth: parameterWidth, showAsLableIfOneData: showAsLabel, parameterControlWidth: paraControlWidth,
+        defaultOptionForFilter: {
+          optionText: defOptFilterTxt,
+          optionValue: defOptFilterVal,
+        },
+        maxDaysAfterCurrentDate: "0", placeHolder: placeHolder, defaultValueIfEmpty: defaultValueIfLeft,
+        defaultValue: defaultValue, textBoxValidation: validation, textboxMaxlength: maxLength,
+        textboxMinlength: minLength, isMultipleSelectionRequired: isMultiSelectReq
+      }
+    };
+
+    fetchPostData("/hisutils/parametersave", val).then((data) => {
+      if (data) {
+        ToastAlert("Data Saved Successfully", "success");
+        getAllParameterData(values?.parameterFor)
+        reset();
+      } else {
+        ToastAlert("Internal Error!", "error");
+      }
+    });
+  };
+
+  const updateParametersData = () => {
+    const {
+      parameterFor, parameterType, parameterInternal, parameterDisplay, placeHolder, parameterWidth, parameterAlignment, paraLabelWidth, paraLabelAlignment, paraControlWidth, paraControlAlignment, mandatory, defaultValueIfLeft, defaultValue, validation, maxLength, minLength, parentID, modeForQuery, query, defaultOptValue, defaultOptText, defOptFilterVal, defOptFilterTxt, jndiSavingData, stmtTimeOut, id
+    } = values;
+
+    const val = {
+      id: id, dashboardFor: parameterFor, masterName: "ParameterMst", entryUserId: 101, keyName: parameterDisplay, jndiIdForGettingData: jndiSavingData, statementTimeout: stmtTimeOut,
+      jsonData: {
+        JNDIid: jndiSavingData, parentId: parentID, isMandatory: mandatory, modeForQuery: modeForQuery,
+        defaultOption: {
+          optionText: defaultOptText,
+          optionValue: defaultOptValue,
+        },
+        parameterName: parameterInternal, parameterType: parameterType, labelAlignment: paraLabelAlignment, parameterQuery: query, parentAlignment: parameterAlignment, controlAlignment: paraControlAlignment, statementTimeOut: stmtTimeOut, parameterLabelWidth: paraLabelWidth, parameterDisplayName: parameterDisplay, parameterParentWidth: parameterWidth, showAsLableIfOneData: showAsLabel, parameterControlWidth: paraControlWidth,
+        defaultOptionForFilter: {
+          optionText: defOptFilterTxt,
+          optionValue: defOptFilterVal,
+        },
+        maxDaysAfterCurrentDate: "0", placeHolder: placeHolder, defaultValueIfEmpty: defaultValueIfLeft,
+        defaultValue: defaultValue, textBoxValidation: validation, textboxMaxlength: maxLength,
+        textboxMinlength: minLength, isMultipleSelectionRequired: isMultiSelectReq
+      }
+    };
+
+    fetchPostData("/hisutils/parameterUpdate", val).then((data) => {
+      if (data) {
+        ToastAlert("Data Updated Successfully", "success");
+        getAllParameterData(values?.parameterFor)
+        reset();
+      } else {
+        ToastAlert("Internal Error!", "error");
+      }
+    });
+  };
+
 
   const returnAlignment = (val) => {
     if (val === "left" || val === "Left") {
@@ -81,12 +175,14 @@ const ParameterMaster = () => {
       return 'center';
     }
   }
+
   useEffect(() => {
     if (singleData?.length > 0) {
       const jsonData = singleData[0]?.jsonData || {};
       setIsMultiSelectReq(jsonData?.isMultipleSelectionRequired || "No")
       setValues({
         ...values,
+        id: singleData[0]?.id,
         parameterFor: singleData[0]?.dashboardFor || "",
         parameterType: jsonData.parameterType || "",
         parameterInternal: jsonData.parameterName || "",
@@ -139,6 +235,11 @@ const ParameterMaster = () => {
     setSelectedOption([]);
   }
 
+  const reset = () => {
+    setValues({ "parameterFor": "", "parameterType": "combo", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "", "stmtTimeOut": "","id": "", "shouldBeLess": "", "shouldBeGreater": "", "minDaysBefore": "", "maxDaysAfter": "" })
+    setActionMode('home');
+  }
+
   const column = [
     {
       name: <input
@@ -182,55 +283,14 @@ const ParameterMaster = () => {
       sortable: true,
     },
   ]
-  const webServiceColumn = [
-    {
-      name: <input
-        type="checkbox"
-        // checked={selectAll}
-        // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
-        disabled={true}
-        className="form-check-input log-select"
-      />,
-      cell: row =>
-        <div style={{ position: 'absolute', top: 4, left: 10 }}>
-          <span className="btn btn-sm text-white px-1 py-0 mr-1" >
-            <input
-              type="checkbox"
-            // checked={selectedRows.includes(row.gnumUserId)}
-            // onChange={(e) => { handleRowSelect(row.gnumUserId) }}
-            />
-          </span>
-        </div>,
-      width: "8%"
-    },
-    {
-      name: 'Service ID',
-      selector: row => row.id,
-      sortable: true,
-      width: "10%"
-    },
-    {
-      name: 'Service Name',
-      selector: row => row?.jsonData?.parameterName,
-      sortable: true,
-    },
-    {
-      name: 'Service Display Name',
-      selector: row => row?.jsonData?.parameterDisplayName,
-      sortable: true,
-    },
-    {
-      name: 'Service Category',
-      selector: row => row?.jsonData?.parameterType,
-      sortable: true,
-    },
-  ]
 
   return (
     <>
       <NavbarHeader />
       <div className='main-master-page'>
-        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={null} onOpen={onOpenDataTable} onReset={null} onParams={null} onWeb={onOpenWebService} />
+        {values?.parameterFor &&
+          <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={actionMode === 'edit' ? updateParametersData : saveParametersData} onOpen={onOpenDataTable} onReset={null} onParams={null} onWeb={onOpenWebService} />
+        }
         <div className='form-card m-auto p-2'>
           <div className='p-1'>
             <b><h6 className='header-devider m-0'> Parameter Master</h6></b>
@@ -482,7 +542,7 @@ const ParameterMaster = () => {
               {(values?.parameterType === '2' || values?.parameterType === '3') &&
                 <div className='col-sm-6'>
                   <div className="form-group row" style={{ paddingBottom: "1px" }}>
-                    <label className="col-sm-5 col-form-label fix-label pe-0 required-label">Default Value (If Left Empty) : </label>
+                    <label className="col-sm-5 col-form-label fix-label pe-0">Default Value (If Left Empty) : </label>
                     <div className="col-sm-7 ps-0 align-content-center">
                       <InputField
                         type="text"
@@ -617,7 +677,7 @@ const ParameterMaster = () => {
                 {/* //left columns */}
                 <div className='col-sm-6'>
                   <div className="form-group row">
-                    <label className="col-sm-5 col-form-label fix-label pe-0 required-label">{values?.parameterType === "3" ? "Query For Default Date" : "Query"}: </label>
+                    <label className="col-sm-5 col-form-label fix-label pe-0">{values?.parameterType === "3" ? "Query For Default Date" : "Query"}: </label>
                     <div className="col-sm-7 ps-0 align-content-center">
                       <textarea
                         className="form-control backcolorinput"
@@ -647,13 +707,13 @@ const ParameterMaster = () => {
                     <label className="col-sm-5 col-form-label pe-0">Should Be Less Than Field : </label>
                     <div className="col-sm-7 ps-0 align-content-center">
                       <InputSelect
-                        id="mandatory"
-                        name="mandatory"
+                        id="shouldBeLess"
+                        name="shouldBeLess"
                         placeholder="Select "
                         options={[{ value: 1, label: "Yes" }, { value: 0, label: "No" }]}
                         className="backcolorinput"
                         onChange={handleValueChange}
-                        value={values?.mandatory}
+                        value={values?.shouldBeLess}
                       />
                     </div>
                   </div>
@@ -664,10 +724,10 @@ const ParameterMaster = () => {
                         type="text"
                         className="backcolorinput"
                         placeholder="Enter..."
-                        name='defaultValueIfLeft'
-                        id='defaultValueIfLeft'
+                        name='minDaysBefore'
+                        id='minDaysBefore'
                         onChange={handleValueChange}
-                        value={values?.defaultValueIfLeft}
+                        value={values?.minDaysBefore}
                       />
                     </div>
                   </div>
@@ -678,27 +738,27 @@ const ParameterMaster = () => {
                     <label className="col-sm-5 col-form-label pe-0">Should Be Greater Than Field : </label>
                     <div className="col-sm-7 ps-0 align-content-center">
                       <InputSelect
-                        id="mandatory"
-                        name="mandatory"
+                        id="shouldBeGreater"
+                        name="shouldBeGreater"
                         placeholder="Select "
                         options={[{ value: 1, label: "Yes" }, { value: 0, label: "No" }]}
                         className="backcolorinput"
                         onChange={handleValueChange}
-                        value={values?.mandatory}
+                        value={values?.shouldBeGreater}
                       />
                     </div>
                   </div>
                   <div className="form-group row" style={{ paddingBottom: "1px" }}>
-                    <label className="col-sm-5 col-form-label fix-label pe-0">Max Date Selection After Current Date : </label>
+                    <label className="col-sm-5 col-form-label fix-label pe-0">Max Days Selection After Current Date : </label>
                     <div className="col-sm-7 ps-0 align-content-center">
                       <InputField
                         type="text"
                         className="backcolorinput"
                         placeholder="Enter..."
-                        name='defaultValueIfLeft'
-                        id='defaultValueIfLeft'
+                        name='maxDaysAfter'
+                        id='maxDaysAfter'
                         onChange={handleValueChange}
-                        value={values?.defaultValueIfLeft}
+                        value={values?.maxDaysAfter}
                       />
                     </div>
                   </div>
@@ -887,13 +947,13 @@ const ParameterMaster = () => {
               {/* //left columns */}
               <div className='col-sm-6'>
                 <div className="form-group row">
-                  <label className="col-sm-5 col-form-label pe-0 required-label">JNDI For Saving Data : </label>
+                  <label className="col-sm-5 col-form-label pe-0">JNDI For Saving Data : </label>
                   <div className="col-sm-7 ps-0 align-content-center">
                     <InputSelect
                       id="jndiSavingData"
                       name="jndiSavingData"
                       // placeholder="Select"
-                      options={[{ value: 'cdwh', label: "CDWH" }]}
+                      options={[{ value: '1', label: "CDWH" }, { value: '2', label: "CDWH" }]}
                       className="backcolorinput"
                       onChange={handleValueChange}
                       value={values?.jndiSavingData}
@@ -904,7 +964,7 @@ const ParameterMaster = () => {
               {/* right columns */}
               <div className='col-sm-6'>
                 <div className="form-group row">
-                  <label className="col-sm-5 col-form-label pe-0 required-label">Statement Time Out : </label>
+                  <label className="col-sm-5 col-form-label pe-0">Statement Time Out : </label>
                   <div className="col-sm-7 ps-0 align-content-center">
                     <InputSelect
                       id="stmtTimeOut"
@@ -925,10 +985,10 @@ const ParameterMaster = () => {
         </div>
 
         {showParamsTable &&
-          <GlobalDataTable title={"Parameter List"} column={column} data={parameterData} onModify={handleUpdateData} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} />
+          <GlobalDataTable title={"Parameter List"} column={column} data={parameterData} onModify={handleUpdateData} onDelete={handleDeleteParams} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
         }
         {showWebServiceTable &&
-          <GlobalDataTable title={"Data Service List"} column={webServiceColumn} data={parameterData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} />
+          <DataServiceTable data={dataServiceData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={false} />
         }
 
       </div>

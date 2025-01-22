@@ -9,7 +9,7 @@ import { HISContext } from '../../contextApi/HISContext';
 
 const GlobalDataTable = (props) => {
     const { showDataTable, setShowDataTable } = useContext(HISContext);
-    const { title, column, data, onModify, onDelete, onClose, setSearchInput } = props;
+    const { title, column, data, onModify, onDelete, onClose, setSearchInput, isShowBtn } = props;
 
     const handleClose = () => { setShowDataTable(false); onClose(); }
 
@@ -31,10 +31,14 @@ const GlobalDataTable = (props) => {
                 <b><h4 className='datatable-header mx-3 py-1 mt-1 px-1'>{title}</h4></b>
                 <div className='datatable-btns row mx-3 my-1 '>
                     <div className='col-6 m-0 p-0 align-content-center'>
-                        <button className='btn btn-sm me-1' onClick={onModify}><FontAwesomeIcon icon={faEdit}
-                            className="dropdown-gear-icon me-1" />Modify</button>
-                        <button className='btn btn-sm ms-1' onClick={onDelete}><FontAwesomeIcon icon={faRemove}
-                            className="dropdown-gear-icon me-1" />Delete</button>
+                        {isShowBtn &&
+                            <>
+                                <button className='btn btn-sm me-1' onClick={onModify}><FontAwesomeIcon icon={faEdit}
+                                    className="dropdown-gear-icon me-1" />Modify</button>
+                                <button className='btn btn-sm ms-1' onClick={onDelete}><FontAwesomeIcon icon={faRemove}
+                                    className="dropdown-gear-icon me-1" />Delete</button>
+                            </>
+                        }
                     </div>
                     <div className="col-6 d-flex justify-content-end align-items-center p-0">
                         <label className="col-form-label me-2">Search :</label>

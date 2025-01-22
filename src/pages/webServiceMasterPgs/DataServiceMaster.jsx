@@ -1,13 +1,19 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import NavbarHeader from '../../components/headers/NavbarHeader'
 import GlobalButtonGroup from '../../components/commons/GlobalButtonGroup'
 import InputSelect from '../../components/commons/InputSelect'
 import InputField from '../../components/commons/InputField'
 import { serviceCategories, timeOutOptions } from '../../localData/DropDownData'
+import DataServiceTable from '../../components/webServiceMasters/dataService/DataServiceTable'
+import { HISContext } from '../../contextApi/HISContext'
 
 const DataServiceMaster = () => {
+  const { setShowDataTable, getAllServiceData, dataServiceData,setSelectedOption } = useContext(HISContext);
   const [isCacheData, setIsCacheData] = useState(false);
   const [selectedMode, setSelectedMode] = useState("query");
+  const [showWebServiceTable, setShowWebServiceTable] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+
   const [values, setValues] = useState({
     "serviceCategory": "", "serviceDisplayName": "", "serviceCallingName": "", "procedureFuncName": "", "fetchQuery": "", "webJsonType": "dataHeadingColumnType", "jndiSavingData": "", "stmtTimeOut": ""
   })
@@ -19,11 +25,26 @@ const DataServiceMaster = () => {
     }
   }
 
+  useEffect(() => {
+    if (dataServiceData?.length === 0) { getAllServiceData(); }
+  }, [])
+
+  const onOpenWebService = () => {
+    setShowDataTable(true);
+    setShowWebServiceTable(true);
+  }
+
+  const onTableClose = () => {
+    setShowWebServiceTable(false);
+    setSearchInput('');
+    setSelectedOption([]);
+  }
+
   return (
     <div>
       <NavbarHeader />
       <div className='main-master-page'>
-        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={false} onSave={null} onOpen={null} onReset={null} onParams={null} onWeb={null} />
+        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={false} onSave={null} onOpen={onOpenWebService} onReset={null} onParams={null} onWeb={null} />
         <div className='form-card m-auto p-3'>
           <b><h6 className='header-devider mt-0 mb-1'>Data Service Master</h6></b>
 
@@ -376,6 +397,9 @@ const DataServiceMaster = () => {
           </div>
         </div>
       </div>
+      {showWebServiceTable &&
+        <DataServiceTable data={dataServiceData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
+      }
     </div>
   )
 }

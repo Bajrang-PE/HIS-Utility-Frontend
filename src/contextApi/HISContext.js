@@ -8,12 +8,12 @@ const HISContextData = ({ children }) => {
   //GLOBALS
   const [showDataTable, setShowDataTable] = useState(false);
   const [selectedOption, setSelectedOption] = useState([]);
-  const [actionMode, setActionMode] = useState('');
+  const [actionMode, setActionMode] = useState('home');
 
   // ALL DATA
   const [parameterData, setParameterData] = useState([]);
   const [allWidgetData, setAllWidgetData] = useState([]);
-  // const [allWidgetData, setAllWidgetData] = useState([]);
+  const [dataServiceData, setDataServiceData] = useState([]);
 
   //DROPDOWN DATA
   const [dashboardForDt, setDashboardForDt] = useState([]);
@@ -21,7 +21,6 @@ const HISContextData = ({ children }) => {
   const [widgetDrpData, setWidgetDrpData] = useState([]);
 
   // dropdowns api call
-
   const getDashboardForDrpData = () => {
     fetchData("hisutils/dashboardfor").then((data) => {
       if (data) {
@@ -32,6 +31,8 @@ const HISContextData = ({ children }) => {
     })
   }
 
+
+  //all data
   const getAllParameterData = (dashFor) => {
     fetchData("/hisutils/parameterAll", { 'masterName': dashFor }).then((data) => {
       if (data) {
@@ -40,6 +41,18 @@ const HISContextData = ({ children }) => {
       } else {
         setParameterData([]);
         setParameterDrpData([]);
+      }
+    })
+  }
+
+  const getAllServiceData =()=>{
+    fetchData("/hisutils/DataService").then((data) => {
+      if (data) {
+        setDataServiceData(data);
+        // setParameterDrpData(DrpDataValLab(data, 'parameterId', 'parameterName',true))
+      } else {
+        setDataServiceData([]);
+        // setParameterDrpData([]);
       }
     })
   }
@@ -74,7 +87,9 @@ const HISContextData = ({ children }) => {
       //PARAMETER DATA
       parameterData, getAllParameterData,
       // WIDGET DATA
-      allWidgetData, getAllWidgetData
+      allWidgetData, getAllWidgetData,
+      //data/web services
+      getAllServiceData,dataServiceData
     }}>
       {children}
     </HISContext.Provider>

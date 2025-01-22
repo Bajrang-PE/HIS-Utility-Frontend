@@ -242,8 +242,29 @@ label {
     padding: 2px 2px !important;
     font-size: x-small;
   }
-
 }
+
+@media (min-width: 475px) and (max-width: 768px) {
+  .global-button-group button {
+    border: 2px solid #FBC02D !important;
+    border-radius: 35% 35% 0% 0%;
+    background-color: #005b88;
+    color: white;
+    padding: 2px 2px !important;
+    font-size: small;
+  }
+}
+
+@media (max-width:475px) {
+  .global-button-group{
+    width: 90% !important;
+  }
+  .global-tabs{
+    width: 10% !important;
+  }
+}
+
+
 
 .global-button-group button:hover .dropdown-gear-icon,.datatable-btns button:hover .dropdown-gear-icon {
   color: #2C2C2C;

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ParameterMasterForm = () => {
+const HelpDocs = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const ParameterMasterForm = () => {
   )
 }
 
-export default ParameterMasterForm
+export default HelpDocs

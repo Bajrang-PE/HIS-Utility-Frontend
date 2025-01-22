@@ -16,11 +16,13 @@ import MapWidget from '../../components/dashboardMasters/widgetMaster/MapWidget'
 import NewsTickWidget from '../../components/dashboardMasters/widgetMaster/NewsTickWidget'
 import GlobalDataTable from '../../components/commons/GlobalDataTable'
 import { HISContext } from '../../contextApi/HISContext'
+import DataServiceTable from '../../components/webServiceMasters/dataService/DataServiceTable'
+import { parameterType } from '../../localData/DropDownData'
 
 const WidgetMaster = () => {
 
 
-  const { setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, parameterData, getAllParameterData,widgetDrpData } = useContext(HISContext);
+  const { setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, parameterData, getAllParameterData,widgetDrpData,getAllServiceData,dataServiceData } = useContext(HISContext);
 
   const [values, setValues] = useState({
     "widgetFor": "",
@@ -195,6 +197,7 @@ const WidgetMaster = () => {
 
   useEffect(() => {
     if (dashboardForDt?.length === 0) { getDashboardForDrpData(); }
+    if (dataServiceData?.length === 0) { getAllServiceData(); }
   }, [])
 
 
@@ -383,56 +386,12 @@ const WidgetMaster = () => {
       sortable: true,
     },
     {
-      name: 'Type',
-      selector: row => row?.jsonData?.parameterType,
-      sortable: true,
-    },
+          name: 'Type',
+          selector: row => parameterType?.filter(dt => dt?.value === row?.jsonData?.parameterType)[0]?.label || "---",
+          sortable: true,
+        },
   ]
 
-  const webServiceColumn = [
-    {
-      name: <input
-        type="checkbox"
-        // checked={selectAll}
-        // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
-        disabled={true}
-        className="form-check-input log-select"
-      />,
-      cell: row =>
-        <div style={{ position: 'absolute', top: 4, left: 10 }}>
-          <span className="btn btn-sm text-white px-1 py-0 mr-1" >
-            <input
-              type="checkbox"
-            // checked={selectedRows.includes(row.gnumUserId)}
-            // onChange={(e) => { handleRowSelect(row.gnumUserId) }}
-            />
-          </span>
-        </div>,
-      width: "8%"
-    },
-    {
-      name: 'Service ID',
-      selector: row => row.id,
-      sortable: true,
-      width: "10%"
-    },
-    {
-      name: 'Service Name',
-      selector: row => row?.jsonData?.parameterName,
-      sortable: true,
-    },
-    {
-      name: 'Service Display Name',
-      selector: row => row?.jsonData?.parameterDisplayName,
-      sortable: true,
-    },
-    {
-      name: 'Service Category',
-      selector: row => row?.jsonData?.parameterType,
-      sortable: true,
-    },
-  ]
-console.log(values?.parentWidgetMap,'widgetDrpData')
   return (
     <>
       <NavbarHeader />
@@ -443,7 +402,7 @@ console.log(values?.parentWidgetMap,'widgetDrpData')
               <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={true} onSave={null} onOpen={onOpenDataTable} onReset={null} onParams={onOpenParams} onWeb={onOpenWebService} />
             }
           </div>
-          <div className='col-sm-6 p-0'>
+          <div className='col-sm-6 p-0 global-tabs'>
             <TabNav isTabNav={true} tabNavData={tabNavMenus} setTabIndex={setTabIndex} tabName={tabName} setTabName={setTabName} />
           </div>
         </div>
@@ -493,13 +452,13 @@ console.log(values?.parentWidgetMap,'widgetDrpData')
               <FooterDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />}
 
             {showWidgetTable &&
-              <GlobalDataTable title={"Widget List"} column={widgetColumn} data={allWidgetData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} />
+              <GlobalDataTable title={"Widget List"} column={widgetColumn} data={allWidgetData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} isShowBtn={true}/>
             }
             {showParamsTable &&
-              <GlobalDataTable title={"Parameter List"} column={paramsColumn} data={parameterData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} />
+              <GlobalDataTable title={"Parameter List"} column={paramsColumn} data={parameterData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} isShowBtn={false}/>
             }
             {showWebServiceTable &&
-              <GlobalDataTable title={"Data Service List"} column={webServiceColumn} data={allWidgetData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} />
+              <DataServiceTable data={dataServiceData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={false}/>
             }
 
 
