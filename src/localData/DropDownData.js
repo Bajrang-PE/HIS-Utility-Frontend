@@ -13,7 +13,6 @@ export const parameterType = [
 ]
 
 export const parameterWidth = [
-    { label: 'Select', value: 0 },
     { label: '1', value: 1 },
     { label: '2', value: 2 },
     { label: '3 (25% of page width)', value: 3 },
@@ -63,12 +62,31 @@ export const serviceCategories = [
     { value: "Mobile App Service", label: "Mobile App Service" },
     { value: "Niti Aayog Service", label: "Niti Aayog Service" },
     { value: "O2 Alert services", label: "O2 Alert services" },
-  ];
+];
 
- export const widgetTypeOptions = [
+export const widgetTypeOptions = [
     { value: "columnBased", label: "Column Based" },
     { value: "singleQueryParent", label: "Single Query Parent" },
     { value: "singleQueryChild", label: "Single Query Child" },
-  ];
-  
-  
+];
+
+export const datePickFields = [
+    { value: "113", label: "From date", selected: true },
+    { value: "116", label: "From date test" },
+    { value: "38", label: "Stock Date" },
+    { value: "97", label: "test Date" },
+    { value: "11600010", label: "testdt" },
+    { value: "114", label: "test from date" },
+    { value: "115", label: "test from date 2" },
+    { value: "117", label: "testing from date" },
+    { value: "125", label: "testreactdate1" },
+    { value: "126", label: "testreactdate2" },
+    { value: "123", label: "To Date" },
+];
+
+export const parameterOptions = [
+    { value: 1, label: "Hide Parameters" },
+    { value: 2, label: "Always Display Parameters" },
+    { value: 3, label: "Hide Parameters on Go" },
+]
+

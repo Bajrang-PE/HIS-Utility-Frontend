@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const TableDetails = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues,parentWidget } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues, parentWidget } = props;
 
     const [rows, setRows] = useState([{ queryLabel: "", mainQuery: "", dataTableReq: "", tableDataDisplay: "" }]);
 
@@ -46,9 +46,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isTableHeadingReq"
                                     id="isTableHeadingReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isTableHeadingReq === "yes"}
+                                    checked={radioValues?.isTableHeadingReq === "Yes"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -60,9 +60,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isTableHeadingReq"
                                     id="isTableHeadingReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isTableHeadingReq === "no"}
+                                    checked={radioValues?.isTableHeadingReq === "No"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -163,9 +163,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isFirstRowHeading"
                                     id="isFirstRowHeadingYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isFirstRowHeading === 'yes'}
+                                    checked={radioValues?.isFirstRowHeading === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -177,9 +177,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isFirstRowHeading"
                                     id="isFirstRowHeadingNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isFirstRowHeading === 'no'}
+                                    checked={radioValues?.isFirstRowHeading === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -207,9 +207,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isDataTblReq"
                                     id="isDataTblReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDataTblReq === 'yes'}
+                                    checked={radioValues?.isDataTblReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -221,9 +221,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isDataTblReq"
                                     id="isDataTblReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDataTblReq === 'no'}
+                                    checked={radioValues?.isDataTblReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -242,9 +242,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isPaginationReq"
                                     id="isPaginationReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isPaginationReq === 'yes'}
+                                    checked={radioValues?.isPaginationReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -256,9 +256,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isPaginationReq"
                                     id="isPaginationReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isPaginationReq === 'no'}
+                                    checked={radioValues?.isPaginationReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -291,9 +291,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isHeadingFixed"
                                     id="isHeadingFixedYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isHeadingFixed === 'yes'}
+                                    checked={radioValues?.isHeadingFixed === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -305,9 +305,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isHeadingFixed"
                                     id="isHeadingFixedNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isHeadingFixed === 'no'}
+                                    checked={radioValues?.isHeadingFixed === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -326,9 +326,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isLastRowTotal"
                                     id="isLastRowTotalYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isLastRowTotal === 'yes'}
+                                    checked={radioValues?.isLastRowTotal === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -340,9 +340,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isLastRowTotal"
                                     id="isLastRowTotalNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isLastRowTotal === 'no'}
+                                    checked={radioValues?.isLastRowTotal === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -364,9 +364,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isIndexNumReq"
                                     id="isIndexNumReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isIndexNumReq === 'yes'}
+                                    checked={radioValues?.isIndexNumReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -378,9 +378,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isIndexNumReq"
                                     id="isIndexNumReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isIndexNumReq === 'no'}
+                                    checked={radioValues?.isIndexNumReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -399,9 +399,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isSearchReq"
                                     id="isSearchReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isSearchReq === 'yes'}
+                                    checked={radioValues?.isSearchReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -413,9 +413,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isSearchReq"
                                     id="isSearchReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isSearchReq === 'no'}
+                                    checked={radioValues?.isSearchReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -508,6 +508,43 @@ const TableDetails = (props) => {
                             />
                         </div>
                     </div>
+                    {values?.parentWidget &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Is Hide Parent :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isHideParent"
+                                        id="isHideParentYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isHideParent === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isHideParent"
+                                        id="isHideParentNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isHideParent === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Column Nos. to Display : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -590,6 +627,43 @@ const TableDetails = (props) => {
                             </div>
                         </div>
                     </div>
+                    {values?.parentWidget &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Is Row Clickable :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isRowClickable"
+                                        id="isRowClickableYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isRowClickable === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isRowClickable"
+                                        id="isRowClickableNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isRowClickable === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">
                             Show Parent Parameter details in Child :
@@ -1299,9 +1373,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isDataTblReqTree"
                                     id="isDataTblReqTreeYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDataTblReqTree === 'yes'}
+                                    checked={radioValues?.isDataTblReqTree === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1313,9 +1387,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isDataTblReqTree"
                                     id="isDataTblReqTreeNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDataTblReqTree === 'no'}
+                                    checked={radioValues?.isDataTblReqTree === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1334,9 +1408,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isPaginationReqTree"
                                     id="isPaginationReqTreeYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isPaginationReqTree === 'yes'}
+                                    checked={radioValues?.isPaginationReqTree === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1348,9 +1422,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isPaginationReqTree"
                                     id="isPaginationReqTreeNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isPaginationReqTree === 'no'}
+                                    checked={radioValues?.isPaginationReqTree === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1421,9 +1495,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isSearchReqTree"
                                     id="isSearchReqTreeYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isSearchReqTree === 'yes'}
+                                    checked={radioValues?.isSearchReqTree === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1435,9 +1509,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isSearchReqTree"
                                     id="isSearchReqTreeNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isSearchReqTree === 'no'}
+                                    checked={radioValues?.isSearchReqTree === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No

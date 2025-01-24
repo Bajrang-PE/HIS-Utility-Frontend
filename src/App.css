@@ -88,7 +88,7 @@
   }
 } */
 
-.table-row-form td {
+.table-row-form td, .table-row-form th {
   font-size: smaller;
   font-weight: 700;
   padding-left: 1rem !important;
@@ -227,7 +227,7 @@ label {
 
 .global-tab-group .nav-tab-btn {
   border: 1px solid #FBC02D;
-  border-radius: 0% 30% 0% 30%;
+  /* border-radius: 0% 30% 0% 30%; */
   background-color: #005b88;
   color: white;
   padding: 3px 5px;
@@ -279,7 +279,7 @@ label {
 .global-tab-group .nav-tab-btn:hover {
   padding: 2px 5px;
   border: 1px solid #FFEB3B;
-  border-radius: 0% 30% 0% 30%;
+  /* border-radius: 0% 30% 0% 30%; */
   background-color: #055275;
   color: rgb(243, 192, 81);
 }
@@ -288,6 +288,8 @@ label {
   border: 1px solid #FFEB3B !important;
   background-color: #055275 !important;
   color: rgb(248, 208, 123) !important;
+  /* border-radius: 0% 30% 0% 30% !important; */
+
 }
 
 .global-button-group {

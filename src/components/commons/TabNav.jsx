@@ -1,9 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const TabNav = ({ isTabNav, tabNavData, tabName, setTabName,setTabIndex }) => {
 
   const [visibleTabCount, setVisibleTabCount] = useState(4);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const modalRef = useRef();
+
+  const handleClickOutside = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      setShowDropdown(false); 
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const calculateTabCount = () => {
@@ -54,7 +69,7 @@ const TabNav = ({ isTabNav, tabNavData, tabName, setTabName,setTabIndex }) => {
 
             {/* DROPDOWN BUTTON */}
             {tabNavData?.length > visibleTabCount && (
-              <div className="dropdown">
+              <div className="dropdown" ref={modalRef}>
                 <button
                   className="btn btn-sm dropdown-button nav-tab-btn ms-1"
                   onClick={() => setShowDropdown((prev) => !prev)}
@@ -64,12 +79,12 @@ const TabNav = ({ isTabNav, tabNavData, tabName, setTabName,setTabIndex }) => {
 
                 {/* DROPDOWN LIST */}
                 {showDropdown && (
-                  <div className="dropdown-menu show" style={{ right: 0, left: "auto" }}>
+                  <div  className="dropdown-menu show" style={{ right: 0, left: "auto" }}>
                     {tabNavData?.slice(visibleTabCount)?.map((tab,index) => (
                       <button
                         key={tab.value}
                         className="dropdown-item"
-                        onClick={() => { handleTabClick(index,tab); setShowDropdown((prev) => !prev); }}
+                        onClick={() => { handleTabClick(visibleTabCount+index,tab); setShowDropdown((prev) => !prev); }}
                       >
                         {tab.label}
                       </button>

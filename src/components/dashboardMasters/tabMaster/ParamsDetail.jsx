@@ -3,9 +3,10 @@ import { ToastAlert } from '../../../utils/commonFunction';
 import { leftCaret, rightCaret } from '../../../utils/commonSVG';
 import InputField from '../../commons/InputField';
 import InputSelect from '../../commons/InputSelect';
+import { parameterOptions } from '../../../localData/DropDownData';
 
 const ParamsDetail = (props) => {
-    const { availableOptions, setAvailableOptions, mapedDt, isMulti, selectedOptions, setSelectedOptions, handleValueChange, handleRadioChange, radioValues, values } = props;
+    const { availableOptions, setAvailableOptions, mapedDt, isMulti, selectedOptions, setSelectedOptions, handleValueChange, handleRadioChange, radioValues, values, parameterDrpData,pageName } = props;
 
     // const [selectedOptions, setSelectedOptions] = useState();
     const [leftSelectedValues, setLeftSelectedValues] = useState([]);
@@ -51,22 +52,6 @@ const ParamsDetail = (props) => {
         }
     };
 
-    //FUNCTION TO MOVE ALL VALUES RIGHT
-    // const moveAllRight = () => {
-    //     if (availableOptions?.length > 0) {
-    //         if ((selectedOptions?.length >= 1 && !isMulti) || (availableOptions?.length > 1 && !isMulti)) {
-    //             ToastAlert('Can not assign multiple roles!', 'warning');
-    //         } else {
-    //             // const removeDuplicates = availableOptions?.filter(option => !selectedOptions.map(item=>item?.value.toString()).includes(option?.value?.toString()));
-    //             setSelectedOptions([...selectedOptions, ...availableOptions]);
-    //             setAvailableOptions([]);
-    //             setLeftSelectedValues([]);
-    //             setRightSelectedValues([]);
-    //         }
-    //     } else {
-    //         ToastAlert('Data Not Available!', 'warning');
-    //     }
-    // }
 
     //FUNCTION TO MOVE SELECTED VALUES LEFT
     const moveLeft = () => {
@@ -81,17 +66,6 @@ const ParamsDetail = (props) => {
         }
     };
 
-    //FUNCTION TO MOVE ALL VALUES LEFT
-    // const moveAllLeft = () => {
-    //     if (selectedOptions?.length > 0) {
-    //         setAvailableOptions([...availableOptions, ...selectedOptions]);
-    //         setSelectedOptions([]);
-    //         setLeftSelectedValues([]);
-    //         setRightSelectedValues([]);
-    //     } else {
-    //         ToastAlert('Data Not Available!', 'warning');
-    //     }
-    // }
 
     return (
         <>
@@ -100,7 +74,7 @@ const ParamsDetail = (props) => {
                 <div className='' style={{ width: "30%" }}>
                     <b><h6 className='mb-2 text-center'>Parameter Name</h6></b>
                     <select className="form-select form-select-sm backcolorinput" id='leftRightSelect' multiple size="6" aria-label="size 4 select example" onChange={handleLeftSelect}>
-                        {availableOptions?.map((opt, index) => (
+                        {parameterDrpData?.map((opt, index) => (
                             <option value={opt.value} key={index}>{opt.label}</option>
                         ))}
                     </select>
@@ -112,20 +86,13 @@ const ParamsDetail = (props) => {
                         <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={availableOptions?.length > 0 ? false : true} onClick={moveRight}>
                             <svg dangerouslySetInnerHTML={{ __html: rightCaret }} height={16} width={16} />
                         </button>
-                        {/* 
-                    <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={availableOptions?.length > 0 ? false : true} onClick={moveAllRight}>
-                        <svg dangerouslySetInnerHTML={{ __html: forwordArrow }} height={15} width={15} />
-                    </button> */}
+
                     </div>
 
                     <div className='d-flex justify-content-center'>
                         <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={selectedOptions?.length > 0 ? false : true} onClick={moveLeft}>
                             <svg dangerouslySetInnerHTML={{ __html: leftCaret }} height={16} width={16} />
                         </button>
-
-                        {/* <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={selectedOptions?.length > 0 ? false : true} onClick={moveAllLeft}>
-                        <svg dangerouslySetInnerHTML={{ __html: backwordArrow }} height={15} width={15} />
-                    </button> */}
                     </div>
                 </div>
 
@@ -144,6 +111,20 @@ const ParamsDetail = (props) => {
                 {/* //left columns */}
                 <div className='col-sm-6'>
                     <div className="form-group row">
+                        <label className="col-sm-5 col-form-label pe-0">Parameter Options : </label>
+                        <div className="col-sm-7 ps-0 align-content-center">
+                            <InputSelect
+                                className="backcolorinput "
+                                // placeholder="Enter value..."
+                                name='parameterOption'
+                                id="parameterOption"
+                                options={parameterOptions}
+                                onChange={handleValueChange}
+                                value={values?.parameterOption}
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Parameter Combo Background Color : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputField
@@ -152,8 +133,8 @@ const ParamsDetail = (props) => {
                                 placeholder="Enter value..."
                                 name='paraComboBgColor'
                                 id="paraComboBgColor"
-                                // onChange={handleValueChange}
-                                // value={values?.paraComboBgColor}
+                                onChange={handleValueChange}
+                                value={values?.paraComboBgColor}
                             />
                         </div>
                     </div>
@@ -166,14 +147,28 @@ const ParamsDetail = (props) => {
                                 placeholder="Enter value..."
                                 name='paraLabelFontColor'
                                 id="paraLabelFontColor"
-                                // onChange={handleValueChange}
-                                // value={values?.paraLabelFontColor}
+                                onChange={handleValueChange}
+                                value={values?.paraLabelFontColor}
                             />
                         </div>
                     </div>
                 </div>
                 {/* right columns */}
                 <div className='col-sm-6'>
+                    <div className="form-group row">
+                        <label className="col-sm-5 col-form-label pe-0">{pageName === "tab"? 'Tab Load Options':'Widget Load Options'} : </label>
+                        <div className="col-sm-7 ps-0 align-content-center">
+                            <InputSelect
+                                className="backcolorinput "
+                                // placeholder="Enter value..."
+                                name='loadOption'
+                                id="loadOption"
+                                options={[{ value: "ONWINDOWLOAD", label: "On Window Load" }, { value: "ONGOBUTTONCLICK", label: "On Go Button Click" }]}
+                                onChange={handleValueChange}
+                                value={values?.loadOption}
+                            />
+                        </div>
+                    </div>
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Parameter Combo Font Color : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -183,12 +178,27 @@ const ParamsDetail = (props) => {
                                 placeholder="Enter value..."
                                 name='paraComboFontColor'
                                 id="paraComboFontColor"
-                                // onChange={handleValueChange}
-                                // value={values?.paraComboFontColor}
+                                onChange={handleValueChange}
+                                value={values?.paraComboFontColor}
                             />
                         </div>
                     </div>
-
+                    {pageName === 'tab' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">Parameter Remarks : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <textarea
+                                    className="form-control backcolorinput"
+                                    placeholder="Enter value..."
+                                    name="paraRemark"
+                                    id='paraRemark'
+                                    rows="2"
+                                    onChange={handleValueChange}
+                                    value={values?.paraRemark}
+                                ></textarea>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
 

@@ -6,7 +6,7 @@ import Select from 'react-select'
 import { faAdd, faDatabase, faFile, faMinus, faRefresh } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import GlobalButtonGroup from '../../components/commons/GlobalButtonGroup'
-import { itemForDashboard, parameterAlignment, parameterType, parameterWidth, timeOutOptions, validationType } from '../../localData/DropDownData'
+import { datePickFields, itemForDashboard, parameterAlignment, parameterType, parameterWidth, timeOutOptions, validationType } from '../../localData/DropDownData'
 import { HISContext } from '../../contextApi/HISContext'
 import GlobalDataTable from '../../components/commons/GlobalDataTable'
 import { ToastAlert } from '../../utils/commonFunction'
@@ -22,7 +22,7 @@ const ParameterMaster = () => {
   const [isMultiSelectReq, setIsMultiSelectReq] = useState('No');
   const [singleData, setSingleData] = useState([]);
   const [values, setValues] = useState({
-    "parameterFor": "", "parameterType": "1", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "1", "stmtTimeOut": "", "id": "", "shouldBeLess": "", "shouldBeGreater": "", "minDaysBefore": "", "maxDaysAfter": ""
+    "parameterFor": "", "parameterType": "1", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "1", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "1", "stmtTimeOut": "", "id": "", "shouldBeLess": "", "shouldBeGreater": "", "minDaysBefore": "", "maxDaysAfter": "", "parameterQueryForDate": ""
   })
   const [searchInput, setSearchInput] = useState('');
   const [showParamsTable, setShowParamsTable] = useState(false);
@@ -97,6 +97,7 @@ const ParameterMaster = () => {
   const saveParametersData = () => {
     const {
       parameterFor, parameterType, parameterInternal, parameterDisplay, placeHolder, parameterWidth, parameterAlignment, paraLabelWidth, paraLabelAlignment, paraControlWidth, paraControlAlignment, mandatory, defaultValueIfLeft, defaultValue, validation, maxLength, minLength, parentID, modeForQuery, query, defaultOptValue, defaultOptText, defOptFilterVal, defOptFilterTxt, jndiSavingData, stmtTimeOut,
+      shouldBeLess, shouldBeGreater, minDaysBefore, maxDaysAfter, parameterQueryForDate
     } = values;
 
     const val = {
@@ -113,7 +114,10 @@ const ParameterMaster = () => {
           optionText: defOptFilterTxt,
           optionValue: defOptFilterVal,
         },
-        maxDaysAfterCurrentDate: "0", placeHolder: placeHolder, defaultValueIfEmpty: defaultValueIfLeft,
+
+        maxDaysAfterCurrentDate: maxDaysAfter, minDaysBeforeCurrentDate: minDaysBefore, shouldBeGreaterThanField: shouldBeGreater, shouldBeLessThanField: shouldBeLess, parameterQueryForDate: parameterQueryForDate,
+
+        placeHolder: placeHolder, defaultValueIfEmpty: defaultValueIfLeft,
         defaultValue: defaultValue, textBoxValidation: validation, textboxMaxlength: maxLength,
         textboxMinlength: minLength, isMultipleSelectionRequired: isMultiSelectReq
       }
@@ -132,7 +136,7 @@ const ParameterMaster = () => {
 
   const updateParametersData = () => {
     const {
-      parameterFor, parameterType, parameterInternal, parameterDisplay, placeHolder, parameterWidth, parameterAlignment, paraLabelWidth, paraLabelAlignment, paraControlWidth, paraControlAlignment, mandatory, defaultValueIfLeft, defaultValue, validation, maxLength, minLength, parentID, modeForQuery, query, defaultOptValue, defaultOptText, defOptFilterVal, defOptFilterTxt, jndiSavingData, stmtTimeOut, id
+      parameterFor, parameterType, parameterInternal, parameterDisplay, placeHolder, parameterWidth, parameterAlignment, paraLabelWidth, paraLabelAlignment, paraControlWidth, paraControlAlignment, mandatory, defaultValueIfLeft, defaultValue, validation, maxLength, minLength, parentID, modeForQuery, query, defaultOptValue, defaultOptText, defOptFilterVal, defOptFilterTxt, jndiSavingData, stmtTimeOut, id, shouldBeLess, shouldBeGreater, minDaysBefore, maxDaysAfter, parameterQueryForDate
     } = values;
 
     const val = {
@@ -148,7 +152,9 @@ const ParameterMaster = () => {
           optionText: defOptFilterTxt,
           optionValue: defOptFilterVal,
         },
-        maxDaysAfterCurrentDate: "0", placeHolder: placeHolder, defaultValueIfEmpty: defaultValueIfLeft,
+        maxDaysAfterCurrentDate: maxDaysAfter, minDaysBeforeCurrentDate: minDaysBefore, shouldBeGreaterThanField: shouldBeGreater, shouldBeLessThanField: shouldBeLess, parameterQueryForDate: parameterQueryForDate,
+
+        placeHolder: placeHolder, defaultValueIfEmpty: defaultValueIfLeft,
         defaultValue: defaultValue, textBoxValidation: validation, textboxMaxlength: maxLength,
         textboxMinlength: minLength, isMultipleSelectionRequired: isMultiSelectReq
       }
@@ -236,7 +242,7 @@ const ParameterMaster = () => {
   }
 
   const reset = () => {
-    setValues({ "parameterFor": "", "parameterType": "combo", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "", "stmtTimeOut": "","id": "", "shouldBeLess": "", "shouldBeGreater": "", "minDaysBefore": "", "maxDaysAfter": "" })
+    setValues({ "parameterFor": "", "parameterType": "combo", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "", "stmtTimeOut": "", "id": "", "shouldBeLess": "", "shouldBeGreater": "", "minDaysBefore": "", "maxDaysAfter": "" })
     setActionMode('home');
   }
 
@@ -601,7 +607,7 @@ const ParameterMaster = () => {
                       <InputSelect
                         id="validation"
                         name="validation"
-                        placeholder="Select value..."
+                        // placeholder="Select value..."
                         options={validationType}
                         className="backcolorinput"
                         onChange={handleValueChange}
@@ -682,11 +688,11 @@ const ParameterMaster = () => {
                       <textarea
                         className="form-control backcolorinput"
                         placeholder="Enter value..."
-                        name="query"
-                        id='query'
+                        name={values?.parameterType === "3" ? "parameterQueryForDate" : "query"}
+                        id={values?.parameterType === "3" ? "parameterQueryForDate" : "query"}
                         rows="1"
                         onChange={handleValueChange}
-                        value={values?.query}
+                        value={values?.parameterType === "3" ? values?.parameterQueryForDate : values?.query}
                       ></textarea>
                     </div>
 
@@ -709,8 +715,8 @@ const ParameterMaster = () => {
                       <InputSelect
                         id="shouldBeLess"
                         name="shouldBeLess"
-                        placeholder="Select "
-                        options={[{ value: 1, label: "Yes" }, { value: 0, label: "No" }]}
+                        placeholder="Not Required"
+                        options={datePickFields}
                         className="backcolorinput"
                         onChange={handleValueChange}
                         value={values?.shouldBeLess}
@@ -740,8 +746,8 @@ const ParameterMaster = () => {
                       <InputSelect
                         id="shouldBeGreater"
                         name="shouldBeGreater"
-                        placeholder="Select "
-                        options={[{ value: 1, label: "Yes" }, { value: 0, label: "No" }]}
+                        placeholder="Not Required"
+                        options={datePickFields}
                         className="backcolorinput"
                         onChange={handleValueChange}
                         value={values?.shouldBeGreater}

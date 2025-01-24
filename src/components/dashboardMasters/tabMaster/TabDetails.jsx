@@ -1,7 +1,10 @@
 import React from 'react'
 import InputField from '../../commons/InputField'
 
-const TabDetails = () => {
+const TabDetails = (props) => {
+
+    const { handleValueChange, handleRadioChange, radioValues, values } = props;
+
     return (
         <>
             <b><h6 className='header-devider my-1'>Tab Details Configuration</h6></b>
@@ -18,11 +21,11 @@ const TabDetails = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelYes"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(true)}
-                                // checked={showAsLabel}
+                                    name="showTabNameInDetail"
+                                    id="showTabNameInDetailYes"
+                                    value={'Yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.showTabNameInDetail === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -32,11 +35,11 @@ const TabDetails = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelNo"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(false)}
-                                // checked={!showAsLabel}
+                                    name="showTabNameInDetail"
+                                    id="showTabNameInDetailNo"
+                                    value={'No'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.showTabNameInDetail === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -51,10 +54,10 @@ const TabDetails = () => {
                                 type="text"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='parameterInternal'
-                                id="parameterInternal"
-                            // onChange={handleValueChange}
-                            // value={values?.parameterInternal}
+                                name='tabNameFontWeight'
+                                id="tabNameFontWeight"
+                                onChange={handleValueChange}
+                                value={values?.tabNameFontWeight}
                             />
                         </div>
                     </div>
@@ -65,10 +68,10 @@ const TabDetails = () => {
                                 type="color"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='parameterInternal'
-                                id="parameterInternal"
-                            // onChange={handleValueChange}
-                            // value={values?.parameterInternal}
+                                name='tabDetailBgColor'
+                                id="tabDetailBgColor"
+                                onChange={handleValueChange}
+                                value={values?.tabDetailBgColor}
                             />
                         </div>
                     </div>
@@ -79,10 +82,10 @@ const TabDetails = () => {
                                 type="text"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='parameterInternal'
-                                id="parameterInternal"
-                            // onChange={handleValueChange}
-                            // value={values?.parameterInternal}
+                                name='tabTopPadding'
+                                id="tabTopPadding"
+                                onChange={handleValueChange}
+                                value={values?.tabTopPadding}
                             />
                         </div>
                     </div>
@@ -93,10 +96,10 @@ const TabDetails = () => {
                                 type="text"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='parameterInternal'
-                                id="parameterInternal"
-                            // onChange={handleValueChange}
-                            // value={values?.parameterInternal}
+                                name='buttonMarginHeading'
+                                id="buttonMarginHeading"
+                                onChange={handleValueChange}
+                                value={values?.buttonMarginHeading}
                             />
                         </div>
                     </div>
@@ -110,10 +113,10 @@ const TabDetails = () => {
                                 type="text"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='parameterDisplay'
-                                id="parameterDisplay"
-                            // onChange={handleValueChange}
-                            // value={values?.parameterDisplay}
+                                name='tabNameFontSize'
+                                id="tabNameFontSize"
+                                onChange={handleValueChange}
+                                value={values?.tabNameFontSize}
                             />
                         </div>
                     </div>
@@ -125,10 +128,10 @@ const TabDetails = () => {
                                 type="text"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='parameterDisplay'
-                                id="parameterDisplay"
-                            // onChange={handleValueChange}
-                            // value={values?.parameterDisplay}
+                                name='tabNameTxtDecorat'
+                                id="tabNameTxtDecorat"
+                                onChange={handleValueChange}
+                                value={values?.tabNameTxtDecorat}
                             />
                         </div>
                     </div>
@@ -139,10 +142,10 @@ const TabDetails = () => {
                                 type="color"
                                 className="backcolorinput"
                                 placeholder="Enter value..."
-                                name='placeHolder'
-                                id="placeHolder"
-                            // onChange={handleValueChange}
-                            // value={values?.placeHolder}
+                                name='tabDetailTitleColor'
+                                id="tabDetailTitleColor"
+                                onChange={handleValueChange}
+                                value={values?.tabDetailTitleColor}
                             />
                         </div>
                     </div>
@@ -156,11 +159,11 @@ const TabDetails = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelYes"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(true)}
-                                // checked={showAsLabel}
+                                    name="widgetMaxMin"
+                                    id="widgetMaxMinYes"
+                                    value={'Yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetMaxMin === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -170,11 +173,11 @@ const TabDetails = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelNo"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(false)}
-                                // checked={!showAsLabel}
+                                    name="widgetMaxMin"
+                                    id="widgetMaxMinNo"
+                                    value={'No'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.widgetMaxMin === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No

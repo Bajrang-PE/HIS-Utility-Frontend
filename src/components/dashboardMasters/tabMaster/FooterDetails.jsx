@@ -1,8 +1,10 @@
 import React from 'react'
 import InputField from '../../commons/InputField'
 import InputSelect from '../../commons/InputSelect'
+import { parameterAlignment } from '../../../localData/DropDownData';
 
-const FooterDetails = () => {
+const FooterDetails = (props) => {
+    const { handleValueChange, handleRadioChange, radioValues, values } = props;
     return (
         <>
 
@@ -16,13 +18,13 @@ const FooterDetails = () => {
                         <label className="col-sm-5 col-form-label pe-0">Footer Alignment : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
-                                id="parameterFor"
-                                name="parameterFor"
+                                id="footerAlignment"
+                                name="footerAlignment"
                                 placeholder="Select value..."
-                                // options={dashboardForDt}
+                                options={parameterAlignment}
                                 className="backcolorinput"
-                            // value={values?.parameterFor}
-                            // onChange={handleValueChange}
+                                value={values?.footerAlignment}
+                                onChange={handleValueChange}
                             // disabled={actionMode === 'edit' ? true : false}
                             />
                         </div>
@@ -36,11 +38,11 @@ const FooterDetails = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelYes"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(true)}
-                                // checked={showAsLabel}
+                                    name="isLegendCollapes"
+                                    id="isLegendCollapesYes"
+                                    value={'Yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isLegendCollapes === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -50,11 +52,11 @@ const FooterDetails = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelNo"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(false)}
-                                // checked={!showAsLabel}
+                                    name="isLegendCollapes"
+                                    id="isLegendCollapesNo"
+                                    value={'No'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isLegendCollapes === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -68,11 +70,11 @@ const FooterDetails = () => {
                             <textarea
                                 className="form-control backcolorinput"
                                 placeholder="Enter value..."
-                                name="lastUpdatedQuery"
-                                id='lastUpdatedQuery'
+                                name="footerQuery"
+                                id='footerQuery'
                                 rows="2"
-                            // onChange={handleValueChange}
-                            // value={values?.lastUpdatedQuery}
+                                onChange={handleValueChange}
+                                value={values?.footerQuery}
                             ></textarea>
                         </div>
                     </div>
@@ -88,11 +90,11 @@ const FooterDetails = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelYes"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(true)}
-                                // checked={showAsLabel}
+                                    name="isMarqueeReq"
+                                    id="isMarqueeReqYes"
+                                    value={'Yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isMarqueeReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -102,11 +104,11 @@ const FooterDetails = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelNo"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(false)}
-                                // checked={!showAsLabel}
+                                    name="isMarqueeReq"
+                                    id="isMarqueeReqNo"
+                                    value={'No'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isMarqueeReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -123,11 +125,11 @@ const FooterDetails = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelYes"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(true)}
-                                // checked={showAsLabel}
+                                    name="isLegendBorderReq"
+                                    id="isLegendBorderReqYes"
+                                    value={'Yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isLegendBorderReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -137,11 +139,11 @@ const FooterDetails = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    name="showAsLabel"
-                                    id="showAsLabelNo"
-                                // value={showAsLabel}
-                                // onChange={(e) => setShowAsLabel(false)}
-                                // checked={!showAsLabel}
+                                    name="isLegendBorderReq"
+                                    id="isLegendBorderReqNo"
+                                    value={'No'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isLegendBorderReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -155,11 +157,11 @@ const FooterDetails = () => {
                             <textarea
                                 className="form-control backcolorinput"
                                 placeholder="Enter value..."
-                                name="FooterText"
-                                id='FooterText'
+                                name="footerText"
+                                id='footerText'
                                 rows="2"
-                            // onChange={handleValueChange}
-                            // value={values?.FooterText}
+                                onChange={handleValueChange}
+                                value={values?.footerText}
                             ></textarea>
                         </div>
                     </div>
@@ -174,13 +176,13 @@ const FooterDetails = () => {
                         <label className="col-sm-5 col-form-label pe-0">Webservice Reference Name : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
-                                id="parameterFor"
-                                name="parameterFor"
+                                id="webRefName"
+                                name="webRefName"
                                 placeholder="Select value..."
-                                // options={dashboardForDt}
+                                options={[]}
                                 className="backcolorinput"
-                            // value={values?.parameterFor}
-                            // onChange={handleValueChange}
+                                value={values?.webRefName}
+                                onChange={handleValueChange}
                             // disabled={actionMode === 'edit' ? true : false}
                             />
                         </div>
@@ -194,12 +196,12 @@ const FooterDetails = () => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputField
                                 type='text'
-                                id="customMsgForNoData"
-                                name="customMsgForNoData"
+                                id="webServiceName"
+                                name="webServiceName"
                                 placeholder="Enter "
                                 className="backcolorinput"
-                            // onChange={handleValueChange}
-                            // value={values?.customMsgForNoData}
+                                onChange={handleValueChange}
+                                value={values?.webServiceName}
                             />
                         </div>
                     </div>

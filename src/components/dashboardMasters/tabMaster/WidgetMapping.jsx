@@ -1,10 +1,12 @@
 import { faAdd, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import InputSelect from '../../commons/InputSelect';
 import InputField from '../../commons/InputField';
+import { parameterWidth } from '../../../localData/DropDownData';
 
-const WidgetMapping = () => {
+const WidgetMapping = (props) => {
+    const { handleValueChange, handleRadioChange, radioValues, values,widgetDrpData } = props;
 
     const [rows, setRows] = useState([{ widgetName: "", DisplayOrder: "", widgetWidth: "", widgetHeight: "", widgetColor: "", widgetDisplay: "" }]);
 
@@ -26,6 +28,8 @@ const WidgetMapping = () => {
             setRows(updatedRows);
         }
     };
+
+    console.log(rows,'rroro')
 
     return (
         <>
@@ -54,74 +58,72 @@ const WidgetMapping = () => {
                     </thead>
                     <tbody>
                         {rows.map((row, index) => (
-                            <tr key={index}>
+                            <tr key={index}> 
                                 <td>
                                     <InputSelect
-                                        id="parameterFor"
-                                        name="parameterFor"
-                                        // placeholder="Select value..."
-                                        options={[{ value: 1, label: "Widget" }]}
+                                        id={`widgetName-${index}`} 
+                                        name="widgetName"
+                                        placeholder="Select widget..."
+                                        options={widgetDrpData}
                                         className="backcolorinput"
-                                    // value={values?.parameterFor}
-                                    // onChange={handleValueChange}
+                                        value={row.widgetName} 
+                                        onChange={(e) => handleInputChange(index, 'widgetName', e.target.value)} 
                                     />
                                 </td>
                                 <td>
                                     <InputField
                                         type="text"
                                         className="backcolorinput"
-                                        name='serviceRefName'
-                                        id='serviceRefName'
-                                    // value={serverDetails?.serviceRefName}
-                                    // onChange={handleServerChange}
+                                        name='DisplayOrder'
+                                        id={`DisplayOrder-${index}`}
+                                        value={row.DisplayOrder} 
+                                        onChange={(e) => handleInputChange(index, 'DisplayOrder', e.target.value)} 
                                     />
                                 </td>
                                 <td>
                                     <InputSelect
-                                        id="parameterFor"
-                                        name="parameterFor"
-                                        // placeholder="Select value..."
-                                        options={[{ value: 1, label: "Yes" }, { value: 0, label: "No" }]}
+                                        id={`widgetWidth-${index}`} 
+                                        name="widgetWidth"
+                                        placeholder="Select value..."
+                                        options={parameterWidth}
                                         className="backcolorinput"
-                                    // value={values?.parameterFor}
-                                    // onChange={handleValueChange}
+                                        value={row.widgetWidth}
+                                        onChange={(e) => handleInputChange(index, 'widgetWidth', e.target.value)}
                                     />
                                 </td>
                                 <td>
                                     <InputField
                                         type="text"
                                         className="backcolorinput"
-                                        name='serviceRefName'
-                                        id='serviceRefName'
-                                    // value={serverDetails?.serviceRefName}
-                                    // onChange={handleServerChange}
+                                        name='widgetHeight'
+                                        id={`widgetHeight-${index}`}
+                                        value={row.widgetHeight}
+                                        onChange={(e) => handleInputChange(index, 'widgetHeight', e.target.value)} 
                                     />
                                 </td>
                                 <td>
                                     <InputSelect
-                                        id="parameterFor"
-                                        name="parameterFor"
-                                        // placeholder="Select value..."
-                                        options={[{ value: 1, label: "Horizontal" }, { value: 0, label: "Vertical" }]}
+                                        id={`widgetColor-${index}`} 
+                                        name="widgetColor"
+                                        options={[{ value: 1, label: "Red" }, { value: 0, label: "Blue" }]}
                                         className="backcolorinput"
-                                    // value={values?.parameterFor}
-                                    // onChange={handleValueChange}
+                                        value={row.widgetColor}
+                                        onChange={(e) => handleInputChange(index, 'widgetColor', e.target.value)} 
                                     />
                                 </td>
                                 <td>
                                     <InputSelect
-                                        id="parameterFor"
-                                        name="parameterFor"
-                                        // placeholder="Select value..."
-                                        options={[{ value: 1, label: "Horizontal" }, { value: 0, label: "Vertical" }]}
+                                        id={`widgetDisplay-${index}`} 
+                                        name="widgetDisplay"
+                                        options={[{ value: 1, label: "OnLoad" }, { value: 0, label: "OnClick" }]}
                                         className="backcolorinput"
-                                    // value={values?.parameterFor}
-                                    // onChange={handleValueChange}
+                                        value={row.widgetDisplay}
+                                        onChange={(e) => handleInputChange(index, 'widgetDisplay', e.target.value)} 
                                     />
                                 </td>
 
                                 <td className='px-0'>
-                                    {rows.length > 0 && (
+                                    {rows.length > 1 && ( 
                                         <div>
                                             <button
                                                 className="btn btn-outline-secondary btn-sm ms-1"
@@ -140,7 +142,7 @@ const WidgetMapping = () => {
             </div>
 
         </>
-    )
-}
+    );
+};
 
-export default WidgetMapping
+export default WidgetMapping;

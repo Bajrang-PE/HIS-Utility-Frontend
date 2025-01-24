@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faEdit, faMinus, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const AboutWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values,dashboardForDt } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, dashboardForDt } = props;
 
     const [rows, setRows] = useState([{ columnNo: "", widget: "" }]);
     const [otherLinkData, setOtherLinkData] = useState([{ otherLinkName: "", otherLinkUrl: "" }]);
@@ -191,9 +191,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="widgetViewedTabular"
                                     name="widgetViewed"
-                                    value={"tabular"}
+                                    value={"Tabular"}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.widgetViewed === "tabular"}
+                                    checked={radioValues?.widgetViewed === "Tabular"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Tabular
@@ -300,9 +300,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     name="isWidgetNameVisible"
                                     id="isWidgetNameVisibleYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isWidgetNameVisible === "yes"}
+                                    checked={radioValues?.isWidgetNameVisible === "Yes"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -314,9 +314,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     name="isWidgetNameVisible"
                                     id="isWidgetNameVisibleNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isWidgetNameVisible === 'no'}
+                                    checked={radioValues?.isWidgetNameVisible === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -490,9 +490,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="widgetPurposeDownload"
                                     name="widgetPurpose"
-                                    value={'download'}
+                                    value={'Download'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.widgetPurpose === "download"}
+                                    checked={radioValues?.widgetPurpose === "Download"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Download
@@ -504,9 +504,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="widgetPurposeHtml"
                                     name="widgetPurpose"
-                                    value={'html'}
+                                    value={'HTML'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.widgetPurpose === "html"}
+                                    checked={radioValues?.widgetPurpose === "HTML"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     HTML
@@ -550,9 +550,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="isRecordLimitReqYes"
                                     name="isRecordLimitReq"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isRecordLimitReq === "yes"}
+                                    checked={radioValues?.isRecordLimitReq === "Yes"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -564,9 +564,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="isRecordLimitReqNo"
                                     name="isRecordLimitReq"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isRecordLimitReq === "no"}
+                                    checked={radioValues?.isRecordLimitReq === "No"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -624,9 +624,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     name="isWidgetBorderReq"
                                     id="isWidgetBorderReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isWidgetBorderReq === 'yes'}
+                                    checked={radioValues?.isWidgetBorderReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -638,9 +638,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     name="isWidgetBorderReq"
                                     id="isWidgetBorderReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isWidgetBorderReq === 'no'}
+                                    checked={radioValues?.isWidgetBorderReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -750,9 +750,9 @@ const AboutWidget = (props) => {
                                         type="radio"
                                         name="isSsoUrl"
                                         id="isSsoUrlYes"
-                                        value={'yes'}
+                                        value={'Yes'}
                                         onChange={handleRadioChange}
-                                        checked={radioValues?.isSsoUrl === 'yes'}
+                                        checked={radioValues?.isSsoUrl === 'Yes'}
                                     />
                                     <label className="form-check-label" htmlFor="dbYes">
                                         Yes
@@ -764,9 +764,9 @@ const AboutWidget = (props) => {
                                         type="radio"
                                         name="isSsoUrl"
                                         id="isSsoUrlNo"
-                                        value={'no'}
+                                        value={'No'}
                                         onChange={handleRadioChange}
-                                        checked={radioValues?.isSsoUrl === 'no'}
+                                        checked={radioValues?.isSsoUrl === 'No'}
                                     />
                                     <label className="form-check-label" htmlFor="dbNo">
                                         No

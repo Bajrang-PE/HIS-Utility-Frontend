@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import InputField from '../../commons/InputField'
 import InputSelect from '../../commons/InputSelect'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faMinus } from '@fortawesome/free-solid-svg-icons'
+import FormatColumn from '../../commons/FormatColumn'
+import { HISContext } from '../../../contextApi/HISContext'
 
 const QueryDetails = (props) => {
 
+    const { showDataTable, setShowDataTable } = useContext(HISContext);
     const { handleValueChange, handleRadioChange, radioValues, values } = props;
 
     const [rows, setRows] = useState([{ queryLabel: "", mainQuery: "", dataTableReq: "", tableDataDisplay: "" }]);
     const [procedureRows, setProcedureRows] = useState([{ queryLabel: "", webRefName: "", webId: "", dataTblReq: "", dataTblDisplay: "" }]);
+
+    const [showFormatModal, setShowFormatModal] = useState(false);
 
     // Handle input change
     const handleInputChange = (index, field, value) => {
@@ -17,6 +22,7 @@ const QueryDetails = (props) => {
         updatedRows[index][field] = value;
         setRows(updatedRows);
     };
+
     // Add a new row
     const handleAddRow = (name) => {
         if (name === 'query') {
@@ -37,6 +43,10 @@ const QueryDetails = (props) => {
         }
     };
 
+    const closeFormatModal = () => {
+        setShowFormatModal(false);
+    }
+
     return (
         <>
             <b><h6 className='header-devider m-0'>Query or Procedure or Webservice Details</h6></b>
@@ -56,9 +66,9 @@ const QueryDetails = (props) => {
                                     type="radio"
                                     id="selectedModeQueryQuery"
                                     name="selectedModeQuery"
-                                    value={'query'}
+                                    value={'Query'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.selectedModeQuery === "query"}
+                                    checked={radioValues?.selectedModeQuery === "Query"}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     By Query
@@ -70,9 +80,9 @@ const QueryDetails = (props) => {
                                     type="radio"
                                     id="selectedModeQueryProcedure"
                                     name="selectedModeQuery"
-                                    value={'procedure'}
+                                    value={'Procedure'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.selectedModeQuery === "procedure"}
+                                    checked={radioValues?.selectedModeQuery === "Procedure"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     By Procedure
@@ -84,9 +94,9 @@ const QueryDetails = (props) => {
                                     type="radio"
                                     id="selectedModeQueryWebService"
                                     name="selectedModeQuery"
-                                    value={'webService'}
+                                    value={'WebService'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.selectedModeQuery === "webService"}
+                                    checked={radioValues?.selectedModeQuery === "WebService"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     By Webservice
@@ -98,9 +108,9 @@ const QueryDetails = (props) => {
                                     type="radio"
                                     id="selectedModeQueryParent"
                                     name="selectedModeQuery"
-                                    value={'parent'}
+                                    value={'Parent'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.selectedModeQuery === "parent"}
+                                    checked={radioValues?.selectedModeQuery === "Parent"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     By Parent
@@ -111,7 +121,7 @@ const QueryDetails = (props) => {
                 </div>
             </div>
             {/* FOR QUERY */}
-            {(radioValues?.widgetViewed === "tabular" && radioValues?.selectedModeQuery === "query") &&
+            {(radioValues?.widgetViewed === "Tabular" && radioValues?.selectedModeQuery === "Query") &&
                 <div className="table-responsive row p-1">
                     <table className="table table-borderless text-center mb-0">
                         <thead className="text-white">
@@ -183,7 +193,7 @@ const QueryDetails = (props) => {
                                             <div>
                                                 <button
                                                     className="btn btn-outline-secondary btn-sm me-1"
-                                                    // onClick={() => handleRemoveRow(index)}
+                                                    onClick={() => { setShowDataTable(true); setShowFormatModal(true) }}
                                                     style={{ padding: "0 4px" }}
                                                 >
                                                     Format
@@ -206,7 +216,7 @@ const QueryDetails = (props) => {
             }
 
             {/* FOR PROCEDURE */}
-            {radioValues?.selectedModeQuery === "procedure" &&
+            {radioValues?.selectedModeQuery === "Procedure" &&
                 <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                     {/* //left columns */}
                     <div className='col-sm-6'>
@@ -226,11 +236,11 @@ const QueryDetails = (props) => {
                         </div>
                     </div>
                     {/* right columns */}
-                    {radioValues?.widgetViewed === "tabular" &&
+                    {radioValues?.widgetViewed === "Tabular" &&
                         <div className='col-sm-6 text-center'>
                             <button
                                 className="btn btn-outline-secondary btn-sm me-1"
-                                // onClick={() => handleRemoveRow(index)}
+                                onClick={() => { setShowDataTable(true); setShowFormatModal(true) }}
                                 style={{ padding: "0 4px" }}
                             >
                                 Format Column
@@ -241,7 +251,7 @@ const QueryDetails = (props) => {
             }
 
             {/* FOR WEBSERVICE tabular */}
-            {(radioValues?.widgetViewed === "tabular" && radioValues?.selectedModeQuery === "webService") &&
+            {(radioValues?.widgetViewed === "Tabular" && radioValues?.selectedModeQuery === "WebService") &&
                 <div className="table-responsive row p-1">
                     <table className="table table-borderless text-center mb-0">
                         <thead className="text-white">
@@ -254,7 +264,7 @@ const QueryDetails = (props) => {
                                 <th style={{ width: "10%" }}>
                                     <button
                                         className="btn btn-secondary btn-sm"
-                                        // onClick={handleAddRow}
+                                        onClick={() => { setShowDataTable(true); setShowFormatModal(true) }}
                                         style={{ padding: "0 4px" }}
                                     >
                                         Format Column
@@ -351,7 +361,7 @@ const QueryDetails = (props) => {
             }
 
             {/* FOR GRAPH AND QUERY */}
-            {((radioValues?.widgetViewed === "graph" || radioValues?.widgetViewed === "map") && radioValues?.selectedModeQuery === "query") &&
+            {((radioValues?.widgetViewed === "graph" || radioValues?.widgetViewed === "map") && radioValues?.selectedModeQuery === "Query") &&
                 <div className="table-responsive row p-1">
                     <table className="table table-borderless text-center mb-0">
                         <thead className="text-white">
@@ -392,7 +402,7 @@ const QueryDetails = (props) => {
 
             {/* FOR GRAPH AND WEBSERVICE */}
             {/* SECTION DEVIDER*/}
-            {(radioValues?.widgetViewed !== "tabular" && radioValues?.selectedModeQuery === "webService") &&
+            {(radioValues?.widgetViewed !== "Tabular" && radioValues?.selectedModeQuery === "WebService") &&
                 <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                     {/* //left columns */}
                     <div className='col-sm-6'>
@@ -434,7 +444,7 @@ const QueryDetails = (props) => {
 
             {/* FOR KPI AND QUERY AND HTML TEXT */}
             {/* SECTION DEVIDER*/}
-            {((radioValues?.widgetViewed === "kpi" || radioValues?.widgetViewed === "newsTicker") && radioValues?.selectedModeQuery === "query") &&
+            {((radioValues?.widgetViewed === "kpi" || radioValues?.widgetViewed === "newsTicker") && radioValues?.selectedModeQuery === "Query") &&
                 <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                     {/* //left columns */}
                     <div className='col-sm-6'>
@@ -454,6 +464,9 @@ const QueryDetails = (props) => {
                         </div>
                     </div>
                 </div>
+            }
+            {showFormatModal &&
+                <FormatColumn title={"Format Display columns"} onClose={closeFormatModal} />
             }
         </>
     )
