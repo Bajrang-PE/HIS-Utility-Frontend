@@ -27,7 +27,7 @@ const HelpDocs = () => {
 
   const handleEditRow = (index) => {
     setIsEditing(index);
-    setNewRow(rows[index]); 
+    setNewRow(rows[index]);
   };
 
   const handleRemoveRow = (index) => {

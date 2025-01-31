@@ -1,14 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import InputField from '../../commons/InputField'
 import InputSelect from '../../commons/InputSelect'
+import { iconType, kpiBoxClickOptions, kpiTypes } from '../../../localData/DropDownData';
+import * as FaIcons from "react-icons/fa";
+import IconPicker from '../../commons/IconPicker';
+
 
 const KpiWidget = (props) => {
     const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+    const [tabIcon, setTabIcon] = useState(null);
+
+
+    const SelectedIconComponent = tabIcon ? FaIcons[tabIcon] : null;
 
     return (
         <div>
             <b><h6 className='header-devider m-0'>KPI Details</h6></b>
             {/* SECTION DEVIDER graph plugin and color*/}
+
             <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
@@ -17,10 +26,10 @@ const KpiWidget = (props) => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput "
-                                placeholder="Enter value..."
+                                // placeholder="Enter value..."
                                 name='kpiType'
                                 id="kpiType"
-                                options={[]}
+                                options={kpiTypes}
                                 onChange={handleValueChange}
                                 value={values?.kpiType}
                             />
@@ -31,15 +40,81 @@ const KpiWidget = (props) => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput "
-                                placeholder="Enter value..."
+                                // placeholder="Enter value..."
                                 name='kpiIconType'
                                 id="kpiIconType"
-                                options={[]}
+                                options={iconType}
                                 onChange={handleValueChange}
                                 value={values?.kpiIconType}
                             />
                         </div>
                     </div>
+                </div>
+                <div className='col-sm-6'>
+                    <div className="form-group row">
+                        <label className="col-sm-5 col-form-label pe-0">KPI Border Width (In Pixels) and Color : </label>
+                        <div className="col-sm-3 ps-0 align-content-center">
+                            <InputField
+                                type={'text'}
+                                className="backcolorinput "
+                                placeholder="Enter value..."
+                                name='kpiBorderWidth'
+                                id="kpiBorderWidth"
+                                onChange={handleValueChange}
+                                value={values?.kpiBorderWidth}
+                            />
+                        </div>
+                        <div className="col-sm-4 ps-0 align-content-center">
+                            <InputField
+                                type={'color'}
+                                className="backcolorinput "
+                                placeholder="Enter value..."
+                                name='kpiBorderColor'
+                                id="kpiBorderColor"
+                                onChange={handleValueChange}
+                                value={values?.kpiBorderColor}
+                            />
+                        </div>
+                    </div>
+                    {values?.kpiIconType !== 'NOICON' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">Tab Icon Image : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                {values?.kpiIconType === 'IMAGE' &&
+                                    <InputSelect
+                                        className="backcolorinput "
+                                        placeholder="Select Image"
+                                        name='kpiTabIconImage'
+                                        id="kpiTabIconImage"
+                                        options={[{ value: "default", label: "Default-Image.png" }]}
+                                        onChange={handleValueChange}
+                                        value={values?.kpiTabIconImage}
+                                    />
+                                }
+                                {values?.kpiIconType === 'FONT' &&
+                                    <IconPicker setTabIcon={setTabIcon} />
+                                    // <InputSelect
+                                    //     className="backcolorinput "
+                                    //     placeholder="Select Icon"
+                                    //     name='kpiTabIconImage'
+                                    //     id="kpiTabIconImage"
+                                    //     options={iconOptions}
+                                    //     onChange={handleChange}
+                                    //     value={selectedIcon}
+                                    //     style={{ width: "100%", padding: "5px" }}
+                                    // />
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+
+            <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                {/* //left columns */}
+                <div className='col-sm-6'>
+
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Default Background Color : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -79,9 +154,9 @@ const KpiWidget = (props) => {
                                     type="radio"
                                     name="isWidgetShadowReq"
                                     id="isWidgetShadowReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isWidgetShadowReq === 'yes'}
+                                    checked={radioValues?.isWidgetShadowReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -93,9 +168,9 @@ const KpiWidget = (props) => {
                                     type="radio"
                                     name="isWidgetShadowReq"
                                     id="isWidgetShadowReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isWidgetShadowReq === 'no'}
+                                    checked={radioValues?.isWidgetShadowReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -103,90 +178,10 @@ const KpiWidget = (props) => {
                             </div>
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">KPI Box click Options : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputSelect
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='kpiBoxClickOptions'
-                                id="kpiBoxClickOptions"
-                                options={[]}
-                                onChange={handleValueChange}
-                                value={values?.kpiBoxClickOptions}
-                            />
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Tab link name : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type={'text'}
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='kpiTabLinkName'
-                                id="kpiTabLinkName"
-                                onChange={handleValueChange}
-                                value={values?.kpiTabLinkName}
-                            />
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">KPI link color : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type={'color'}
-                                className="backcolorinput"
-                                placeholder="Enter value..."
-                                name='kpiLinkColor'
-                                id="kpiLinkColor"
-                                onChange={handleValueChange}
-                                value={values?.kpiLinkColor}
-                            />
-                        </div>
-                    </div>
                 </div>
                 {/* right columns */}
                 <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">KPI Border Width (In Pixels) and Color : </label>
-                        <div className="col-sm-3 ps-0 align-content-center">
-                            <InputField
-                                type={'text'}
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='kpiBorderWidth'
-                                id="kpiBorderWidth"
-                                onChange={handleValueChange}
-                                value={values?.kpiBorderWidth}
-                            />
-                        </div>
-                        <div className="col-sm-4 ps-0 align-content-center">
-                            <InputField
-                                type={'color'}
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='kpiBorderColor'
-                                id="kpiBorderColor"
-                                onChange={handleValueChange}
-                                value={values?.kpiBorderColor}
-                            />
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Tab Icon Image : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputSelect
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='kpiTabIconImage'
-                                id="kpiTabIconImage"
-                                options={[]}
-                                onChange={handleValueChange}
-                                value={values?.kpiTabIconImage}
-                            />
-                        </div>
-                    </div>
+
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Default Font Color : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -226,9 +221,9 @@ const KpiWidget = (props) => {
                                     type="radio"
                                     name="isDownloadDataFromKpi"
                                     id="isDownloadDataFromKpiYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDownloadDataFromKpi === 'yes'}
+                                    checked={radioValues?.isDownloadDataFromKpi === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -240,9 +235,9 @@ const KpiWidget = (props) => {
                                     type="radio"
                                     name="isDownloadDataFromKpi"
                                     id="isDownloadDataFromKpiNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDownloadDataFromKpi === 'no'}
+                                    checked={radioValues?.isDownloadDataFromKpi === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -250,20 +245,103 @@ const KpiWidget = (props) => {
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+
+            <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                {/* //left columns */}
+                <div className='col-sm-6'>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Tab open on click : </label>
+                        <label className="col-sm-5 col-form-label pe-0">KPI Box click Options : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='kpiTabOpenOnClick'
-                                id="kpiTabOpenOnClick"
-                                options={[]}
+                                // placeholder="Enter value..."
+                                name='kpiBoxClickOptions'
+                                id="kpiBoxClickOptions"
+                                options={kpiBoxClickOptions}
                                 onChange={handleValueChange}
-                                value={values?.kpiTabOpenOnClick}
+                                value={values?.kpiBoxClickOptions}
                             />
                         </div>
                     </div>
+                </div>
+                <div className='col-sm-6'>
+                    {values?.kpiBoxClickOptions !== '0' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">{values?.kpiBoxClickOptions === '1' ? "Tab" : values?.kpiBoxClickOptions === '2' ? 'Widget' : 'Dashboard'} open on click : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                {values?.kpiBoxClickOptions === '1' &&
+                                    <InputSelect
+                                        className="backcolorinput "
+                                        placeholder="No Tabs"
+                                        name='kpiTabOpenOnClick'
+                                        id="kpiTabOpenOnClick"
+                                        options={[]}
+                                        onChange={handleValueChange}
+                                        value={values?.kpiTabOpenOnClick}
+                                    />}
+                                {values?.kpiBoxClickOptions === '2' &&
+                                    <InputSelect
+                                        className="backcolorinput "
+                                        placeholder="No Widget"
+                                        name='kpiWidgetOpenOnClick'
+                                        id="kpiWidgetOpenOnClick"
+                                        options={[]}
+                                        onChange={handleValueChange}
+                                        value={values?.kpiWidgetOpenOnClick}
+                                    />}
+                                {values?.kpiBoxClickOptions === '3' &&
+                                    <InputSelect
+                                        className="backcolorinput "
+                                        placeholder="No Dashboard"
+                                        name='kpiDashboardOpenOnClick'
+                                        id="kpiDashboardOpenOnClick"
+                                        options={[]}
+                                        onChange={handleValueChange}
+                                        value={values?.kpiDashboardOpenOnClick}
+                                    />}
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+
+            <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                {/* //left columns */}
+                <div className='col-sm-6'>
+                    <div className="form-group row">
+                        <label className="col-sm-5 col-form-label pe-0">Tab link name : </label>
+                        <div className="col-sm-7 ps-0 align-content-center">
+                            <InputField
+                                type={'text'}
+                                className="backcolorinput "
+                                placeholder="Enter value..."
+                                name='kpiTabLinkName'
+                                id="kpiTabLinkName"
+                                onChange={handleValueChange}
+                                value={values?.kpiTabLinkName}
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group row">
+                        <label className="col-sm-5 col-form-label pe-0">KPI link color : </label>
+                        <div className="col-sm-7 ps-0 align-content-center">
+                            <InputField
+                                type={'color'}
+                                className="backcolorinput"
+                                placeholder="Enter value..."
+                                name='kpiLinkColor'
+                                id="kpiLinkColor"
+                                onChange={handleValueChange}
+                                value={values?.kpiLinkColor}
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className='col-sm-6'>
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Widget link name : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -293,6 +371,11 @@ const KpiWidget = (props) => {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div>
+                {tabIcon && (
+                    <SelectedIconComponent />
+                )}
             </div>
         </div>
     )

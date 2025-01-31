@@ -1,6 +1,7 @@
 import React from 'react'
 import InputField from '../../commons/InputField'
 import InputSelect from '../../commons/InputSelect'
+import { newsTimeIntervals } from '../../../localData/DropDownData';
 
 const NewsTickWidget = (props) => {
     const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
@@ -31,10 +32,10 @@ const NewsTickWidget = (props) => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput "
-                                placeholder="Enter value..."
+                                // placeholder="Enter value..."
                                 name='newsSpeed'
                                 id="newsSpeed"
-                                options={[]}
+                                options={[{ value: "normal", label: "Normal" }, { value: "slow", label: "Slow" }, { value: "fast", label: "Fast" }]}
                                 onChange={handleValueChange}
                                 value={values?.newsSpeed}
                             />
@@ -52,7 +53,7 @@ const NewsTickWidget = (props) => {
                                 placeholder="Enter value..."
                                 name='newsInterval'
                                 id="newsInterval"
-                                options={[]}
+                                options={newsTimeIntervals}
                                 onChange={handleValueChange}
                                 value={values?.newsInterval}
                             />

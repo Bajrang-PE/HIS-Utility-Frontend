@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import InputSelect from '../../commons/InputSelect'
 import InputField from '../../commons/InputField'
-import { itemForDashboard, widgetTypeOptions } from '../../../localData/DropDownData'
+import { cachingStatusForWidgetOptions, itemForDashboard, widgetRefreshTimeOptions, widgetTypeOptions } from '../../../localData/DropDownData'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faEdit, faMinus, faTrash } from '@fortawesome/free-solid-svg-icons'
 
@@ -205,9 +205,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="widgetViewedGraph"
                                     name="widgetViewed"
-                                    value={"graph"}
+                                    value={"Graph"}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.widgetViewed === "graph"}
+                                    checked={radioValues?.widgetViewed === "Graph"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Graph
@@ -219,9 +219,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="widgetViewedKpi"
                                     name="widgetViewed"
-                                    value={"kpi"}
+                                    value={"KPI"}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.widgetViewed === "kpi"}
+                                    checked={radioValues?.widgetViewed === "KPI"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     KPI
@@ -233,9 +233,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="widgetViewedMap"
                                     name="widgetViewed"
-                                    value={"map"}
+                                    value={"Map"}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.widgetViewed === "map"}
+                                    checked={radioValues?.widgetViewed === "Map"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Map
@@ -366,291 +366,298 @@ const AboutWidget = (props) => {
             </div>
 
             {/* SECTION DEVIDER widget refresh and delay time*/}
-            <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
-                {/* //left columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Widget Refresh Time : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputSelect
-                                id="widgetRefreshTime"
-                                name="widgetRefreshTime"
-                                placeholder="Select value..."
-                                options={[]}
-                                className="backcolorinput"
-                                value={values?.widgetRefreshTime}
-                                onChange={handleValueChange}
-                            />
-                        </div>
-                    </div>
-                </div>
-                {/* right columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Widget Refresh Delay Time : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputSelect
-                                className="backcolorinput"
-                                id="widgetRefreshDelayTime"
-                                name="widgetRefreshDelayTime"
-                                placeholder="Select value..."
-                                options={[]}
-                                value={values?.widgetRefreshDelayTime}
-                                onChange={handleValueChange}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* SECTION DEVIDER caching status and alignment*/}
-            <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
-                {/* //left columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Caching Status : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputSelect
-                                id="cachingStatus"
-                                name="cachingStatus"
-                                options={[]}
-                                placeholder="Select value..."
-                                className="backcolorinput"
-                                onChange={handleValueChange}
-                                value={values?.cachingStatus}
-                            />
-                        </div>
-                    </div>
-                </div>
-                {/* right columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Widget Heading Alignment :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="widgetHeadingAlignLeft"
-                                    name="widgetHeadingAlign"
-                                    value={'left'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.widgetHeadingAlign === "left"}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Left
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="widgetHeadingAlignCenter"
-                                    name="widgetHeadingAlign"
-                                    value={'center'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.widgetHeadingAlign === "center"}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    Center
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="widgetHeadingAlignRight"
-                                    name="widgetHeadingAlign"
-                                    value={'right'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.widgetHeadingAlign === "right"}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    Right
-                                </label>
+            {(radioValues?.widgetViewed !== "otherLink" && radioValues?.widgetViewed !== "iframe") &&
+                <>
+                    <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                        {/* //left columns */}
+                        <div className='col-sm-6'>
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">Widget Refresh Time : </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <InputSelect
+                                        id="widgetRefreshTime"
+                                        name="widgetRefreshTime"
+                                        // placeholder="Select value..."
+                                        options={widgetRefreshTimeOptions}
+                                        className="backcolorinput"
+                                        value={values?.widgetRefreshTime}
+                                        onChange={handleValueChange}
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* SECTION DEVIDER widget purpose*/}
-            <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Widget Purpose :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="widgetPurposeDownload"
-                                    name="widgetPurpose"
-                                    value={'Download'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.widgetPurpose === "Download"}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Download
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="widgetPurposeHtml"
-                                    name="widgetPurpose"
-                                    value={'HTML'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.widgetPurpose === "HTML"}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    HTML
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* SECTION DEVIDER LIMIT and record required */}
-            <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
-                {/* //left columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row" style={{ paddingBottom: "1px" }}>
-                        <label className="col-sm-5 col-form-label pe-0">LIMIT : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type="text"
-                                className="backcolorinput"
-                                placeholder="Enter value..."
-                                name='limit'
-                                id="limit"
-                                onChange={handleValueChange}
-                                value={values?.limit}
-                            />
-                        </div>
-                    </div>
-                </div>
-                {/* right columns */}
-                <div className='col-sm-6'>
-
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is Records Limited Line Required :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="isRecordLimitReqYes"
-                                    name="isRecordLimitReq"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isRecordLimitReq === "Yes"}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="isRecordLimitReqNo"
-                                    name="isRecordLimitReq"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isRecordLimitReq === "No"}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
+                        {/* right columns */}
+                        <div className='col-sm-6'>
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">Widget Refresh Delay Time : </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <InputSelect
+                                        className="backcolorinput"
+                                        id="widgetRefreshDelayTime"
+                                        name="widgetRefreshDelayTime"
+                                        // placeholder="Select value..."
+                                        options={widgetRefreshTimeOptions}
+                                        value={values?.widgetRefreshDelayTime}
+                                        onChange={handleValueChange}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                </div>
-            </div>
 
-            {/* SECTION DEVIDER heading border margin */}
-            <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
-                {/* //left columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row" style={{ paddingBottom: "1px" }}>
-                        <label className="col-sm-5 col-form-label pe-0">Widget Heading Color : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type="color"
-                                className="backcolorinput"
-                                placeholder="Enter value..."
-                                name='widgetHadingClr'
-                                id="widgetHadingClr"
-                                onChange={handleValueChange}
-                                value={values?.widgetHadingClr}
-                            />
-                        </div>
-                    </div>
-                    <div className="form-group row" style={{ paddingBottom: "1px" }}>
-                        <label className="col-sm-5 col-form-label pe-0">Widget Top Margin : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type="text"
-                                className="backcolorinput"
-                                placeholder="Enter value..."
-                                name='widgetTopMargin'
-                                id="widgetTopMargin"
-                                onChange={handleValueChange}
-                                value={values?.widgetTopMargin}
-                            />
-                        </div>
-                    </div>
-                </div>
-                {/* right columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Widget Border Required :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isWidgetBorderReq"
-                                    id="isWidgetBorderReqYes"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isWidgetBorderReq === 'Yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isWidgetBorderReq"
-                                    id="isWidgetBorderReqNo"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isWidgetBorderReq === 'No'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
+                    {/* SECTION DEVIDER caching status and alignment*/}
+                    <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                        {/* //left columns */}
+                        <div className='col-sm-6'>
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">Caching Status : </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <InputSelect
+                                        id="cachingStatus"
+                                        name="cachingStatus"
+                                        options={cachingStatusForWidgetOptions}
+                                        placeholder="Select value..."
+                                        className="backcolorinput"
+                                        onChange={handleValueChange}
+                                        value={values?.cachingStatus}
+                                    />
+                                </div>
                             </div>
                         </div>
+                        {/* right columns */}
+                        <div className='col-sm-6'>
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">
+                                    Widget Heading Alignment :
+                                </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            id="widgetHeadingAlignLeft"
+                                            name="widgetHeadingAlign"
+                                            value={'left'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.widgetHeadingAlign === "left"}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbYes">
+                                            Left
+                                        </label>
+                                    </div>
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            id="widgetHeadingAlignCenter"
+                                            name="widgetHeadingAlign"
+                                            value={'center'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.widgetHeadingAlign === "center"}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbNo">
+                                            Center
+                                        </label>
+                                    </div>
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            id="widgetHeadingAlignRight"
+                                            name="widgetHeadingAlign"
+                                            value={'right'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.widgetHeadingAlign === "right"}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbNo">
+                                            Right
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                </div>
-            </div>
+                    {/* SECTION DEVIDER widget purpose*/}
+                    <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                        <div className='col-sm-6'>
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">
+                                    Widget Purpose :
+                                </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            id="widgetPurposeDownload"
+                                            name="widgetPurpose"
+                                            value={'Download'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.widgetPurpose === "Download"}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbYes">
+                                            Download
+                                        </label>
+                                    </div>
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            id="widgetPurposeHtml"
+                                            name="widgetPurpose"
+                                            value={'HTML'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.widgetPurpose === "HTML"}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbNo">
+                                            HTML
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* SECTION DEVIDER LIMIT and record required */}
+                    {radioValues?.widgetPurpose === "HTML" &&
+                        <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                            {/* //left columns */}
+                            <div className='col-sm-6'>
+                                <div className="form-group row" style={{ paddingBottom: "1px" }}>
+                                    <label className="col-sm-5 col-form-label pe-0">LIMIT : </label>
+                                    <div className="col-sm-7 ps-0 align-content-center">
+                                        <InputField
+                                            type="text"
+                                            className="backcolorinput"
+                                            placeholder="Enter value..."
+                                            name='limit'
+                                            id="limit"
+                                            onChange={handleValueChange}
+                                            value={values?.limit}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            {/* right columns */}
+                            <div className='col-sm-6'>
+
+                                <div className="form-group row">
+                                    <label className="col-sm-5 col-form-label pe-0">
+                                        Is Records Limited Line Required :
+                                    </label>
+                                    <div className="col-sm-7 ps-0 align-content-center">
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                id="isRecordLimitReqYes"
+                                                name="isRecordLimitReq"
+                                                value={'Yes'}
+                                                onChange={handleRadioChange}
+                                                checked={radioValues?.isRecordLimitReq === "Yes"}
+                                            />
+                                            <label className="form-check-label" htmlFor="dbYes">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                id="isRecordLimitReqNo"
+                                                name="isRecordLimitReq"
+                                                value={'No'}
+                                                onChange={handleRadioChange}
+                                                checked={radioValues?.isRecordLimitReq === "No"}
+                                            />
+                                            <label className="form-check-label" htmlFor="dbNo">
+                                                No
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+
+                    {/* SECTION DEVIDER heading border margin */}
+                    <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                        {/* //left columns */}
+                        <div className='col-sm-6'>
+                            <div className="form-group row" style={{ paddingBottom: "1px" }}>
+                                <label className="col-sm-5 col-form-label pe-0">Widget Heading Color : </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <InputField
+                                        type="color"
+                                        className="backcolorinput"
+                                        placeholder="Enter value..."
+                                        name='widgetHadingClr'
+                                        id="widgetHadingClr"
+                                        onChange={handleValueChange}
+                                        value={values?.widgetHadingClr}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group row" style={{ paddingBottom: "1px" }}>
+                                <label className="col-sm-5 col-form-label pe-0">Widget Top Margin : </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <InputField
+                                        type="text"
+                                        className="backcolorinput"
+                                        placeholder="Enter value..."
+                                        name='widgetTopMargin'
+                                        id="widgetTopMargin"
+                                        onChange={handleValueChange}
+                                        value={values?.widgetTopMargin}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        {/* right columns */}
+                        <div className='col-sm-6'>
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">
+                                    Widget Border Required :
+                                </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="isWidgetBorderReq"
+                                            id="isWidgetBorderReqYes"
+                                            value={'Yes'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.isWidgetBorderReq === 'Yes'}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbYes">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="isWidgetBorderReq"
+                                            id="isWidgetBorderReqNo"
+                                            value={'No'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.isWidgetBorderReq === 'No'}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbNo">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </>
+            }
 
             {/* IF OTHER LINK SELECTED */}
             {radioValues?.widgetViewed === "otherLink" &&

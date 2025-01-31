@@ -2,9 +2,10 @@ import React from 'react'
 import InputSelect from '../../commons/InputSelect'
 import InputField from '../../commons/InputField'
 import Select from 'react-select'
+import { graphOptions, isActionButtonReqOptions } from '../../../localData/DropDownData'
 
 const GraphWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues,parentWidget } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues, parentWidget } = props;
 
     return (
         <div>
@@ -24,9 +25,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isDisplayGraphPlugin"
                                     id="isDisplayGraphPluginYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDisplayGraphPlugin === 'yes'}
+                                    checked={radioValues?.isDisplayGraphPlugin === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -38,9 +39,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isDisplayGraphPlugin"
                                     id="isDisplayGraphPluginNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDisplayGraphPlugin === 'no'}
+                                    checked={radioValues?.isDisplayGraphPlugin === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -53,10 +54,10 @@ const GraphWidget = (props) => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput "
-                                placeholder="Enter value..."
+                                // placeholder="Enter value..."
                                 name='defaultGraphType'
                                 id="defaultGraphType"
-                                options={[]}
+                                options={graphOptions}
                                 onChange={handleValueChange}
                                 value={values?.defaultGraphType}
                             />
@@ -70,50 +71,52 @@ const GraphWidget = (props) => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput "
-                                placeholder="Enter value..."
+                                // placeholder="Enter value..."
                                 name='defaultPluginName'
                                 id="defaultPluginName"
-                                options={[]}
+                                options={[{value:"highchart",label:"High Charts"},{value:"googlechart",label:"Google Charts"}]}
                                 onChange={handleValueChange}
                                 value={values?.defaultPluginName}
                             />
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is Color By Point (graph color) :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isColorByPoint"
-                                    id="isColorByPointYes"
-                                    value={'yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isColorByPoint === 'yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isColorByPoint"
-                                    id="isColorByPointNo"
-                                    value={'no'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isColorByPoint === 'no'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
+                    {values?.defaultGraphType === 'BAR_GRAPH' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Is Color By Point (graph color) :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isColorByPoint"
+                                        id="isColorByPointYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isColorByPoint === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isColorByPoint"
+                                        id="isColorByPointNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isColorByPoint === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
 
@@ -127,7 +130,7 @@ const GraphWidget = (props) => {
                             <Select
                                 id='graphTypes'
                                 name='graphTypes'
-                                options={[{ value: 1, label: "No Parent" }, { value: 2, label: "State" }]}
+                                options={graphOptions}
                                 isMulti
                                 placeholder="Select value..."
                                 className="backcolorinput react-select-multi"
@@ -217,9 +220,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isGraphScrollBarReq"
                                     id="isGraphScrollBarReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isGraphScrollBarReq === 'yes'}
+                                    checked={radioValues?.isGraphScrollBarReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -231,9 +234,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isGraphScrollBarReq"
                                     id="isGraphScrollBarReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isGraphScrollBarReq === 'no'}
+                                    checked={radioValues?.isGraphScrollBarReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -284,9 +287,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isShowLegendOnExport"
                                     id="isShowLegendOnExportYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isShowLegendOnExport === 'yes'}
+                                    checked={radioValues?.isShowLegendOnExport === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -298,9 +301,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isShowLegendOnExport"
                                     id="isShowLegendOnExportNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isShowLegendOnExport === 'no'}
+                                    checked={radioValues?.isShowLegendOnExport === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -333,9 +336,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isFullLabelReq"
                                     id="isFullLabelReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isFullLabelReq === 'yes'}
+                                    checked={radioValues?.isFullLabelReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -347,9 +350,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isFullLabelReq"
                                     id="isFullLabelReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isFullLabelReq === 'no'}
+                                    checked={radioValues?.isFullLabelReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -404,9 +407,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isShowLegend"
                                     id="isShowLegendYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isShowLegend === 'yes'}
+                                    checked={radioValues?.isShowLegend === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -418,9 +421,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isShowLegend"
                                     id="isShowLegendNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isShowLegend === 'no'}
+                                    checked={radioValues?.isShowLegend === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -439,9 +442,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isThree3D"
                                     id="isThree3DYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isThree3D === 'yes'}
+                                    checked={radioValues?.isThree3D === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -453,9 +456,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isThree3D"
                                     id="isThree3DNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isThree3D === 'no'}
+                                    checked={radioValues?.isThree3D === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -479,9 +482,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isDataLabels"
                                     id="isDataLabelsYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDataLabels === 'yes'}
+                                    checked={radioValues?.isDataLabels === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -493,9 +496,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isDataLabels"
                                     id="isDataLabelsNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDataLabels === 'no'}
+                                    checked={radioValues?.isDataLabels === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -510,20 +513,22 @@ const GraphWidget = (props) => {
             <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">Alpha : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type='text'
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='alphaGraph3D'
-                                id="alphaGraph3D"
-                                onChange={handleValueChange}
-                                value={values?.alphaGraph3D}
-                            />
+                    {radioValues?.isThree3D === 'Yes' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0 required-label">Alpha : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <InputField
+                                    type='text'
+                                    className="backcolorinput "
+                                    placeholder="Enter value..."
+                                    name='alphaGraph3D'
+                                    id="alphaGraph3D"
+                                    onChange={handleValueChange}
+                                    value={values?.alphaGraph3D}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0 required-label">X-axis Label : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -581,7 +586,7 @@ const GraphWidget = (props) => {
                         </div>
                     </div>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">
+                        <label className="col-sm-5 col-form-label pe-0">
                             Is Direct Download Button Required :
                         </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -591,9 +596,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isDirectDownloadBtnGraph"
                                     id="isDirectDownloadBtnGraphYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDirectDownloadBtnGraph === 'yes'}
+                                    checked={radioValues?.isDirectDownloadBtnGraph === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -605,9 +610,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isDirectDownloadBtnGraph"
                                     id="isDirectDownloadBtnGraphNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDirectDownloadBtnGraph === 'no'}
+                                    checked={radioValues?.isDirectDownloadBtnGraph === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -616,7 +621,7 @@ const GraphWidget = (props) => {
                         </div>
                     </div>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">
+                        <label className="col-sm-5 col-form-label pe-0">
                             Is First Column Graph Heading :
                         </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -626,9 +631,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isFirstClmGraphHeading"
                                     id="isFirstClmGraphHeadingYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isFirstClmGraphHeading === 'yes'}
+                                    checked={radioValues?.isFirstClmGraphHeading === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -640,9 +645,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isFirstClmGraphHeading"
                                     id="isFirstClmGraphHeadingNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isFirstClmGraphHeading === 'no'}
+                                    checked={radioValues?.isFirstClmGraphHeading === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -654,20 +659,22 @@ const GraphWidget = (props) => {
                 {/* right columns */}
 
                 <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">Beta : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type='text'
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='betaGraph3D'
-                                id="betaGraph3D"
-                                onChange={handleValueChange}
-                                value={values?.betaGraph3D}
-                            />
+                    {radioValues?.isThree3D === 'Yes' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0 required-label">Beta : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <InputField
+                                    type='text'
+                                    className="backcolorinput "
+                                    placeholder="Enter value..."
+                                    name='betaGraph3D'
+                                    id="betaGraph3D"
+                                    onChange={handleValueChange}
+                                    value={values?.betaGraph3D}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0 required-label">Y-axis Label : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -711,7 +718,21 @@ const GraphWidget = (props) => {
                         </div>
                     </div>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">
+                        <label className="col-sm-5 col-form-label pe-0 required-label">Minimum value of axis : </label>
+                        <div className="col-sm-7 ps-0 align-content-center">
+                            <InputField
+                                type='text'
+                                className="backcolorinput "
+                                placeholder="Enter value..."
+                                name='minValueOfAxis'
+                                id="minValueOfAxis"
+                                onChange={handleValueChange}
+                                value={values?.minValueOfAxis}
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group row">
+                        <label className="col-sm-5 col-form-label pe-0">
                             Show Parent Heading in Child :
                         </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -721,9 +742,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isShowPrntHeadChildGraph"
                                     id="isShowPrntHeadChildGraphYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isShowPrntHeadChildGraph === 'yes'}
+                                    checked={radioValues?.isShowPrntHeadChildGraph === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -735,9 +756,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isShowPrntHeadChildGraph"
                                     id="isShowPrntHeadChildGraphNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isShowPrntHeadChildGraph === 'no'}
+                                    checked={radioValues?.isShowPrntHeadChildGraph === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -750,10 +771,10 @@ const GraphWidget = (props) => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput "
-                                placeholder="Enter value..."
+                                // placeholder="Select value..."
                                 name='isActionBtnReqGraph'
                                 id="isActionBtnReqGraph"
-                                options={[]}
+                                options={isActionButtonReqOptions}
                                 onChange={handleValueChange}
                                 value={values?.isActionBtnReqGraph}
                             />
@@ -770,9 +791,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isHideParent"
                                     id="isHideParentYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isHideParent === 'yes'}
+                                    checked={radioValues?.isHideParent === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -784,9 +805,9 @@ const GraphWidget = (props) => {
                                     type="radio"
                                     name="isHideParent"
                                     id="isHideParentNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isHideParent === 'no'}
+                                    checked={radioValues?.isHideParent === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No

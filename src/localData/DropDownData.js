@@ -90,3 +90,77 @@ export const parameterOptions = [
     { value: 3, label: "Hide Parameters on Go" },
 ]
 
+export const widgetRefreshTimeOptions = [
+    { value: "0", label: "Not Required" },
+    { value: "10000", label: "10 Sec" },
+    { value: "30000", label: "30 Sec" },
+    { value: "60000", label: "1 Min" },
+    { value: "120000", label: "2 Min" },
+    { value: "300000", label: "5 Min" },
+    { value: "600000", label: "10 Min" },
+    { value: "900000", label: "15 Min" },
+    { value: "1800000", label: "30 Min" },
+];
+
+export const cachingStatusForWidgetOptions = [
+    { value: "Cache for All", label: "Cache for All Widget,Parameter,Tab" },
+    { value: "Cache Userid Wise", label: "Cache UserId Wise for All Widget,Parameter,Tab" },
+    { value: "Cache Seatid Wise", label: "Cache Seatid Wise for All Widget,Parameter,Tab" },
+    { value: "Stop Caching", label: "Stop Caching" },
+];
+
+export const headingDisplayStyleOptions = [
+    { value: "asPerDataFromQuery", label: "As Per Query Result Heading" },
+    { value: "allCapitalLetter", label: "All Capital Letter" },
+    { value: "initCapitalLetter", label: "Initial Capital Letter" },
+];
+
+export const isActionButtonReqOptions = [
+    { value: "Yes", label: "All" },
+    { value: "pdf", label: "PDF Only" },
+    { value: "csv", label: "CSV Only" },
+    { value: "pdfAndcsv", label: "PDF and CSV" },
+    { value: "advanced", label: "Advanced Options Only" },
+    { value: "No", label: "No PDF, CSV or Advanced Options" },
+    { value: "None", label: "None" },
+];
+
+export const graphOptions = [
+    { value: "BAR_GRAPH", label: "Column Bar Graph" },
+    { value: "PIE_CHART", label: "Pie Chart" },
+    { value: "DONUT_CHART", label: "Donut Chart" },
+    { value: "LINE_GRAPH", label: "Line Graph" },
+    { value: "AREA_GRAPH", label: "Area Graph" },
+    { value: "CANDLE_STICK", label: "Candle Stick Chart" },
+    { value: "DUAL_AXES_COLUMN", label: "Dual Axes Column Graph" }
+];
+
+export const newsTimeIntervals = [
+    { value: "1000", label: "1 Sec" },
+    { value: "2000", label: "2 Sec" },
+    { value: "3000", label: "3 Sec" },
+    { value: "4000", label: "4 Sec" },
+    { value: "5000", label: "5 Sec" },
+    { value: "10000", label: "10 Sec" },
+    { value: "30000", label: "30 Sec" }
+];
+
+export const iconType = [
+    { value: "IMAGE", label: "Image" },
+    { value: "FONT", label: "Font Icon" },
+    { value: "NOICON", label: "No Icon Required" },
+]
+
+export const kpiTypes = [
+    { value: "rectangle", label: "Rectangle" },
+    { value: "rightedge", label: "Right Edge Box" },
+    { value: "leftedge", label: "Left Edge Box" },
+    { value: "circle", label: "Circle" }
+]
+
+export const kpiBoxClickOptions = [
+    { value: '0', label: 'Not Required' },
+    { value: '1', label: 'Show Tab' },
+    { value: '2', label: 'Show Widget' },
+    { value: '3', label: 'Show Dashboard' },
+]

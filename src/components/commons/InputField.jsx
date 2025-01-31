@@ -15,7 +15,8 @@ const InputField = ({
     className,
     style,
     errorMessage,
-    type
+    type,
+    onClick
 
 }) => {
     return (
@@ -36,6 +37,7 @@ const InputField = ({
                 className={`form-control form-control-sm ${className}`}
                 style={style}
                 autoComplete='off'
+                onClick={onClick}
             />
             {errorMessage &&
                 <div className="required-input">

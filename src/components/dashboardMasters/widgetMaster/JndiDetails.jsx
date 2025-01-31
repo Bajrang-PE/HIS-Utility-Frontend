@@ -21,7 +21,7 @@ const JndiDetails = (props) => {
                                 id="jndiSavingData"
                                 name="jndiSavingData"
                                 placeholder="Select"
-                                options={[{ value: 'cdwh', label: "CDWH" }]}
+                                options={[{ value: '2', label: "CDWH" }]}
                                 className="backcolorinput"
                                 onChange={handleValueChange}
                                 value={values?.jndiSavingData}

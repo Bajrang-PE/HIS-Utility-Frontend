@@ -64,7 +64,7 @@
   border-radius: 2px;
 }
 
-.datatable-header{
+.datatable-header {
   /* background: #005b88; */
   /* background-color: #005b88 !important; */
   background: linear-gradient(135deg, #05213c, #05396c);
@@ -88,7 +88,8 @@
   }
 } */
 
-.table-row-form td, .table-row-form th {
+.table-row-form td,
+.table-row-form th {
   font-size: smaller;
   font-weight: 700;
   padding-left: 1rem !important;
@@ -124,6 +125,18 @@ input[type="text"]:focus {
   border-color: gray !important;
 }
 
+.backcolorinput-icons {
+  background-color: #97dbed4a !important;
+  border-color: gray !important;
+  border-radius: 0px 10px 10px 0px !important;
+}
+
+.backcolorinput-icon {
+  background-color: #97dbed4a !important;
+  border-color: gray !important;
+  border-radius: 10px 0px 0px 10px !important;
+}
+
 .form-check-input:checked {
   background-color: #3182ce !important;
   outline: none !important;
@@ -140,7 +153,8 @@ label {
   label {
     padding-left: 0 !important;
   }
-  .role-theme{
+
+  .role-theme {
     padding: 8px;
   }
 }
@@ -196,7 +210,8 @@ label {
   color: white;
   padding: 2px 5px;
 }
-.datatable-btns button{
+
+.datatable-btns button {
   border: 1px solid #FBC02D;
   border-radius: 5px;
   background-color: #005b88;
@@ -204,7 +219,7 @@ label {
   padding: 2px 5px;
 }
 
-.datatable-btns button:hover{
+.datatable-btns button:hover {
   border: 1px solid #005b88;
   background-color: #FBC02D;
 }
@@ -256,17 +271,19 @@ label {
 }
 
 @media (max-width:475px) {
-  .global-button-group{
+  .global-button-group {
     width: 90% !important;
   }
-  .global-tabs{
+
+  .global-tabs {
     width: 10% !important;
   }
 }
 
 
 
-.global-button-group button:hover .dropdown-gear-icon,.datatable-btns button:hover .dropdown-gear-icon {
+.global-button-group button:hover .dropdown-gear-icon,
+.datatable-btns button:hover .dropdown-gear-icon {
   color: #2C2C2C;
   transform: rotate(360deg);
 }
@@ -361,6 +378,7 @@ label {
   /* background: #053f7a; */
   /* color: white; */
 }
+
 /* .rdt_TableHeadRow {
   min-height: 21px !important;
 } */

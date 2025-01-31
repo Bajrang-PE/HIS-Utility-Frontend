@@ -20,6 +20,8 @@ import { parameterType } from '../../localData/DropDownData'
 import ParamsDetail from '../../components/dashboardMasters/tabMaster/ParamsDetail'
 import InputSelect from '../../components/commons/InputSelect'
 import { ToastAlert } from '../../utils/commonFunction'
+import { fetchPostData, fetchUpdateData } from '../../utils/ApiHooks'
+import IconPicker from '../../components/commons/IconPicker'
 
 const WidgetMaster = () => {
 
@@ -27,16 +29,16 @@ const WidgetMaster = () => {
   const { setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, parameterData, getAllParameterData, widgetDrpData, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, actionMode, setActionMode, } = useContext(HISContext);
 
   const [values, setValues] = useState({
-    "widgetFor": "", "widgetType": "", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "",
+    "id": "", "widgetFor": "", "widgetType": "", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "", "treeChildQuery": "", "treeChildProcedure": "", "popUpDetails": [],
     //graphs fields
-    "defaultPluginName": "", "defaultGraphType": "", "graphTypes": [], "clmNameForLineGraph": "", "colorsForBars": "", "graphHeight": "", "graphBottomMargin": "", "graphBgStartColor": "", "graphBgEndColor": "", "graphFontColor": "", "graphTypeBgColor": "", "graphTypeFontColor": "", "labelRotation": "", "alphaGraph3D": "", "betaGraph3D": "", "xAxisLabel": "", "yAxisLabel": "", "xAxisFontSize": "", "yAxisFontSize": "", "annotationFontSize": "", "maxValueOfAxis": "", "parentWidgetGraph": "", "isActionBtnReqGraph": "",
+    "defaultPluginName": "highchart", "defaultGraphType": "BAR_GRAPH", "graphTypes": [], "clmNameForLineGraph": "", "colorsForBars": "", "graphHeight": "", "graphBottomMargin": "", "graphBgStartColor": "", "graphBgEndColor": "", "graphFontColor": "", "graphTypeBgColor": "", "graphTypeFontColor": "", "labelRotation": "", "alphaGraph3D": "", "betaGraph3D": "", "xAxisLabel": "", "yAxisLabel": "", "xAxisFontSize": "", "yAxisFontSize": "", "annotationFontSize": "", "maxValueOfAxis": "", "parentWidgetGraph": "", "isActionBtnReqGraph": "Yes", "minValueOfAxis": '',
     //kpi details
-    "kpiType": "", "kpiBorderWidth": "", "kpiBorderColor": "", "kpiIconType": "", "kpiTabIconImage": "", "kpiDefaultBgColor": "", "kpiDefaultFontColor": "", "kpiDefaultHoverBg": "", "kpiIconColor": "", "kpiBoxClickOptions": "", "kpiTabOpenOnClick": "", "kpiWidgetOpenOnClick": "", "kpiDashboardOpenOnClick": "",
+    "kpiType": "", "kpiBorderWidth": "", "kpiBorderColor": "", "kpiIconType": "FONT", "kpiTabIconImage": "", "kpiDefaultBgColor": "", "kpiDefaultFontColor": "", "kpiDefaultHoverBg": "", "kpiIconColor": "", "kpiBoxClickOptions": "0", "kpiTabOpenOnClick": "", "kpiWidgetOpenOnClick": "", "kpiDashboardOpenOnClick": "",
     "kpiTabLinkName": "", "kpiWidgetLinkName": "", "kpiLinkColor": "", "kpiLinkFontColor": "",
     //map fields
     "mapName": "", "parentWidgetMap": "", "mapIncreasingIntensity": "",
     //newsTicker Fields
-    "noOfNewsVisible": "", "newsSpeed": "", "newsInterval": "",
+    "noOfNewsVisible": "", "newsSpeed": "normal", "newsInterval": "5000",
     //iframe
     "urlForIframe": ""
 
@@ -47,14 +49,14 @@ const WidgetMaster = () => {
     widgetHeadingAlign: 'left', isRecordLimitReq: 'Yes', isWidgetBorderReq: 'Yes',
 
     isTableHeadingReq: 'Yes',
-    tableHeadingAlign: "datatype", isFirstRowHeading: 'Yes', isDataTblReq: 'Yes', isIndexNumReq: 'Yes',
-    isPaginationReq: 'Yes', isSearchReq: 'Yes', isHeadingFixed: 'Yes', isLastRowTotal: 'Yes', isCardViewMobile: 'yes', isShowPrntHeadChild: 'yes', isShowPrntParamsChild: 'yes', printPdfIn: 'landscape', pdfTheme: 'grid', isPdfHeadReqAllPgs: 'yes', showFilterDtlsInPdf: 'yes', isReportByJsPdfPlug: 'yes', isReportPrintDtReq: 'yes', isGlobalHeaderReq: 'yes', isTableBorderReq: 'yes', isPositiveWidget: 'yes', isDirectDownloadBtn: 'yes', isPopupBasedReq: 'yes', isTreeChildReq: 'yes', treeChildDataBy: "query", dataDisplay: "horizontal", isDataTblReqTree: 'Yes', isPaginationReqTree: 'Yes', isSearchReqTree: 'Yes',
+    tableHeadingAlign: "0", isFirstRowHeading: 'Yes', isDataTblReq: 'Yes', isIndexNumReq: 'Yes',
+    isPaginationReq: 'Yes', isSearchReq: 'Yes', isHeadingFixed: 'Yes', isLastRowTotal: 'Yes', isCardViewMobile: 'Yes', isShowPrntHeadChild: 'Yes', isShowPrntParamsChild: 'Yes', printPdfIn: 'landscape', pdfTheme: 'grid', isPdfHeadReqAllPgs: 'Yes', showFilterDtlsInPdf: 'Yes', isReportByJsPdfPlug: 'Yes', isReportPrintDtReq: 'Yes', isGlobalHeaderReq: 'Yes', isTableBorderReq: 'Yes', isPositiveWidget: 'Yes', isDirectDownloadBtn: 'Yes', isPopupBasedReq: 'No', isTreeChildReq: 'No', treeChildDataBy: "Query", dataDisplay: "horizontal", isDataTblReqTree: 'Yes', isPaginationReqTree: 'Yes', isSearchReqTree: 'Yes',
     //graphs fields
-    isDisplayGraphPlugin: "yes", isColorByPoint: "yes", isShowLegendOnExport: "yes", isFullLabelReq: "yes", isGraphScrollBarReq: "yes", isShowLegend: "yes", isDataLabels: "yes", isThree3D: "yes", isDirectDownloadBtnGraph: 'yes', isFirstClmGraphHeading: 'yes', isShowPrntHeadChildGraph: 'yes', isHideParent: 'Yes', isRowClickable: "No",
+    isDisplayGraphPlugin: "Yes", isColorByPoint: "Yes", isShowLegendOnExport: "Yes", isFullLabelReq: "Yes", isGraphScrollBarReq: "Yes", isShowLegend: "Yes", isDataLabels: "Yes", isThree3D: "Yes", isDirectDownloadBtnGraph: 'Yes', isFirstClmGraphHeading: 'Yes', isShowPrntHeadChildGraph: 'Yes', isHideParent: 'Yes', isRowClickable: "No",
     //kpi
-    isWidgetShadowReq: "yes", isDownloadDataFromKpi: "yes",
+    isWidgetShadowReq: "Yes", isDownloadDataFromKpi: "Yes",
     //map
-    isChildBasedPrimaryKey: "yes", isHideParentMap: "yes",
+    isChildBasedPrimaryKey: "Yes", isHideParentMap: "Yes",
     //iframe
     isSsoUrl: "Yes"
 
@@ -111,17 +113,17 @@ const WidgetMaster = () => {
   // HANDLE TAB MENUS ACCORDING TO WIDGET
   useEffect(() => {
     const widgetTabMapping = {
-      tabular: { value: 3, label: "Table Details" },
-      graph: { value: 3, label: "Graph Details" },
-      map: { value: 3, label: "Map Details" },
-      kpi: { value: 3, label: "KPI Details" },
+      Tabular: { value: 3, label: "Table Details" },
+      Graph: { value: 3, label: "Graph Details" },
+      Map: { value: 3, label: "Map Details" },
+      KPI: { value: 3, label: "KPI Details" },
       newsTicker: { value: 3, label: "News Details" },
     };
-    const removeParamTabsFor = ["Tabular", "graph", "map"];
+    const removeParamTabsFor = ["Tabular", "Graph", "Map"];
 
     let updatedTabs = [...tabNavMenus];
     if (radioValues?.widgetViewed === "otherLink" || radioValues?.widgetViewed === "iframe") {
-      const removeTabs = tabNavMenus.filter(dt => dt?.value !== 3);
+      const removeTabs = tabNavMenus.filter(dt => dt?.value !== 3 && dt?.value !== 4 && dt?.value !== 2);
       setTabNavMenus(removeTabs);
     } else {
       const selectedTab = widgetTabMapping[radioValues?.widgetViewed];
@@ -190,34 +192,34 @@ const WidgetMaster = () => {
     const isReset = window.confirm('Do you want to reset whole form!');
     if (isReset) {
       setValues({
-        "widgetFor": "", "widgetType": "", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "",
+        "id": "", "widgetFor": "", "widgetType": "", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "", "treeChildQuery": "", "treeChildProcedure": "", "popUpDetails": [],
         //graphs fields
-        "defaultPluginName": "", "defaultGraphType": "", "graphTypes": [], "clmNameForLineGraph": "", "colorsForBars": "", "graphHeight": "", "graphBottomMargin": "", "graphBgStartColor": "", "graphBgEndColor": "", "graphFontColor": "", "graphTypeBgColor": "", "graphTypeFontColor": "", "labelRotation": "", "alphaGraph3D": "", "betaGraph3D": "", "xAxisLabel": "", "yAxisLabel": "", "xAxisFontSize": "", "yAxisFontSize": "", "annotationFontSize": "", "maxValueOfAxis": "", "parentWidgetGraph": "", "isActionBtnReqGraph": "",
+        "defaultPluginName": "highchart", "defaultGraphType": "BAR_GRAPH", "graphTypes": [], "clmNameForLineGraph": "", "colorsForBars": "", "graphHeight": "", "graphBottomMargin": "", "graphBgStartColor": "", "graphBgEndColor": "", "graphFontColor": "", "graphTypeBgColor": "", "graphTypeFontColor": "", "labelRotation": "", "alphaGraph3D": "", "betaGraph3D": "", "xAxisLabel": "", "yAxisLabel": "", "xAxisFontSize": "", "yAxisFontSize": "", "annotationFontSize": "", "maxValueOfAxis": "", "parentWidgetGraph": "", "isActionBtnReqGraph": "Yes", "minValueOfAxis": "",
         //kpi details
-        "kpiType": "", "kpiBorderWidth": "", "kpiBorderColor": "", "kpiIconType": "", "kpiTabIconImage": "", "kpiDefaultBgColor": "", "kpiDefaultFontColor": "", "kpiDefaultHoverBg": "", "kpiIconColor": "", "kpiBoxClickOptions": "", "kpiTabOpenOnClick": "", "kpiWidgetOpenOnClick": "", "kpiDashboardOpenOnClick": "",
+        "kpiType": "", "kpiBorderWidth": "", "kpiBorderColor": "", "kpiIconType": "FONT", "kpiTabIconImage": "", "kpiDefaultBgColor": "", "kpiDefaultFontColor": "", "kpiDefaultHoverBg": "", "kpiIconColor": "", "kpiBoxClickOptions": "0", "kpiTabOpenOnClick": "", "kpiWidgetOpenOnClick": "", "kpiDashboardOpenOnClick": "",
         "kpiTabLinkName": "", "kpiWidgetLinkName": "", "kpiLinkColor": "", "kpiLinkFontColor": "",
         //map fields
         "mapName": "", "parentWidgetMap": "", "mapIncreasingIntensity": "",
         //newsTicker Fields
-        "noOfNewsVisible": "", "newsSpeed": "", "newsInterval": "",
+        "noOfNewsVisible": "", "newsSpeed": "normal", "newsInterval": "5000",
         //iframe
         "urlForIframe": ""
       });
       setRadioValues({
-        widgetViewed: 'Tabular', isWidgetNameVisible: 'Yes', selectedModeQuery: 'Query', widgetPurpose: 'download',
+        widgetViewed: 'Tabular', isWidgetNameVisible: 'Yes', selectedModeQuery: 'Query', widgetPurpose: 'Download',
         widgetHeadingAlign: 'left', isRecordLimitReq: 'Yes', isWidgetBorderReq: 'Yes',
 
         isTableHeadingReq: 'Yes',
-        tableHeadingAlign: "datatype", isFirstRowHeading: 'Yes', isDataTblReq: 'Yes', isIndexNumReq: 'Yes',
-        isPaginationReq: 'Yes', isSearchReq: 'Yes', isHeadingFixed: 'Yes', isLastRowTotal: 'Yes', isCardViewMobile: 'yes', isShowPrntHeadChild: 'yes', isShowPrntParamsChild: 'yes', printPdfIn: 'landscape', pdfTheme: 'grid', isPdfHeadReqAllPgs: 'yes', showFilterDtlsInPdf: 'yes', isReportByJsPdfPlug: 'yes', isReportPrintDtReq: 'yes', isGlobalHeaderReq: 'yes', isTableBorderReq: 'yes', isPositiveWidget: 'yes', isDirectDownloadBtn: 'yes', isPopupBasedReq: 'yes', isTreeChildReq: 'yes', treeChildDataBy: "query", dataDisplay: "horizontal", isDataTblReqTree: 'Yes', isPaginationReqTree: 'Yes', isSearchReqTree: 'Yes',
+        tableHeadingAlign: "0", isFirstRowHeading: 'Yes', isDataTblReq: 'Yes', isIndexNumReq: 'Yes',
+        isPaginationReq: 'Yes', isSearchReq: 'Yes', isHeadingFixed: 'Yes', isLastRowTotal: 'Yes', isCardViewMobile: 'Yes', isShowPrntHeadChild: 'Yes', isShowPrntParamsChild: 'Yes', printPdfIn: 'landscape', pdfTheme: 'grid', isPdfHeadReqAllPgs: 'Yes', showFilterDtlsInPdf: 'Yes', isReportByJsPdfPlug: 'Yes', isReportPrintDtReq: 'Yes', isGlobalHeaderReq: 'Yes', isTableBorderReq: 'Yes', isPositiveWidget: 'Yes', isDirectDownloadBtn: 'Yes', isPopupBasedReq: 'No', isTreeChildReq: 'No', treeChildDataBy: "Query", dataDisplay: "horizontal", isDataTblReqTree: 'Yes', isPaginationReqTree: 'Yes', isSearchReqTree: 'Yes',
         //graphs fields
-        isDisplayGraphPlugin: "yes", isColorByPoint: "yes", isShowLegendOnExport: "yes", isFullLabelReq: "yes", isGraphScrollBarReq: "yes", isShowLegend: "yes", isDataLabels: "yes", isThree3D: "yes", isDirectDownloadBtnGraph: 'yes', isFirstClmGraphHeading: 'yes', isShowPrntHeadChildGraph: 'yes', isHideParent: 'yes',
+        isDisplayGraphPlugin: "Yes", isColorByPoint: "Yes", isShowLegendOnExport: "Yes", isFullLabelReq: "Yes", isGraphScrollBarReq: "Yes", isShowLegend: "Yes", isDataLabels: "Yes", isThree3D: "Yes", isDirectDownloadBtnGraph: 'Yes', isFirstClmGraphHeading: 'Yes', isShowPrntHeadChildGraph: 'Yes', isHideParent: 'Yes',
         //kpi
-        isWidgetShadowReq: "yes", isDownloadDataFromKpi: "yes",
+        isWidgetShadowReq: "Yes", isDownloadDataFromKpi: "Yes",
         //map
-        isChildBasedPrimaryKey: "yes", isHideParentMap: "yes",
+        isChildBasedPrimaryKey: "Yes", isHideParentMap: "Yes",
         //iframe
-        isSsoUrl: "yes"
+        isSsoUrl: "Yes"
       });
       setTabIndex(1);
       setTabName({ value: 1, label: "About Widget" })
@@ -252,6 +254,7 @@ const WidgetMaster = () => {
     if (singleData?.length > 0) {
       setValues({
         ...values,
+        id: singleData[0]?.rptId,
         widgetFor: singleData[0]?.dashboardFor,//
         widgetType: singleData[0]?.widgetType,//
         widgetNameDisplay: singleData[0]?.rptDisplayName,//
@@ -259,7 +262,7 @@ const WidgetMaster = () => {
         widgetRefreshTime: singleData[0]?.widgetRefreshTime,//
         widgetRefreshDelayTime: singleData[0]?.widgetRefreshDelayTime,//
         cachingStatus: singleData[0]?.cachingStatusForWidget,//
-        limit: singleData[0]?.limit,//======
+        limit: singleData[0]?.limitHTMLFromDb,//
         widgetHadingClr: singleData[0]?.widgetHeadingColor,//
         widgetTopMargin: singleData[0]?.widgetTopMargin,//
         //table
@@ -268,19 +271,24 @@ const WidgetMaster = () => {
         headingDisplayStyle: singleData[0]?.headingDisplayStyle,//
         recordsPerPage: singleData[0]?.recordPerPage,//
         pagePerBlock: singleData[0]?.pagePerBlock,//
-        DataScrollHeight: singleData[0]?.DataScrollHeight,//===============
-        parentWidget: singleData[0]?.parentWidget,//==============
-        columnNoToDisplay: singleData[0]?.columnNoToDisplay,//=============
-        leftClmNoToFixed: singleData[0]?.leftClmNoToFixed,//===========
-        rightClmNoToFixed: singleData[0]?.rightClmNoToFixed,//==========
+        DataScrollHeight: singleData[0]?.scrollYValue,//
+        parentWidget: singleData[0]?.parentReport,//
+        columnNoToDisplay: singleData[0]?.parentDisplaycolumnno,//
+        leftClmNoToFixed: singleData[0]?.leftColumnsToBeFixed,//
+        rightClmNoToFixed: singleData[0]?.rightColumnsToBeFixed,//
         linkedWidget: singleData[0]?.linkWidget,//
         actionBtnReq: singleData[0]?.isActionButtonReq,//
         pdfTableFontSize: singleData[0]?.pdfTableFontSize,//
         pdfTableHeadBarClr: singleData[0]?.pdfTableheaderBarColor,//
         pdfTableHeadTxtFontClr: singleData[0]?.pdfTableheadingFontColour,//
-        groupClmNoComma: singleData[0]?.groupClmNoComma,//================
-        query: singleData[0]?.query,//===============
+        groupClmNoComma: singleData[0]?.groupColumnNo,//
+
+        query: singleData[0]?.queryVO || [],//
         procedureName: singleData[0]?.procedureName,//=============
+        treeChildQuery: singleData[0]?.treeChildQuery,
+        treeChildProcedure: singleData[0]?.treeChildProcedure,
+        popUpDetails: singleData[0]?.drillDownJsonString?.length > 0 ? JSON?.parse(singleData[0]?.drillDownJsonString) : [],
+
         recordsPerPageTreeCh: singleData[0]?.treeChildrecordPerPage,//
         parameterOption: singleData[0]?.parameterOptions,//
         loadOption: singleData[0]?.widgetLoadOption,//
@@ -289,61 +297,62 @@ const WidgetMaster = () => {
         paraLabelFontColor: singleData[0]?.widgetParameterLabelFontColor,//
         jndiSavingData: singleData[0]?.JNDIid,//
         stmtTimeOut: singleData[0]?.statementTimeOut,//
-        lastUpdatedQuery: singleData[0]?.lastUpdatedQuery,//===========
-        FooterText: singleData[0]?.FooterText,//============
-        customMsgForNoData: singleData[0]?.customMsgForNoData,//===============
+        lastUpdatedQuery: singleData[0]?.lastUpdatedQuery,//
+        FooterText: singleData[0]?.footerText,//
+        customMsgForNoData: singleData[0]?.customMessage,//
         //graph
-        defaultPluginName: singleData[0]?.defaultPluginName,
-        defaultGraphType: singleData[0]?.defaultGraphType,
-        graphTypes: singleData[0]?.graphTypes,
-        clmNameForLineGraph: singleData[0]?.clmNameForLineGraph,
-        colorsForBars: singleData[0]?.colorsForBars,
-        graphHeight: singleData[0]?.graphHeight,
-        graphBottomMargin: singleData[0]?.graphBottomMargin,
-        graphBgStartColor: singleData[0]?.graphBgStartColor,
-        graphBgEndColor: singleData[0]?.graphBgEndColor,
-        graphFontColor: singleData[0]?.graphFontColor,
-        graphTypeBgColor: singleData[0]?.graphTypeBgColor,
-        graphTypeFontColor: singleData[0]?.graphTypeFontColor,
-        labelRotation: singleData[0]?.labelRotation,
-        alphaGraph3D: singleData[0]?.alphaGraph3D,
-        betaGraph3D: singleData[0]?.betaGraph3D,
-        xAxisLabel: singleData[0]?.xAxisLabel,
-        yAxisLabel: singleData[0]?.yAxisLabel,
-        xAxisFontSize: singleData[0]?.xAxisFontSize,
-        yAxisFontSize: singleData[0]?.yAxisFontSize,
-        annotationFontSize: singleData[0]?.annotationFontSize,
-        maxValueOfAxis: singleData[0]?.maxValueOfAxis,
-        parentWidgetGraph: singleData[0]?.parentWidgetGraph,
-        isActionBtnReqGraph: singleData[0]?.isActionBtnReqGraph,
+        defaultPluginName: singleData[0]?.graphPluginName,//
+        defaultGraphType: singleData[0]?.defaultgraphType,//
+        graphTypes: singleData[0]?.graphChangeOptions,//
+        clmNameForLineGraph: singleData[0]?.lineGraphColumnName,//
+        colorsForBars: singleData[0]?.colorForBars,//
+        graphHeight: singleData[0]?.graphHeight,//
+        graphBottomMargin: singleData[0]?.graphBottomMargin,//
+        graphBgStartColor: singleData[0]?.graphStartColor,//
+        graphBgEndColor: singleData[0]?.graphEndColor,//
+        graphFontColor: singleData[0]?.graphFontColor,//
+        graphTypeBgColor: singleData[0]?.graphTypeBGColor,//
+        graphTypeFontColor: singleData[0]?.graphTypeFontColor,//
+        labelRotation: singleData[0]?.rotation,//
+        alphaGraph3D: singleData[0]?.alpha,//
+        betaGraph3D: singleData[0]?.beta,//
+        xAxisLabel: singleData[0]?.xAxisLabel,//
+        yAxisLabel: singleData[0]?.yAxisLabel,//
+        xAxisFontSize: singleData[0]?.XAxisFontSize,//
+        yAxisFontSize: singleData[0]?.YAxisFontSize,//
+        annotationFontSize: singleData[0]?.annotationFontSize,//
+        maxValueOfAxis: singleData[0]?.maxValueOfAxis,//
+        minValueOfAxis: singleData[0]?.minValueOfAxis,//
+        parentWidgetGraph: singleData[0]?.parentReport,//
+        isActionBtnReqGraph: singleData[0]?.isActionButtonReq,//
         //kpi
-        kpiType: singleData[0]?.kpiType,
-        kpiBorderWidth: singleData[0]?.kpiBorderWidth,
-        kpiBorderColor: singleData[0]?.kpiBorderColor,
-        kpiIconType: singleData[0]?.kpiIconType,
-        kpiTabIconImage: singleData[0]?.kpiTabIconImage,
-        kpiDefaultBgColor: singleData[0]?.kpiDefaultBgColor,
-        kpiDefaultFontColor: singleData[0]?.kpiDefaultFontColor,
-        kpiDefaultHoverBg: singleData[0]?.kpiDefaultHoverBg,
-        kpiIconColor: singleData[0]?.kpiIconColor,
-        kpiBoxClickOptions: singleData[0]?.kpiBoxClickOptions,
-        kpiTabOpenOnClick: singleData[0]?.kpiTabOpenOnClick,
-        kpiWidgetOpenOnClick: singleData[0]?.kpiWidgetOpenOnClick,
-        kpiDashboardOpenOnClick: singleData[0]?.kpiDashboardOpenOnClick,
-        kpiTabLinkName: singleData[0]?.kpiTabLinkName,
-        kpiWidgetLinkName: singleData[0]?.kpiWidgetLinkName,
-        kpiLinkColor: singleData[0]?.kpiLinkColor,
-        kpiLinkFontColor: singleData[0]?.kpiLinkFontColor,
+        kpiType: singleData[0]?.kpiType,//================
+        kpiBorderWidth: singleData[0]?.kpiBorderWidth,//
+        kpiBorderColor: singleData[0]?.kpiBorderColor,//
+        kpiIconType: singleData[0]?.iconType,//
+        kpiTabIconImage: singleData[0]?.iconImageName,//
+        kpiDefaultBgColor: singleData[0]?.widgetBackgroundColour,//
+        kpiDefaultFontColor: singleData[0]?.widgetFontColour,//
+        kpiDefaultHoverBg: singleData[0]?.widgetHoverBackground,//
+        kpiIconColor: singleData[0]?.widgetIconColour,//
+        kpiBoxClickOptions: singleData[0]?.onClickKPITypeOption,//======
+        kpiTabOpenOnClick: singleData[0]?.onClickOfKPITabId,//
+        kpiWidgetOpenOnClick: singleData[0]?.onClickOfKPIWidgetId,//
+        kpiDashboardOpenOnClick: singleData[0]?.onClickOfKPIDashboardId,//
+        kpiTabLinkName: singleData[0]?.linkTab,//
+        kpiWidgetLinkName: singleData[0]?.linkWidget,//
+        kpiLinkColor: singleData[0]?.kpiLinkColor,//
+        kpiLinkFontColor: singleData[0]?.kpiLinkFontColor,//
         //map
-        mapName: singleData[0]?.mapName,
-        parentWidgetMap: singleData[0]?.parentWidgetMap,
-        mapIncreasingIntensity: singleData[0]?.mapIncreasingIntensity,
+        mapName: singleData[0]?.mapName,//
+        parentWidgetMap: singleData[0]?.parentReport,//
+        mapIncreasingIntensity: singleData[0]?.legendText,//
         //news
-        noOfNewsVisible: singleData[0]?.noOfNewsVisible,
-        newsSpeed: singleData[0]?.newsSpeed,
-        newsInterval: singleData[0]?.newsInterval,
+        noOfNewsVisible: singleData[0]?.newsVisible,//
+        newsSpeed: singleData[0]?.newsSpeed,//
+        newsInterval: singleData[0]?.newsTimeInterval,//
         //iframe
-        urlForIframe: singleData[0]?.urlForIframe,
+        urlForIframe: singleData[0]?.iframeURL,//
       });
       setRadioValues({
         ...radioValues,
@@ -356,7 +365,7 @@ const WidgetMaster = () => {
 
         selectedModeQuery: singleData[0]?.modeOfQuery,//
 
-        isTableHeadingReq: singleData[0]?.tableHeadingRequired,//
+        isTableHeadingReq: singleData[0]?.tableHeadingRequired === 'yes' || singleData[0]?.tableHeadingRequired === 'Yes' ? 'Yes' : 'No',//
         tableHeadingAlign: singleData[0]?.tableHeadingAlignment,//
         isFirstRowHeading: singleData[0]?.isFirstRowWidgetHeading,//
         isDataTblReq: singleData[0]?.isDataTableRequired,//
@@ -389,31 +398,458 @@ const WidgetMaster = () => {
         isPaginationReqTree: singleData[0]?.treeChildIsPaginationRequired,//
         isSearchReqTree: singleData[0]?.treeChildIsSearchRequired,//
         // Graph fields
-        isDisplayGraphPlugin: singleData[0]?.isDisplayGraphPlugin,
-        isColorByPoint: singleData[0]?.isColorByPoint,
-        isShowLegendOnExport: singleData[0]?.isShowLegendOnExport,
-        isFullLabelReq: singleData[0]?.isFullLabelReq,
-        isGraphScrollBarReq: singleData[0]?.isGraphScrollBarReq,
-        isShowLegend: singleData[0]?.isShowLegend,
-        isDataLabels: singleData[0]?.isDataLabels,
-        isThree3D: singleData[0]?.isThree3D,
-        isDirectDownloadBtnGraph: singleData[0]?.isDirectDownloadBtnGraph,
-        isFirstClmGraphHeading: singleData[0]?.isFirstClmGraphHeading,
-        isShowPrntHeadChildGraph: singleData[0]?.isShowPrntHeadChildGraph,
+        isDisplayGraphPlugin: singleData[0]?.isDisplayPluginCombo,//
+        isColorByPoint: singleData[0]?.isColorByPoint,//==========
+        isShowLegendOnExport: singleData[0]?.showLegendOnExport,//
+        isFullLabelReq: singleData[0]?.isFullLabelRequired,//
+        isGraphScrollBarReq: singleData[0]?.isScrollbarRequired,//
+        isShowLegend: singleData[0]?.showInLegend === 'true' ? 'Yes' : 'No',//
+        isDataLabels: singleData[0]?.dataLabels === 'true' ? "Yes" : 'No',//
+        isThree3D: singleData[0]?.is3d === 'true' ? 'Yes' : 'No',//
+        isDirectDownloadBtnGraph: singleData[0]?.isDirectDownloadRequired,//
+        isFirstClmGraphHeading: singleData[0]?.isFirstClmGraphHeading,//========
+        isShowPrntHeadChildGraph: singleData[0]?.showParentDetailsinChild,//
         isHideParent: singleData[0]?.isHideParent,//
         isRowClickable: singleData[0]?.isRowClickable,//
         // KPI fields
-        isWidgetShadowReq: singleData[0]?.isWidgetShadowReq,
-        isDownloadDataFromKpi: singleData[0]?.isDownloadDataFromKpi,
+        isWidgetShadowReq: singleData[0]?.isWidgetShadowRequired,//
+        isDownloadDataFromKpi: singleData[0]?.downloadDataFromKPI,//
         // Map fields
-        isChildBasedPrimaryKey: singleData[0]?.isChildBasedPrimaryKey,
-        isHideParentMap: singleData[0]?.isHideParentMap,
+        isChildBasedPrimaryKey: singleData[0]?.isChildBasedOnPK,//
+        isHideParentMap: singleData[0]?.isHideParent,//
         // Iframe fields
-        isSsoUrl: singleData[0]?.isSsoUrl,
+        isSsoUrl: singleData[0]?.isSSOUrl,//
       });
     }
   }, [singleData]);
 
+  const saveWidgetData = () => {
+    const {
+      widgetFor, widgetType, widgetNameDisplay, widgetNameInternal, widgetRefreshTime, widgetRefreshDelayTime, cachingStatus, limit, widgetHadingClr, widgetTopMargin,
+      //table
+      headingBgColor, headingFontColor, headingDisplayStyle, recordsPerPage, pagePerBlock, DataScrollHeight, parentWidget, columnNoToDisplay, leftClmNoToFixed, rightClmNoToFixed, linkedWidget, actionBtnReq, pdfTableFontSize, pdfTableHeadBarClr, pdfTableHeadTxtFontClr, groupClmNoComma, query, procedureName, recordsPerPageTreeCh, parameterOption, loadOption, paraComboBgColor, paraComboFontColor, paraLabelFontColor, jndiSavingData, stmtTimeOut, lastUpdatedQuery, FooterText, customMsgForNoData, treeChildQuery, treeChildProcedure, popUpDetails,
+      // graph fields
+      defaultPluginName, defaultGraphType, graphTypes, clmNameForLineGraph, colorsForBars, graphHeight, graphBottomMargin, graphBgStartColor, graphBgEndColor, graphFontColor, graphTypeBgColor, graphTypeFontColor, labelRotation, alphaGraph3D, betaGraph3D, xAxisLabel, yAxisLabel, xAxisFontSize,
+      yAxisFontSize, annotationFontSize, maxValueOfAxis, parentWidgetGraph, isActionBtnReqGraph, minValueOfAxis,
+      // KPI fields
+      kpiType, kpiBorderWidth, kpiBorderColor, kpiIconType, kpiTabIconImage, kpiDefaultBgColor, kpiDefaultFontColor, kpiDefaultHoverBg, kpiIconColor, kpiBoxClickOptions, kpiTabOpenOnClick, kpiWidgetOpenOnClick, kpiDashboardOpenOnClick, kpiTabLinkName, kpiWidgetLinkName, kpiLinkColor, kpiLinkFontColor,
+      // map fields
+      mapName, parentWidgetMap, mapIncreasingIntensity,
+      // newsTicker fields
+      noOfNewsVisible, newsSpeed, newsInterval,
+      // iframe
+      urlForIframe } = values;
+
+    const {
+      widgetViewed, isWidgetNameVisible, selectedModeQuery, widgetPurpose, widgetHeadingAlign, isRecordLimitReq, isWidgetBorderReq,
+      //table
+      isTableHeadingReq, tableHeadingAlign, isFirstRowHeading, isDataTblReq, isIndexNumReq, isPaginationReq, isSearchReq, isHeadingFixed, isLastRowTotal, isCardViewMobile, isShowPrntHeadChild, isShowPrntParamsChild, printPdfIn, pdfTheme, isPdfHeadReqAllPgs, showFilterDtlsInPdf,
+      isReportByJsPdfPlug, isReportPrintDtReq, isGlobalHeaderReq, isTableBorderReq, isPositiveWidget, isDirectDownloadBtn, isPopupBasedReq, isTreeChildReq, treeChildDataBy, dataDisplay, isDataTblReqTree,
+      isPaginationReqTree, isSearchReqTree,
+      // Graph fields
+      isDisplayGraphPlugin, isColorByPoint, isShowLegendOnExport, isFullLabelReq, isGraphScrollBarReq, isShowLegend,
+      isDataLabels, isThree3D, isDirectDownloadBtnGraph, isFirstClmGraphHeading, isShowPrntHeadChildGraph, isHideParent, isRowClickable,
+      // KPI fields
+      isWidgetShadowReq, isDownloadDataFromKpi,
+      // Map fields
+      isChildBasedPrimaryKey, isHideParentMap,
+      // Iframe fields
+      isSsoUrl
+    } = radioValues;
+
+    const val = {
+      dashboardFor: widgetFor,
+      masterName: "DashboardWidgetMst",
+      keyName: widgetNameDisplay,
+      jndiIdForGettingData: jndiSavingData,
+      statementTimeout: stmtTimeOut,
+      entryUserId: 101,
+      // lastModifiedUserId: 2,
+      jsonData: {
+        dashboardFor: widgetFor,
+        widgetType: widgetType,
+        rptDisplayName: widgetNameDisplay,
+        rptName: widgetNameInternal,
+        widgetRefreshTime: widgetRefreshTime,
+        widgetRefreshDelayTime: widgetRefreshDelayTime,
+        cachingStatusForWidget: cachingStatus,
+        limitHTMLFromDb: limit,
+        widgetHeadingColor: widgetHadingClr,
+        widgetTopMargin: widgetTopMargin,
+        //table
+        headingBackgroundColour: headingBgColor,
+        headingFontColour: headingFontColor,
+        headingDisplayStyle: headingDisplayStyle,
+        recordPerPage: recordsPerPage,
+        pagePerBlock: pagePerBlock,
+        scrollYValue: DataScrollHeight,
+        parentReport: parentWidget,
+        parentDisplaycolumnno: columnNoToDisplay,
+        leftColumnsToBeFixed: leftClmNoToFixed,
+        rightColumnsToBeFixed: rightClmNoToFixed,
+        linkWidget: linkedWidget?.length > 0 ? linkedWidget : kpiWidgetLinkName?.length > 0 ? kpiWidgetLinkName : [],
+        isActionButtonReq: actionBtnReq,
+        pdfTableFontSize: pdfTableFontSize,
+        pdfTableheaderBarColor: pdfTableHeadBarClr,
+        pdfTableheadingFontColour: pdfTableHeadTxtFontClr,
+        groupColumnNo: groupClmNoComma,
+        query: query,
+        procedureName: procedureName,
+        treeChildQuery: treeChildQuery,
+        treeChildProcedure: treeChildProcedure,
+        drillDownJsonString: popUpDetails,
+        treeChildrecordPerPage: recordsPerPageTreeCh,
+        parameterOptions: parameterOption,
+        widgetLoadOption: loadOption,
+        widgetParameterComboBGColor: paraComboBgColor,
+        widgetParameterComboFontColor: paraComboFontColor,
+        widgetParameterLabelFontColor: paraLabelFontColor,
+        JNDIid: jndiSavingData,
+        statementTimeOut: stmtTimeOut,
+        lastUpdatedQuery: lastUpdatedQuery,
+        footerText: FooterText,
+        customMessage: customMsgForNoData,
+        //graph
+        graphPluginName: defaultPluginName,
+        defaultgraphType: defaultGraphType,
+        graphChangeOptions: graphTypes,
+        lineGraphColumnName: clmNameForLineGraph,
+        colorForBars: colorsForBars,
+        graphHeight: graphHeight,
+        graphBottomMargin: graphBottomMargin,
+        graphStartColor: graphBgStartColor,
+        graphEndColor: graphBgEndColor,
+        graphFontColor: graphFontColor,
+        graphTypeBGColor: graphTypeBgColor,
+        graphTypeFontColor: graphTypeFontColor,
+        rotation: labelRotation,
+        alpha: alphaGraph3D,
+        beta: betaGraph3D,
+        xAxisLabel: xAxisLabel,
+        yAxisLabel: yAxisLabel,
+        XAxisFontSize: xAxisFontSize,
+        YAxisFontSize: yAxisFontSize,
+        annotationFontSize: annotationFontSize,
+        maxValueOfAxis: maxValueOfAxis,
+        minValueOfAxis: minValueOfAxis,
+        parentReportGraph: parentWidgetGraph,
+        isActionButtonReqGraph: isActionBtnReqGraph,
+        //kpi
+        kpiType: kpiType,
+        kpiBorderWidth: kpiBorderWidth,
+        kpiBorderColor: kpiBorderColor,
+        iconType: kpiIconType,
+        iconImageName: kpiTabIconImage,
+        widgetBackgroundColour: kpiDefaultBgColor,
+        widgetFontColour: kpiDefaultFontColor,
+        widgetHoverBackground: kpiDefaultHoverBg,
+        widgetIconColour: kpiIconColor,
+        onClickKPITypeOption: kpiBoxClickOptions,
+        onClickOfKPITabId: kpiTabOpenOnClick,
+        onClickOfKPIWidgetId: kpiWidgetOpenOnClick,
+        onClickOfKPIDashboardId: kpiDashboardOpenOnClick,
+        linkTab: kpiTabLinkName,
+        // linkWidget: kpiWidgetLinkName,
+        kpiLinkColor: kpiLinkColor,
+        kpiLinkFontColor: kpiLinkFontColor,
+        //map
+        mapName: mapName,
+        parentReportMap: parentWidgetMap,
+        legendText: mapIncreasingIntensity,
+        //news
+        newsVisible: noOfNewsVisible,
+        newsSpeed: newsSpeed,
+        newsTimeInterval: newsInterval,
+        //iframe
+        iframeURL: urlForIframe,
+
+        //RADIOVALUES
+        reportViewed: widgetViewed,
+        isWidgetNameVisible: isWidgetNameVisible,
+        widgetShowOrDownload: widgetPurpose,
+        widgetHeadingAlignment: widgetHeadingAlign,
+        isRecordsLimitedLineRequired: isRecordLimitReq,
+        isWidgetBorderRequired: isWidgetBorderReq,
+        modeOfQuery: selectedModeQuery,
+        //table
+        tableHeadingRequired: isTableHeadingReq,
+        tableHeadingAlignment: tableHeadingAlign,
+        isFirstRowWidgetHeading: isFirstRowHeading,
+        isDataTableRequired: isDataTblReq,
+        isIndexNumberRequired: isIndexNumReq,
+        isPaginationReq: isPaginationReq,
+        isDataSearchReq: isSearchReq,
+        isHeadingFixed: isHeadingFixed,
+        isLastRowTotal: isLastRowTotal,
+        isCardViewMobile: isCardViewMobile,
+        showParentDetailsinChild: isShowPrntHeadChild,
+        showParentParameterDetailsinChild: isShowPrntParamsChild,
+        printPDFIn: printPdfIn,
+        pdfTheme: pdfTheme,
+        isPdfHeaderReqInAllPages: isPdfHeadReqAllPgs,
+        showFilterDetailsInPDF: showFilterDtlsInPdf,
+        isReportByjsPDFPlugin: isReportByJsPdfPlug,
+        isReportPrintDateRequired: isReportPrintDtReq,
+        isGlobalHeaderRequired: isGlobalHeaderReq,
+        isTableBorderRequired: isTableBorderReq,
+        isPositiveWidget: isPositiveWidget,
+        isDirectDownloadRequired: isDirectDownloadBtn,
+        isPopupBasedOnDataClickRequired: isPopupBasedReq,
+        isTreeChildRequired: isTreeChildReq,
+        treeChildDataBy: treeChildDataBy,
+        treeChildDataDisplay: dataDisplay,
+        treeChildIsDataTableRequired: isDataTblReqTree,
+        treeChildIsPaginationRequired: isPaginationReqTree,
+        treeChildIsSearchRequired: isSearchReqTree,
+        //graph
+        isDisplayPluginCombo: isDisplayGraphPlugin,
+        isColorByPoint: isColorByPoint,
+        showLegendOnExport: isShowLegendOnExport,
+        isFullLabelRequired: isFullLabelReq,
+        isScrollbarRequired: isGraphScrollBarReq,
+        showInLegend: isShowLegend,
+        dataLabels: isDataLabels,
+        is3d: isThree3D,
+        isDirectDownloadRequiredGraph: isDirectDownloadBtnGraph,
+        isFirstClmGraphHeading: isFirstClmGraphHeading,
+        showParentDetailsinChildGraph: isShowPrntHeadChildGraph,
+        isHideParent: isHideParent,
+        isRowClickable: isRowClickable,
+        //kpi
+        isWidgetShadowRequired: isWidgetShadowReq,
+        downloadDataFromKPI: isDownloadDataFromKpi,
+        //map
+        isChildBasedOnPK: isChildBasedPrimaryKey,
+        isHideParentMap: isHideParentMap,
+        //iframe
+        isSSOUrl: isSsoUrl
+      }
+    };
+    fetchPostData("http://10.226.29.211:8025/hisutils/createWidget", val).then((data) => {
+      if (data) {
+        ToastAlert("Data Saved Successfully", "success");
+        getAllWidgetData(values?.widgetFor)
+        reset();
+      } else {
+        ToastAlert("Internal Error!", "error");
+      }
+    });
+  };
+
+  const updateWidgetData = () => {
+    const {
+      id, widgetFor, widgetType, widgetNameDisplay, widgetNameInternal, widgetRefreshTime, widgetRefreshDelayTime, cachingStatus, limit, widgetHadingClr, widgetTopMargin,
+      //table
+      headingBgColor, headingFontColor, headingDisplayStyle, recordsPerPage, pagePerBlock, DataScrollHeight, parentWidget, columnNoToDisplay, leftClmNoToFixed, rightClmNoToFixed, linkedWidget, actionBtnReq, pdfTableFontSize, pdfTableHeadBarClr, pdfTableHeadTxtFontClr, groupClmNoComma, query, procedureName, recordsPerPageTreeCh, parameterOption, loadOption, paraComboBgColor, paraComboFontColor, paraLabelFontColor, jndiSavingData, stmtTimeOut, lastUpdatedQuery, FooterText, customMsgForNoData, treeChildQuery, treeChildProcedure, popUpDetails,
+      // graph fields
+      defaultPluginName, defaultGraphType, graphTypes, clmNameForLineGraph, colorsForBars, graphHeight, graphBottomMargin, graphBgStartColor, graphBgEndColor, graphFontColor, graphTypeBgColor, graphTypeFontColor, labelRotation, alphaGraph3D, betaGraph3D, xAxisLabel, yAxisLabel, xAxisFontSize,
+      yAxisFontSize, annotationFontSize, maxValueOfAxis, parentWidgetGraph, isActionBtnReqGraph, minValueOfAxis,
+      // KPI fields
+      kpiType, kpiBorderWidth, kpiBorderColor, kpiIconType, kpiTabIconImage, kpiDefaultBgColor, kpiDefaultFontColor, kpiDefaultHoverBg, kpiIconColor, kpiBoxClickOptions, kpiTabOpenOnClick, kpiWidgetOpenOnClick, kpiDashboardOpenOnClick, kpiTabLinkName, kpiWidgetLinkName, kpiLinkColor, kpiLinkFontColor,
+      // map fields
+      mapName, parentWidgetMap, mapIncreasingIntensity,
+      // newsTicker fields
+      noOfNewsVisible, newsSpeed, newsInterval,
+      // iframe
+      urlForIframe } = values;
+
+    const {
+      widgetViewed, isWidgetNameVisible, selectedModeQuery, widgetPurpose, widgetHeadingAlign, isRecordLimitReq, isWidgetBorderReq,
+      //table
+      isTableHeadingReq, tableHeadingAlign, isFirstRowHeading, isDataTblReq, isIndexNumReq, isPaginationReq, isSearchReq, isHeadingFixed, isLastRowTotal, isCardViewMobile, isShowPrntHeadChild, isShowPrntParamsChild, printPdfIn, pdfTheme, isPdfHeadReqAllPgs, showFilterDtlsInPdf,
+      isReportByJsPdfPlug, isReportPrintDtReq, isGlobalHeaderReq, isTableBorderReq, isPositiveWidget, isDirectDownloadBtn, isPopupBasedReq, isTreeChildReq, treeChildDataBy, dataDisplay, isDataTblReqTree,
+      isPaginationReqTree, isSearchReqTree,
+      // Graph fields
+      isDisplayGraphPlugin, isColorByPoint, isShowLegendOnExport, isFullLabelReq, isGraphScrollBarReq, isShowLegend,
+      isDataLabels, isThree3D, isDirectDownloadBtnGraph, isFirstClmGraphHeading, isShowPrntHeadChildGraph, isHideParent, isRowClickable,
+      // KPI fields
+      isWidgetShadowReq, isDownloadDataFromKpi,
+      // Map fields
+      isChildBasedPrimaryKey, isHideParentMap,
+      // Iframe fields
+      isSsoUrl
+    } = radioValues;
+
+    const val = {
+      dashboardFor: widgetFor,
+      masterName: "DashboardWidgetMst",
+      keyName: widgetNameDisplay,
+      jndiIdForGettingData: jndiSavingData,
+      statementTimeout: stmtTimeOut,
+      entryUserId: 101,
+      // lastModifiedUserId: 2,
+      id: id,
+      jsonData: {
+        dashboardFor: widgetFor,
+        widgetType: widgetType,
+        rptDisplayName: widgetNameDisplay,
+        rptName: widgetNameInternal,
+        rptId: id,
+        widgetRefreshTime: widgetRefreshTime,
+        widgetRefreshDelayTime: widgetRefreshDelayTime,
+        cachingStatusForWidget: cachingStatus,
+        limitHTMLFromDb: limit,
+        widgetHeadingColor: widgetHadingClr,
+        widgetTopMargin: widgetTopMargin,
+        //table
+        headingBackgroundColour: headingBgColor,
+        headingFontColour: headingFontColor,
+        headingDisplayStyle: headingDisplayStyle,
+        recordPerPage: recordsPerPage,
+        pagePerBlock: pagePerBlock,
+        scrollYValue: DataScrollHeight,
+        parentReport: parentWidget,
+        parentDisplaycolumnno: columnNoToDisplay,
+        leftColumnsToBeFixed: leftClmNoToFixed,
+        rightColumnsToBeFixed: rightClmNoToFixed,
+        linkWidget: linkedWidget?.length > 0 ? linkedWidget : kpiWidgetLinkName?.length > 0 ? kpiWidgetLinkName : [],
+        isActionButtonReq: actionBtnReq,
+        pdfTableFontSize: pdfTableFontSize,
+        pdfTableheaderBarColor: pdfTableHeadBarClr,
+        pdfTableheadingFontColour: pdfTableHeadTxtFontClr,
+        groupColumnNo: groupClmNoComma,
+        query: query,
+        procedureName: procedureName,
+        treeChildQuery: treeChildQuery,
+        treeChildProcedure: treeChildProcedure,
+        drillDownJsonString: popUpDetails,
+        treeChildrecordPerPage: recordsPerPageTreeCh,
+        parameterOptions: parameterOption,
+        widgetLoadOption: loadOption,
+        widgetParameterComboBGColor: paraComboBgColor,
+        widgetParameterComboFontColor: paraComboFontColor,
+        widgetParameterLabelFontColor: paraLabelFontColor,
+        JNDIid: jndiSavingData,
+        statementTimeOut: stmtTimeOut,
+        lastUpdatedQuery: lastUpdatedQuery,
+        footerText: FooterText,
+        customMessage: customMsgForNoData,
+        //graph
+        graphPluginName: defaultPluginName,
+        defaultgraphType: defaultGraphType,
+        graphChangeOptions: graphTypes,
+        lineGraphColumnName: clmNameForLineGraph,
+        colorForBars: colorsForBars,
+        graphHeight: graphHeight,
+        graphBottomMargin: graphBottomMargin,
+        graphStartColor: graphBgStartColor,
+        graphEndColor: graphBgEndColor,
+        graphFontColor: graphFontColor,
+        graphTypeBGColor: graphTypeBgColor,
+        graphTypeFontColor: graphTypeFontColor,
+        rotation: labelRotation,
+        alpha: alphaGraph3D,
+        beta: betaGraph3D,
+        xAxisLabel: xAxisLabel,
+        yAxisLabel: yAxisLabel,
+        XAxisFontSize: xAxisFontSize,
+        YAxisFontSize: yAxisFontSize,
+        annotationFontSize: annotationFontSize,
+        maxValueOfAxis: maxValueOfAxis,
+        minValueOfAxis: minValueOfAxis,
+        parentReportGraph: parentWidgetGraph,
+        isActionButtonReqGraph: isActionBtnReqGraph,
+        //kpi
+        kpiType: kpiType,
+        kpiBorderWidth: kpiBorderWidth,
+        kpiBorderColor: kpiBorderColor,
+        iconType: kpiIconType,
+        iconImageName: kpiTabIconImage,
+        widgetBackgroundColour: kpiDefaultBgColor,
+        widgetFontColour: kpiDefaultFontColor,
+        widgetHoverBackground: kpiDefaultHoverBg,
+        widgetIconColour: kpiIconColor,
+        onClickKPITypeOption: kpiBoxClickOptions,
+        onClickOfKPITabId: kpiTabOpenOnClick,
+        onClickOfKPIWidgetId: kpiWidgetOpenOnClick,
+        onClickOfKPIDashboardId: kpiDashboardOpenOnClick,
+        linkTab: kpiTabLinkName,
+        // linkWidget: kpiWidgetLinkName,
+        kpiLinkColor: kpiLinkColor,
+        kpiLinkFontColor: kpiLinkFontColor,
+        //map
+        mapName: mapName,
+        parentReportMap: parentWidgetMap,
+        legendText: mapIncreasingIntensity,
+        //news
+        newsVisible: noOfNewsVisible,
+        newsSpeed: newsSpeed,
+        newsTimeInterval: newsInterval,
+        //iframe
+        iframeURL: urlForIframe,
+
+        //RADIOVALUES
+        reportViewed: widgetViewed,
+        isWidgetNameVisible: isWidgetNameVisible,
+        widgetShowOrDownload: widgetPurpose,
+        widgetHeadingAlignment: widgetHeadingAlign,
+        isRecordsLimitedLineRequired: isRecordLimitReq,
+        isWidgetBorderRequired: isWidgetBorderReq,
+        modeOfQuery: selectedModeQuery,
+        //table
+        tableHeadingRequired: isTableHeadingReq,
+        tableHeadingAlignment: tableHeadingAlign,
+        isFirstRowWidgetHeading: isFirstRowHeading,
+        isDataTableRequired: isDataTblReq,
+        isIndexNumberRequired: isIndexNumReq,
+        isPaginationReq: isPaginationReq,
+        isDataSearchReq: isSearchReq,
+        isHeadingFixed: isHeadingFixed,
+        isLastRowTotal: isLastRowTotal,
+        isCardViewMobile: isCardViewMobile,
+        showParentDetailsinChild: isShowPrntHeadChild,
+        showParentParameterDetailsinChild: isShowPrntParamsChild,
+        printPDFIn: printPdfIn,
+        pdfTheme: pdfTheme,
+        isPdfHeaderReqInAllPages: isPdfHeadReqAllPgs,
+        showFilterDetailsInPDF: showFilterDtlsInPdf,
+        isReportByjsPDFPlugin: isReportByJsPdfPlug,
+        isReportPrintDateRequired: isReportPrintDtReq,
+        isGlobalHeaderRequired: isGlobalHeaderReq,
+        isTableBorderRequired: isTableBorderReq,
+        isPositiveWidget: isPositiveWidget,
+        isDirectDownloadRequired: isDirectDownloadBtn,
+        isPopupBasedOnDataClickRequired: isPopupBasedReq,
+        isTreeChildRequired: isTreeChildReq,
+        treeChildDataBy: treeChildDataBy,
+        treeChildDataDisplay: dataDisplay,
+        treeChildIsDataTableRequired: isDataTblReqTree,
+        treeChildIsPaginationRequired: isPaginationReqTree,
+        treeChildIsSearchRequired: isSearchReqTree,
+        //graph
+        isDisplayPluginCombo: isDisplayGraphPlugin,
+        isColorByPoint: isColorByPoint,
+        showLegendOnExport: isShowLegendOnExport,
+        isFullLabelRequired: isFullLabelReq,
+        isScrollbarRequired: isGraphScrollBarReq,
+        showInLegend: isShowLegend,
+        dataLabels: isDataLabels,
+        is3d: isThree3D,
+        isDirectDownloadRequiredGraph: isDirectDownloadBtnGraph,
+        isFirstClmGraphHeading: isFirstClmGraphHeading,
+        showParentDetailsinChildGraph: isShowPrntHeadChildGraph,
+        isHideParent: isHideParent,
+        isRowClickable: isRowClickable,
+        //kpi
+        isWidgetShadowRequired: isWidgetShadowReq,
+        downloadDataFromKPI: isDownloadDataFromKpi,
+        //map
+        isChildBasedOnPK: isChildBasedPrimaryKey,
+        isHideParentMap: isHideParentMap,
+        //iframe
+        isSSOUrl: isSsoUrl
+      }
+    };
+    fetchUpdateData("http://10.226.29.211:8025/hisutils/modifyWidget", val).then((data) => {
+      if (data) {
+        ToastAlert("Data Updated Successfully", "success");
+        getAllWidgetData(values?.widgetFor)
+        reset();
+      } else {
+        ToastAlert("Internal Error!", "error");
+      }
+    });
+  };
 
   const widgetColumn = [
     {
@@ -438,7 +874,7 @@ const WidgetMaster = () => {
     },
     {
       name: 'Widget ID',
-      selector: row => parseInt(row.rptId),
+      selector: row => parseInt(row?.rptId),
       sortable: true,
       width: "10%"
     },
@@ -502,6 +938,10 @@ const WidgetMaster = () => {
       sortable: true,
     },
   ]
+  // console.log(values, 'values')
+  // console.log(radioValues, 'rdovalues')
+  console.log(singleData)
+  // console.log(allWidgetData?.filter(dt=>dt?.rptId == 11600023))
 
   return (
     <>
@@ -510,7 +950,7 @@ const WidgetMaster = () => {
         {values?.widgetFor &&
           <div className='row w-100 m-0'>
             <div className='col-sm-6 p-0 global-button-group'>
-              <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={true} onSave={null} onOpen={onOpenDataTable} onReset={reset} onParams={onOpenParams} onWeb={onOpenWebService} />
+              <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={true} onSave={actionMode === 'edit' ? updateWidgetData : saveWidgetData} onOpen={onOpenDataTable} onReset={reset} onParams={onOpenParams} onWeb={onOpenWebService} />
             </div>
             <div className='col-sm-6 p-0 global-tabs'>
               <TabNav isTabNav={true} tabNavData={tabNavMenus} setTabIndex={setTabIndex} tabName={tabName} setTabName={setTabName} />
@@ -526,7 +966,7 @@ const WidgetMaster = () => {
               }
 
               {tabName?.value === 2 &&
-                <QueryDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />
+                <QueryDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues}/>
               }
 
               {tabName?.value === 3 &&
@@ -535,15 +975,15 @@ const WidgetMaster = () => {
                     <TableDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} parentWidget={widgetDrpData} setValues={setValues} />
                   }
 
-                  {radioValues?.widgetViewed === "graph" &&
+                  {radioValues?.widgetViewed === "Graph" &&
                     <GraphWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} parentWidget={widgetDrpData} />
                   }
 
-                  {radioValues?.widgetViewed === "kpi" &&
+                  {radioValues?.widgetViewed === "KPI" &&
                     <KpiWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} />
                   }
 
-                  {radioValues?.widgetViewed === "map" &&
+                  {radioValues?.widgetViewed === "Map" &&
                     <MapWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} parentWidget={widgetDrpData} />
                   }
 
@@ -554,7 +994,7 @@ const WidgetMaster = () => {
 
               }
 
-              {(tabName?.value === 4 && (radioValues?.widgetViewed === "map" || radioValues?.widgetViewed === "graph" || radioValues?.widgetViewed === "Tabular")) &&
+              {(tabName?.value === 4 && (radioValues?.widgetViewed === "Map" || radioValues?.widgetViewed === "Graph" || radioValues?.widgetViewed === "Tabular")) &&
                 <ParamsDetail handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} pageName={'widget'} />}
 
               {tabName?.value === 5 &&

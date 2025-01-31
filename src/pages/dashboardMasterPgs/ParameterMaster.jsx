@@ -75,10 +75,10 @@ const ParameterMaster = () => {
       ToastAlert('Please select a record', 'warning');
     }
   }
-
-  const handleDeleteParams = (id) => {
+  
+  const handleDeleteParams = () => {
     if (selectedOption?.length > 0) {
-      const val = { "id": id };
+      const val = { "id": selectedOption[0]?.id, "dashboardFor": values?.parameterFor, "masterName": "ParameterMst" };
       fetchPostData("/hisutils/parameterDelete", val).then((data) => {
         if (data) {
           ToastAlert('Deleted Successfully!', 'success');
@@ -225,8 +225,8 @@ const ParameterMaster = () => {
 
 
   const onOpenDataTable = () => {
-    setShowDataTable(true)
-    setShowParamsTable(true)
+    setShowDataTable(true);
+    setShowParamsTable(true);
   }
 
   const onOpenWebService = () => {

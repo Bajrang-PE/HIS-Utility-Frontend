@@ -1,9 +1,10 @@
 import React from 'react'
 import InputSelect from '../../commons/InputSelect'
 import Select from 'react-select';
+import InputField from '../../commons/InputField';
 
 const MapWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, parentWidget,setValues } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, parentWidget, setValues } = props;
 
     return (
         <div>
@@ -26,41 +27,43 @@ const MapWidget = (props) => {
                             />
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is Child Based On Primary Key :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isChildBasedPrimaryKey"
-                                    id="isChildBasedPrimaryKeyYes"
-                                    value={'yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isChildBasedPrimaryKey === 'yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isChildBasedPrimaryKey"
-                                    id="isChildBasedPrimaryKeyNo"
-                                    value={'no'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isChildBasedPrimaryKey === 'no'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
+                    {values?.parentWidgetMap &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Is Child Based On Primary Key :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isChildBasedPrimaryKey"
+                                        id="isChildBasedPrimaryKeyYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isChildBasedPrimaryKey === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isChildBasedPrimaryKey"
+                                        id="isChildBasedPrimaryKeyNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isChildBasedPrimaryKey === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
                 {/* right columns */}
                 <div className='col-sm-6'>
@@ -91,45 +94,48 @@ const MapWidget = (props) => {
                                 className="backcolorinput react-select-multi"
                                 onChange={(e) => setValues({ ...values, ['parentWidgetMap']: e })}
                                 value={values?.parentWidgetMap}
+                                isClearable
                             // isSearchable={true}
                             />
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is Hide Parent :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isHideParentMap"
-                                    id="isHideParentMapYes"
-                                    value={'yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isHideParentMap === 'yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isHideParentMap"
-                                    id="isHideParentMapNo"
-                                    value={'no'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isHideParentMap === 'no'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
+                    {values?.parentWidgetMap &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Is Hide Parent :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isHideParentMap"
+                                        id="isHideParentMapYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isHideParentMap === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isHideParentMap"
+                                        id="isHideParentMapNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isHideParentMap === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
             {/* SECTION DEVIDER*/}
@@ -140,12 +146,13 @@ const MapWidget = (props) => {
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Increasing intensity of Green color shows : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
-                            <InputSelect
+                            <InputField
+                                type={'text'}
                                 className="backcolorinput "
                                 placeholder="Enter value..."
                                 name='mapIncreasingIntensity'
                                 id="mapIncreasingIntensity"
-                                options={[]}
+                                // options={[]}
                                 onChange={handleValueChange}
                                 value={values?.mapIncreasingIntensity}
                             />

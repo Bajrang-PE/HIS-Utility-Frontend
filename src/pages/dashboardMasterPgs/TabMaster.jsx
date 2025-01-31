@@ -14,12 +14,16 @@ import FooterDetails from '../../components/dashboardMasters/tabMaster/FooterDet
 import HelpDocs from '../../components/dashboardMasters/tabMaster/HelpDocs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import GlobalDataTable from '../../components/commons/GlobalDataTable';
 
 const TabMaster = () => {
 
-  const { dashboardForDt, getDashboardForDrpData, widgetDrpData, getAllWidgetData, getAllParameterData, parameterDrpData } = useContext(HISContext);
+  const { dashboardForDt, getDashboardForDrpData, widgetDrpData, getAllWidgetData, getAllParameterData, parameterDrpData, getAllTabsData, allTabsData, setShowDataTable, setSelectedOption, selectedOption } = useContext(HISContext);
   const [tabIndex, setTabIndex] = useState(1);
   const [tabName, setTabName] = useState({ value: 1, label: "About Tab" });
+  const [showTabsTable, setShowTabsTable] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+
 
   const [values, setValues] = useState({
     "tabFor": "", "tabNameDisplay": "", "tabNameInternal": "", "parentTab": "", "ellipseInDisplay": "",
@@ -55,6 +59,7 @@ const TabMaster = () => {
     if (values?.tabFor) {
       getAllWidgetData(values?.tabFor);
       getAllParameterData(values?.tabFor)
+      getAllTabsData(values?.tabFor)
     }
   }, [values?.tabFor])
 
@@ -100,6 +105,63 @@ const TabMaster = () => {
     }
   }
 
+  const onOpenDataTable = () => {
+    setShowDataTable(true)
+    setShowTabsTable(true)
+  }
+
+  const onTableClose = () => {
+    setShowTabsTable(false);
+    setSearchInput('');
+    setSelectedOption([]);
+  }
+
+
+  const column = [
+    {
+      name: <input
+        type="checkbox"
+        // checked={selectAll}
+        // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
+        disabled={true}
+        className="form-check-input log-select"
+      />,
+      cell: row =>
+        <div style={{ position: 'absolute', top: 4, left: 10 }}>
+          <span className="btn btn-sm text-white px-1 py-0 mr-1" >
+            <input
+              type="checkbox"
+              checked={selectedOption[0]?.id === row?.id}
+              onChange={(e) => { setSelectedOption([row]) }}
+            />
+          </span>
+        </div>,
+      width: "8%"
+    },
+    {
+      name: 'Tab ID',
+      selector: row => row.id,
+      sortable: true,
+      width: "8%"
+    },
+    {
+      name: 'Tab Name',
+      selector: row => row?.jsonData?.dashboardName || "---",
+      sortable: true,
+    },
+    {
+      name: 'Tab Display Name',
+      selector: row => row?.jsonData?.dashboardActualName || "---",
+      sortable: true,
+    },
+    {
+      name: 'Parent Name',
+      selector: row => allTabsData.filter(dt =>dt?.jsonData?.parentTabId && dt?.jsonData?.dashboardId === row?.jsonData?.parentTabId)[0]?.jsonData?.dashboardName || "---",
+      // selector: row => row?.jsonData?.parentTabId || "---",
+      sortable: true,
+    },
+  ]
+
   return (
     <>
 
@@ -107,7 +169,7 @@ const TabMaster = () => {
       <div className='main-master-page'>
         <div className='row w-100 m-0'>
           <div className='col-sm-6 p-0 global-button-group'>
-            <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={null} onOpen={null} onReset={null} onParams={null} onWeb={null} />
+            <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={null} onOpen={onOpenDataTable} onReset={null} onParams={null} onWeb={null} />
           </div>
           <div className='col-sm-6 p-0 global-tabs'>
             <TabNav isTabNav={true} tabNavData={tabNavMenus} setTabIndex={setTabIndex} tabName={tabName} setTabName={setTabName} />
@@ -126,7 +188,7 @@ const TabMaster = () => {
               <WidgetMapping handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} widgetDrpData={widgetDrpData} />
             }
             {tabName?.value === 4 &&
-              <ParamsDetail handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} parameterDrpData={parameterDrpData} pageName={'tab'}/>
+              <ParamsDetail handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} parameterDrpData={parameterDrpData} pageName={'tab'} />
             }
             {tabName?.value === 5 &&
               <JndiDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />
@@ -158,6 +220,9 @@ const TabMaster = () => {
             </div>
           </div>
         </div>
+        {showTabsTable &&
+          <GlobalDataTable title={"Tab List"} column={column} data={allTabsData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
+        }
       </div>
     </>
   )

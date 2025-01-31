@@ -6,6 +6,8 @@ import InputSelect from '../../components/commons/InputSelect'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faDatabase, faEdit, faFile, faRefresh, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { itemForDashboard, serverName } from '../../localData/DropDownData'
+import { fetchData } from '../../utils/ApiHooks'
+import { ToastAlert } from '../../utils/commonFunction'
 
 const DbConfigMaster = () => {
     const [values, setValues] = useState({
@@ -37,6 +39,19 @@ const DbConfigMaster = () => {
             setServerDetails({ ...serverDetails, [name]: value })
         }
     }
+
+    const checkDatabaseConnection = () => {
+        fetchData("http://10.226.29.211:8025/hisutils/check-db-connection").then((data) => {
+            if (data) {
+                // console.log(data, 'data');
+                ToastAlert(data)
+            } else {
+                console.log('error')
+            }
+        })
+    }
+
+
     return (
         <>
             <NavbarHeader />
@@ -804,7 +819,7 @@ const DbConfigMaster = () => {
                     </form>
                     <div className='text-center py-1 rounded-2 configuration-buttons'>
                         <button className='btn btn-sm me-1'><FontAwesomeIcon icon={faFile} className="dropdown-gear-icon me-1" />Save</button>
-                        <button className='btn btn-sm ms-1 me-1'><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Test DB Connection</button>
+                        <button className='btn btn-sm ms-1 me-1' onClick={checkDatabaseConnection}><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Test DB Connection</button>
                         <button className='btn btn-sm ms-1 me-1'><FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon me-1" />Reset</button>
                         <button className='btn btn-sm ms-1 me-1'><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Port Xml Data</button>
                         <button className='btn btn-sm ms-1'><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Clear All Cached Data</button>

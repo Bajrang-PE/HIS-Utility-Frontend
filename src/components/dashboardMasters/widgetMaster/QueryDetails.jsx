@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import InputField from '../../commons/InputField'
 import InputSelect from '../../commons/InputSelect'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,18 +9,35 @@ import { HISContext } from '../../../contextApi/HISContext'
 const QueryDetails = (props) => {
 
     const { showDataTable, setShowDataTable } = useContext(HISContext);
-    const { handleValueChange, handleRadioChange, radioValues, values } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
 
-    const [rows, setRows] = useState([{ queryLabel: "", mainQuery: "", dataTableReq: "", tableDataDisplay: "" }]);
-    const [procedureRows, setProcedureRows] = useState([{ queryLabel: "", webRefName: "", webId: "", dataTblReq: "", dataTblDisplay: "" }]);
+    const [rows, setRows] = useState([{ queryLabel: "", mainQuery: "", isMultiRowDataTable: "", tableDataDisplay: "", totalRecordCountQuery: "" }]);
+
+    const [procedureRows, setProcedureRows] = useState([{ queryLabel: "", serviceReferenceNumber: "", webserviceName: "", isMultiRowDataTable: "", tableDataDisplay: "" }]);
 
     const [showFormatModal, setShowFormatModal] = useState(false);
 
+    useEffect(() => {
+        if (values?.query?.length > 0 && radioValues?.selectedModeQuery === 'Query') {
+            setRows(values?.query);
+        } else if (values?.query?.length > 0 && radioValues?.selectedModeQuery === 'WebSevice') {
+            setProcedureRows(values?.query);
+        }
+    }, [values?.query, radioValues?.selectedModeQuery])
+
     // Handle input change
-    const handleInputChange = (index, field, value) => {
+    const handleInputRowChange = (index, field, value) => {
         const updatedRows = [...rows];
         updatedRows[index][field] = value;
         setRows(updatedRows);
+        setValues({ ...values, ['query']: updatedRows })
+    };
+
+    const handleInputWebChange = (index, field, value) => {
+        const updatedRows = [...procedureRows];
+        updatedRows[index][field] = value;
+        setProcedureRows(updatedRows);
+        setValues({ ...values, ['query']: updatedRows })
     };
 
     // Add a new row
@@ -28,7 +45,7 @@ const QueryDetails = (props) => {
         if (name === 'query') {
             setRows([...rows, { queryLabel: "", mainQuery: "", dataTableReq: "", tableDataDisplay: "" }]);
         } else if (name === "procedure") {
-            setProcedureRows([...procedureRows, { queryLabel: "", webRefName: "", webId: "", dataTblReq: "", dataTblDisplay: "" }])
+            setProcedureRows([...procedureRows, { queryLabel: "", serviceReferenceNumber: "", webserviceName: "", isMultiRowDataTable: "", tableDataDisplay: "" }])
         }
     };
 
@@ -46,6 +63,8 @@ const QueryDetails = (props) => {
     const closeFormatModal = () => {
         setShowFormatModal(false);
     }
+
+    console.log(procedureRows, 'rows');
 
     return (
         <>
@@ -94,9 +113,9 @@ const QueryDetails = (props) => {
                                     type="radio"
                                     id="selectedModeQueryWebService"
                                     name="selectedModeQuery"
-                                    value={'WebService'}
+                                    value={'WebSevice'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.selectedModeQuery === "WebService"}
+                                    checked={radioValues?.selectedModeQuery === "WebSevice"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     By Webservice
@@ -116,9 +135,64 @@ const QueryDetails = (props) => {
                                     By Parent
                                 </label>
                             </div>
+                            {radioValues?.widgetViewed === 'KPI' &&
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        id="selectedModeQueryHtmlText"
+                                        name="selectedModeQuery"
+                                        value={'HTML'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.selectedModeQuery === "HTML"}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        By HTML Text
+                                    </label>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
+                {radioValues?.widgetViewed === "Tabular" &&
+                    <div className='col-sm-6'>
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Is Data Table Required :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isDataTblReq"
+                                        id="isDataTblReqYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isDataTblReq === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isDataTblReq"
+                                        id="isDataTblReqNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isDataTblReq === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
             {/* FOR QUERY */}
             {(radioValues?.widgetViewed === "Tabular" && radioValues?.selectedModeQuery === "Query") &&
@@ -127,8 +201,14 @@ const QueryDetails = (props) => {
                         <thead className="text-white">
                             <tr className='header-devider m-0'>
                                 <th style={{ width: "15%" }}>Query Label</th>
-                                <th style={{ width: "25%" }}>Main Query</th>
-                                <th style={{ width: "15%" }}>Data Table Required</th>
+                                <th style={{ width: "20%" }}>Main Query</th>
+                                {radioValues?.isDataTblReq === 'Yes' &&
+                                    <th style={{ width: "20%" }}>Data Table Required</th>
+                                }
+                                {radioValues?.isDataTblReq === 'No' &&
+                                    <th style={{ width: "20%" }}>Total Record Count Query</th>
+                                }
+
                                 <th style={{ width: "15%" }}>Data Table Display</th>
                                 <th style={{ width: "15%" }}>
                                     <button
@@ -148,43 +228,54 @@ const QueryDetails = (props) => {
                                         <InputField
                                             type="text"
                                             className="backcolorinput"
-                                            name='serviceRefName'
-                                            id='serviceRefName'
-                                        // value={serverDetails?.serviceRefName}
-                                        // onChange={handleServerChange}
+                                            name='queryLabel'
+                                            id={`queryLabel-${index}`}
+                                            value={row?.queryLabel}
+                                            onChange={(e) => handleInputRowChange(index, 'queryLabel', e.target.value)}
                                         />
                                     </td>
                                     <td>
                                         <textarea
                                             className="form-control backcolorinput"
                                             placeholder="Enter value..."
-                                            name="query"
-                                            id='query'
+                                            name="mainQuery"
+                                            id={`mainQuery-${index}`}
                                             rows="1"
-                                        // onChange={handleValueChange}
-                                        // value={values?.query}
+                                            value={row?.mainQuery}
+                                            onChange={(e) => handleInputRowChange(index, 'mainQuery', e.target.value)}
                                         ></textarea>
                                     </td>
                                     <td>
-                                        <InputSelect
-                                            id="parameterFor"
-                                            name="parameterFor"
-                                            // placeholder="Select value..."
-                                            options={[{ value: 1, label: "Yes" }, { value: 0, label: "No" }]}
-                                            className="backcolorinput"
-                                        // value={values?.parameterFor}
-                                        // onChange={handleValueChange}
-                                        />
+                                        {radioValues?.isDataTblReq === 'Yes' &&
+                                            <InputSelect
+                                                name="isMultiRowDataTable"
+                                                options={[{ value: 'Yes', label: "Yes" }, { value: 'No', label: "No" }]}
+                                                className="backcolorinput"
+                                                id={`isMultiRowDataTable-${index}`}
+                                                value={row?.isMultiRowDataTable}
+                                                onChange={(e) => handleInputRowChange(index, 'isMultiRowDataTable', e.target.value)}
+                                            />
+                                        }
+                                        {radioValues?.isDataTblReq === 'No' &&
+                                            <textarea
+                                                className="form-control backcolorinput"
+                                                placeholder="Enter value..."
+                                                name="totalRecordCountQuery"
+                                                rows="1"
+                                                id={`totalRecordCountQuery-${index}`}
+                                                value={row?.totalRecordCountQuery}
+                                                onChange={(e) => handleInputRowChange(index, 'totalRecordCountQuery', e.target.value)}
+                                            ></textarea>}
                                     </td>
                                     <td>
                                         <InputSelect
-                                            id="parameterFor"
-                                            name="parameterFor"
+                                            name="tableDataDisplay"
                                             // placeholder="Select value..."
-                                            options={[{ value: 1, label: "Horizontal" }, { value: 0, label: "Vertical" }]}
+                                            options={[{ value: 'horizontal', label: "Horizontal" }, { value: 'vertical', label: "Vertical" }]}
                                             className="backcolorinput"
-                                        // value={values?.parameterFor}
-                                        // onChange={handleValueChange}
+                                            id={`tableDataDisplay-${index}`}
+                                            value={row?.tableDataDisplay}
+                                            onChange={(e) => handleInputRowChange(index, 'tableDataDisplay', e.target.value)}
                                         />
                                     </td>
 
@@ -251,7 +342,7 @@ const QueryDetails = (props) => {
             }
 
             {/* FOR WEBSERVICE tabular */}
-            {(radioValues?.widgetViewed === "Tabular" && radioValues?.selectedModeQuery === "WebService") &&
+            {(radioValues?.widgetViewed === "Tabular" && radioValues?.selectedModeQuery === "WebSevice") &&
                 <div className="table-responsive row p-1">
                     <table className="table table-borderless text-center mb-0">
                         <thead className="text-white">
@@ -259,7 +350,9 @@ const QueryDetails = (props) => {
                                 <th style={{ width: "15%" }}>Query Label</th>
                                 <th style={{ width: "20%" }}>Webservice Reference Name</th>
                                 <th style={{ width: "15%" }}>Webservice Id</th>
-                                <th style={{ width: "15%" }}>Data Table Required</th>
+                                {radioValues?.isDataTblReq === 'Yes' &&
+                                    <th style={{ width: "15%" }}>Data Table Required</th>
+                                }
                                 <th style={{ width: "15%" }}>Table Data Display</th>
                                 <th style={{ width: "10%" }}>
                                     <button
@@ -288,54 +381,56 @@ const QueryDetails = (props) => {
                                         <InputField
                                             type="text"
                                             className="backcolorinput"
-                                            name='serviceRefName'
-                                            id='serviceRefName'
-                                        // value={serverDetails?.serviceRefName}
-                                        // onChange={handleServerChange}
+                                            name='queryLabel'
+                                            id={`queryLabel-${index}`}
+                                            value={row?.queryLabel}
+                                            onChange={(e) => handleInputWebChange(index, 'queryLabel', e.target.value)}
                                         />
                                     </td>
 
                                     <td>
                                         <InputSelect
-                                            id="parameterFor"
-                                            name="parameterFor"
-                                            // placeholder="Select value..."
-                                            options={[{ value: 1, label: "Yes" }, { value: 0, label: "No" }]}
+                                            name="serviceReferenceNumber"
+                                            placeholder="Select value..."
+                                            options={[{ value: 'local', label: "Localhost" }]}
                                             className="backcolorinput"
-                                        // value={values?.parameterFor}
-                                        // onChange={handleValueChange}
+                                            id={`serviceReferenceNumber-${index}`}
+                                            value={row?.serviceReferenceNumber}
+                                            onChange={(e) => handleInputWebChange(index, 'serviceReferenceNumber', e.target.value)}
                                         />
                                     </td>
                                     <td>
                                         <InputField
                                             type="text"
                                             className="backcolorinput"
-                                            name='serviceRefName'
-                                            id='serviceRefName'
-                                        // value={serverDetails?.serviceRefName}
-                                        // onChange={handleServerChange}
+                                            name='webserviceName'
+                                            id={`webserviceName-${index}`}
+                                            value={row?.webserviceName}
+                                            onChange={(e) => handleInputWebChange(index, 'webserviceName', e.target.value)}
                                         />
                                     </td>
+                                    {radioValues?.isDataTblReq === 'Yes' &&
+                                        <td>
+                                            <InputSelect
+                                                name="isMultiRowDataTable"
+                                                // placeholder="Select value..."
+                                                options={[{ value: 'Yes', label: "Yes" }, { value: 'No', label: "No" }]}
+                                                className="backcolorinput"
+                                                id={`isMultiRowDataTable-${index}`}
+                                                value={row?.isMultiRowDataTable}
+                                                onChange={(e) => handleInputWebChange(index, 'isMultiRowDataTable', e.target.value)}
+                                            />
+                                        </td>
+                                    }
                                     <td>
                                         <InputSelect
-                                            id="parameterFor"
-                                            name="parameterFor"
+                                            name="tableDataDisplay"
                                             // placeholder="Select value..."
-                                            options={[{ value: 1, label: "Yes" }, { value: 0, label: "No" }]}
+                                            options={[{ value: 'horizontal', label: "Horizontal" }, { value: 'vertical', label: "Vertical" }]}
                                             className="backcolorinput"
-                                        // value={values?.parameterFor}
-                                        // onChange={handleValueChange}
-                                        />
-                                    </td>
-                                    <td>
-                                        <InputSelect
-                                            id="parameterFor"
-                                            name="parameterFor"
-                                            // placeholder="Select value..."
-                                            options={[{ value: 1, label: "Horizontal" }, { value: 0, label: "Vertical" }]}
-                                            className="backcolorinput"
-                                        // value={values?.parameterFor}
-                                        // onChange={handleValueChange}
+                                            id={`tableDataDisplay-${index}`}
+                                            value={row?.tableDataDisplay}
+                                            onChange={(e) => handleInputWebChange(index, 'tableDataDisplay', e.target.value)}
                                         />
                                     </td>
                                     <td></td>
@@ -361,7 +456,7 @@ const QueryDetails = (props) => {
             }
 
             {/* FOR GRAPH AND QUERY */}
-            {((radioValues?.widgetViewed === "graph" || radioValues?.widgetViewed === "map") && radioValues?.selectedModeQuery === "Query") &&
+            {((radioValues?.widgetViewed === "Graph" || radioValues?.widgetViewed === "Map") && radioValues?.selectedModeQuery === "Query") &&
                 <div className="table-responsive row p-1">
                     <table className="table table-borderless text-center mb-0">
                         <thead className="text-white">
@@ -402,7 +497,7 @@ const QueryDetails = (props) => {
 
             {/* FOR GRAPH AND WEBSERVICE */}
             {/* SECTION DEVIDER*/}
-            {(radioValues?.widgetViewed !== "Tabular" && radioValues?.selectedModeQuery === "WebService") &&
+            {(radioValues?.widgetViewed !== "Tabular" && radioValues?.selectedModeQuery === "WebSevice") &&
                 <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                     {/* //left columns */}
                     <div className='col-sm-6'>
@@ -444,12 +539,12 @@ const QueryDetails = (props) => {
 
             {/* FOR KPI AND QUERY AND HTML TEXT */}
             {/* SECTION DEVIDER*/}
-            {((radioValues?.widgetViewed === "kpi" || radioValues?.widgetViewed === "newsTicker") && radioValues?.selectedModeQuery === "Query") &&
+            {((radioValues?.widgetViewed === "KPI" || radioValues?.widgetViewed === "newsTicker") && radioValues?.selectedModeQuery === "Query") &&
                 <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                     {/* //left columns */}
                     <div className='col-sm-6'>
                         <div className="form-group row">
-                            <label className="col-sm-5 col-form-label pe-0">Query/HTML : </label>
+                            <label className="col-sm-5 col-form-label pe-0">Main Query : </label>
                             <div className="col-sm-7 ps-0 align-content-center">
                                 <textarea
                                     className="form-control backcolorinput"

@@ -4,8 +4,10 @@ import axios from 'axios';
 // import Cookies from 'js-cookie';
 
 // const BaseUrl = 'http://10.226.50.25:8003';
-const BaseUrl = 'http://10.226.25.164:8024';  //pritee
+// const BaseUrl = 'http://10.226.25.164:8024';  //pritee
+const BaseUrl = 'http://10.226.17.6:8024';  //BG
 // const BaseUrl1 = 'http://10.226.29.211:8025/';  //Disha
+
 
 axios.defaults.baseURL = BaseUrl;
 
@@ -82,40 +84,23 @@ export const fetchData = async (url, params) => {
 // };
 
 //API FUNCTION TO UPDATE DATA
-// export const fetchUpdateData = async (url, data) => {
-//     try {
-//         const response = await axios.put(url, data, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             withCredentials: true,
-//         });
-//         console.log(response?.data, 'put')
-//         return response.data;
-//     } catch (error) {
-//         console.error('API Error:', error);
-//     }
-// };
+export const fetchUpdateData = async (url, data) => {
+    try {
+        const response = await axios.put(url, data);
+        console.log(response?.data, 'put')
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+    }
+};
 
 //API FUNCTION TO POST DATA
 export const fetchPostData = async (url, data) => {
     try {
-        // const encryptedData = encryptAesData(JSON.stringify(data));
-        // console.log(encryptedData, 'post')
-        const response = await axios.post(url, data, {
-            headers: {
-                "Content-Type": "application/json",
-            }
-        });
-        // const decryptedData = decryptAesOrRsa(response?.data)
-        // console.log(decryptedData, "decryptedData")
+        const response = await axios.post(url, data);
         return response.data;
     } catch (error) {
-        console.error('API Error:', error);
-        // if (error && error?.response && error?.response?.status && error?.response?.status === 409) {
-        //     const data = { status: 409, message: "Record Already Exist!" }
-        //     return data
-        // }
-        // return error.response;
+        console.log('API Error:', error);
+        // console.log('bgbbgbgbg')
     }
 };

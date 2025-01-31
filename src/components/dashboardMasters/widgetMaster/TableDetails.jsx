@@ -1,32 +1,61 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InputField from '../../commons/InputField'
 import InputSelect from '../../commons/InputSelect'
 import Select from 'react-select'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { headingDisplayStyleOptions, isActionButtonReqOptions } from '../../../localData/DropDownData'
 
 const TableDetails = (props) => {
     const { handleValueChange, handleRadioChange, radioValues, values, setValues, parentWidget } = props;
 
-    const [rows, setRows] = useState([{ queryLabel: "", mainQuery: "", dataTableReq: "", tableDataDisplay: "" }]);
+    const [rows, setRows] = useState([]);
+    const [newRow, setNewRow] = useState({ modeForOpeningPopup: "", drillWidgetName: "", titleMsg: "", drillDownType: "", popupWidgetId: "" });
 
-    // Handle input change
-    const handleInputChange = (index, field, value) => {
-        const updatedRows = [...rows];
-        updatedRows[index][field] = value;
-        setRows(updatedRows);
+    useEffect(() => {
+        if (values?.popUpDetails?.length > 0) {
+            setRows(values?.popUpDetails)
+        }
+    }, [values?.popUpDetails])
+
+    const [isEditing, setIsEditing] = useState(null);
+
+    const handleInputChange = (field, e) => {
+        console.log(e, 'e')
+        if (e.target.name === 'popupWidgetId') {
+            setNewRow({ ...newRow, [field]: e.target.value, ['drillWidgetName']: e.target.label })
+        } else {
+            setNewRow({ ...newRow, [field]: e.target.value });
+        }
     };
 
-    // Add a new row
     const handleAddRow = () => {
-        setRows([...rows, { serviceName: "", numberOfUse: "" }]);
+        if (isEditing !== null) {
+            const updatedRows = [...rows];
+            updatedRows[isEditing] = newRow;
+            setRows(updatedRows);
+            setValues({ ...values, ['popUpDetails']: updatedRows })
+            setIsEditing(null);
+        } else {
+            let oldDt = values?.popUpDetails?.length > 0 ? values?.popUpDetails : [];
+            setRows([...rows, newRow]);
+            oldDt?.push(newRow)
+            setValues({ ...values, ['popUpDetails']: oldDt })
+        }
+        setNewRow({ modeForOpeningPopup: "", drillWidgetName: "", titleMsg: "", drillDownType: "", popupWidgetId: "" });
     };
 
-    // Remove a row
+    const handleEditRow = (index) => {
+        setIsEditing(index);
+        setNewRow(rows[index]);
+    };
+
     const handleRemoveRow = (index) => {
         const updatedRows = rows.filter((_, i) => i !== index);
         setRows(updatedRows);
+        setValues({ ...values, ['popUpDetails']: updatedRows })
     };
+
 
     return (
         <>
@@ -70,125 +99,130 @@ const TableDetails = (props) => {
                             </div>
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Heading Background Color : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type="color"
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='headingBgColor'
-                                id="headingBgColor"
-                                onChange={handleValueChange}
-                                value={values?.headingBgColor}
-                            />
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Heading Display Style : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputSelect
-                                className="backcolorinput "
-                                placeholder="select value..."
-                                name='headingDisplayStyle'
-                                id="headingDisplayStyle"
-                                options={[]}
-                                onChange={handleValueChange}
-                                value={values?.headingDisplayStyle}
-                            />
-                        </div>
-                    </div>
+                    {radioValues?.isTableHeadingReq === "Yes" &&
+                        <>
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">Heading Background Color : </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <InputField
+                                        type="color"
+                                        className="backcolorinput "
+                                        placeholder="Enter value..."
+                                        name='headingBgColor'
+                                        id="headingBgColor"
+                                        onChange={handleValueChange}
+                                        value={values?.headingBgColor}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">Heading Display Style : </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <InputSelect
+                                        className="backcolorinput "
+                                        placeholder="select value..."
+                                        name='headingDisplayStyle'
+                                        id="headingDisplayStyle"
+                                        options={headingDisplayStyleOptions}
+                                        onChange={handleValueChange}
+                                        value={values?.headingDisplayStyle}
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    }
 
                 </div>
 
                 {/* right columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Table Heading Alignment :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="tableHeadingAlignDType"
-                                    name="tableHeadingAlign"
-                                    value={'datatype'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.tableHeadingAlign === "datatype"}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    As per Data Type
-                                </label>
+                {radioValues?.isTableHeadingReq === "Yes" &&
+                    <div className='col-sm-6'>
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Table Heading Alignment :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        id="tableHeadingAlignDType"
+                                        name="tableHeadingAlign"
+                                        value={'0'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.tableHeadingAlign === "0"}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        As per Data Type
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        id="tableHeadingAlignCenter"
+                                        name="tableHeadingAlign"
+                                        value={'1'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.tableHeadingAlign === "1"}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        Center
+                                    </label>
+                                </div>
                             </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    id="tableHeadingAlignCenter"
-                                    name="tableHeadingAlign"
-                                    value={'center'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.tableHeadingAlign === "center"}
+                        </div>
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">Heading Font Color : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <InputField
+                                    type="color"
+                                    className="backcolorinput "
+                                    placeholder="Enter value..."
+                                    name='headingFontColor'
+                                    id="headingFontColor"
+                                    onChange={handleValueChange}
+                                    value={values?.headingFontColor}
                                 />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    Center
-                                </label>
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Is First Row Heading :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isFirstRowHeading"
+                                        id="isFirstRowHeadingYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isFirstRowHeading === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isFirstRowHeading"
+                                        id="isFirstRowHeadingNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isFirstRowHeading === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Heading Font Color : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type="color"
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='headingFontColor'
-                                id="headingFontColor"
-                                onChange={handleValueChange}
-                                value={values?.headingFontColor}
-                            />
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is First Row Heading :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isFirstRowHeading"
-                                    id="isFirstRowHeadingYes"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isFirstRowHeading === 'Yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isFirstRowHeading"
-                                    id="isFirstRowHeadingNo"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isFirstRowHeading === 'No'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+                }
             </div>
 
             <b><h6 className='header-devider m-0'>Table - Pagination and Records</h6></b>
@@ -196,41 +230,6 @@ const TableDetails = (props) => {
             <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is Data Table Required :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isDataTblReq"
-                                    id="isDataTblReqYes"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isDataTblReq === 'Yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isDataTblReq"
-                                    id="isDataTblReqNo"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isDataTblReq === 'No'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
-                            </div>
-                        </div>
-                    </div>
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">
                             Is Pagination Required :
@@ -266,55 +265,75 @@ const TableDetails = (props) => {
                             </div>
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Records per Page : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type="text"
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='recordsPerPage'
-                                id="recordsPerPage"
-                                onChange={handleValueChange}
-                                value={values?.recordsPerPage}
-                            />
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is Heading Fixed :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isHeadingFixed"
-                                    id="isHeadingFixedYes"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isHeadingFixed === 'Yes'}
+                    {radioValues?.isPaginationReq === 'Yes' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">Records per Page : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <InputField
+                                    type="text"
+                                    className="backcolorinput "
+                                    placeholder="Enter value..."
+                                    name='recordsPerPage'
+                                    id="recordsPerPage"
+                                    onChange={handleValueChange}
+                                    value={values?.recordsPerPage}
                                 />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isHeadingFixed"
-                                    id="isHeadingFixedNo"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isHeadingFixed === 'No'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
                             </div>
                         </div>
-                    </div>
+                    }
+                    {radioValues?.isDataTblReq === 'Yes' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Is Heading Fixed :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isHeadingFixed"
+                                        id="isHeadingFixedYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isHeadingFixed === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isHeadingFixed"
+                                        id="isHeadingFixedNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isHeadingFixed === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    {(radioValues?.isDataTblReq === 'Yes' && radioValues?.isHeadingFixed === 'Yes') &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">Data Scroll Height : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <InputField
+                                    type="text"
+                                    className="backcolorinput "
+                                    placeholder="Enter value..."
+                                    name='DataScrollHeight'
+                                    id="DataScrollHeight"
+                                    onChange={handleValueChange}
+                                    value={values?.DataScrollHeight}
+                                />
+                            </div>
+                        </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">
                             Is Last row Total :
@@ -353,41 +372,43 @@ const TableDetails = (props) => {
                 </div>
                 {/* right columns */}
                 <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is Index Number Required :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isIndexNumReq"
-                                    id="isIndexNumReqYes"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isIndexNumReq === 'Yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isIndexNumReq"
-                                    id="isIndexNumReqNo"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isIndexNumReq === 'No'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
+                    {radioValues?.isDataTblReq === 'Yes' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Is Index Number Required :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isIndexNumReq"
+                                        id="isIndexNumReqYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isIndexNumReq === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isIndexNumReq"
+                                        id="isIndexNumReqNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isIndexNumReq === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">
                             Is Search Required :
@@ -423,34 +444,22 @@ const TableDetails = (props) => {
                             </div>
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Page per Block : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type="text"
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='pagePerBlock'
-                                id="pagePerBlock"
-                                onChange={handleValueChange}
-                                value={values?.pagePerBlock}
-                            />
+                    {radioValues?.isPaginationReq === 'Yes' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">Page per Block : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <InputField
+                                    type="text"
+                                    className="backcolorinput "
+                                    placeholder="Enter value..."
+                                    name='pagePerBlock'
+                                    id="pagePerBlock"
+                                    onChange={handleValueChange}
+                                    value={values?.pagePerBlock}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Data Scroll Height : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type="text"
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='DataScrollHeight'
-                                id="DataScrollHeight"
-                                onChange={handleValueChange}
-                                value={values?.DataScrollHeight}
-                            />
-                        </div>
-                    </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">
                             Is Card view(for Mobile) :
@@ -462,9 +471,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isCardViewMobile"
                                     id="isCardViewMobileYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isCardViewMobile === 'yes'}
+                                    checked={radioValues?.isCardViewMobile === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -476,9 +485,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isCardViewMobile"
                                     id="isCardViewMobileNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isCardViewMobile === 'no'}
+                                    checked={radioValues?.isCardViewMobile === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -545,20 +554,22 @@ const TableDetails = (props) => {
                             </div>
                         </div>
                     }
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Column Nos. to Display : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type='text'
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='columnNoToDisplay'
-                                id="columnNoToDisplay"
-                                onChange={handleValueChange}
-                                value={values?.columnNoToDisplay}
-                            />
+                    {radioValues?.isShowPrntHeadChild === 'Yes' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">Column Nos. to Display : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <InputField
+                                    type='text'
+                                    className="backcolorinput "
+                                    placeholder="Enter value..."
+                                    name='columnNoToDisplay'
+                                    id="columnNoToDisplay"
+                                    onChange={handleValueChange}
+                                    value={values?.columnNoToDisplay}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Left Column Nos. to be fixed : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -579,7 +590,7 @@ const TableDetails = (props) => {
                             <Select
                                 id='linkedWidget'
                                 name='linkedWidget'
-                                options={[{ value: 1, label: "No Parent" }, { value: 2, label: "State" }]}
+                                options={parentWidget}
                                 isMulti
                                 placeholder="Select value..."
                                 className="backcolorinput react-select-multi"
@@ -603,9 +614,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isShowPrntHeadChild"
                                     id="isShowPrntHeadChildYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isShowPrntHeadChild === 'yes'}
+                                    checked={radioValues?.isShowPrntHeadChild === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -617,9 +628,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isShowPrntHeadChild"
                                     id="isShowPrntHeadChildNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isShowPrntHeadChild === 'no'}
+                                    checked={radioValues?.isShowPrntHeadChild === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -664,41 +675,43 @@ const TableDetails = (props) => {
                             </div>
                         </div>
                     }
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Show Parent Parameter details in Child :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isShowPrntParamsChild"
-                                    id="isShowPrntParamsChildYes"
-                                    value={'yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isShowPrntParamsChild === 'yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isShowPrntParamsChild"
-                                    id="isShowPrntParamsChildNo"
-                                    value={'no'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isShowPrntParamsChild === 'no'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
+                    {radioValues?.isShowPrntHeadChild === 'Yes' &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">
+                                Show Parent Parameter details in Child :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isShowPrntParamsChild"
+                                        id="isShowPrntParamsChildYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isShowPrntParamsChild === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isShowPrntParamsChild"
+                                        id="isShowPrntParamsChildNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isShowPrntParamsChild === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Right Column Nos. to be fixed : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -721,7 +734,7 @@ const TableDetails = (props) => {
                                 placeholder="Enter value..."
                                 name='actionBtnReq'
                                 id="actionBtnReq"
-                                options={[]}
+                                options={isActionButtonReqOptions}
                                 onChange={handleValueChange}
                                 value={values?.actionBtnReq}
                             />
@@ -760,9 +773,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="printPdfIn"
                                     id="printPdfInPotrait"
-                                    value={'potrait'}
+                                    value={'Potrait'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.printPdfIn === 'potrait'}
+                                    checked={radioValues?.printPdfIn === 'Potrait'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Potrait
@@ -844,9 +857,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="showFilterDtlsInPdf"
                                     id="showFilterDtlsInPdfYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.showFilterDtlsInPdf === 'yes'}
+                                    checked={radioValues?.showFilterDtlsInPdf === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -858,9 +871,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="showFilterDtlsInPdf"
                                     id="showFilterDtlsInPdfNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.showFilterDtlsInPdf === 'no'}
+                                    checked={radioValues?.showFilterDtlsInPdf === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -879,9 +892,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isReportPrintDtReq"
                                     id="isReportPrintDtReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isReportPrintDtReq === 'yes'}
+                                    checked={radioValues?.isReportPrintDtReq === 'Yes'}
 
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
@@ -894,9 +907,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isReportPrintDtReq"
                                     id="isReportPrintDtReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isReportPrintDtReq === 'no'}
+                                    checked={radioValues?.isReportPrintDtReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -915,9 +928,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isTableBorderReq"
                                     id="isTableBorderReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isTableBorderReq === 'yes'}
+                                    checked={radioValues?.isTableBorderReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -929,9 +942,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isTableBorderReq"
                                     id="isTableBorderReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isTableBorderReq === 'no'}
+                                    checked={radioValues?.isTableBorderReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -950,9 +963,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isPositiveWidget"
                                     id="isPositiveWidgetYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isPositiveWidget === 'yes'}
+                                    checked={radioValues?.isPositiveWidget === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -964,9 +977,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isPositiveWidget"
                                     id="isPositiveWidgetNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isPositiveWidget === 'no'}
+                                    checked={radioValues?.isPositiveWidget === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -985,9 +998,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isPopupBasedReq"
                                     id="isPopupBasedReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isPopupBasedReq === 'yes'}
+                                    checked={radioValues?.isPopupBasedReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -999,9 +1012,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isPopupBasedReq"
                                     id="isPopupBasedReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isPopupBasedReq === 'no'}
+                                    checked={radioValues?.isPopupBasedReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1037,9 +1050,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isPdfHeadReqAllPgs"
                                     id="isPdfHeadReqAllPgsYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isPdfHeadReqAllPgs === 'yes'}
+                                    checked={radioValues?.isPdfHeadReqAllPgs === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1051,9 +1064,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isPdfHeadReqAllPgs"
                                     id="isPdfHeadReqAllPgsNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isPdfHeadReqAllPgs === 'no'}
+                                    checked={radioValues?.isPdfHeadReqAllPgs === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1086,9 +1099,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isReportByJsPdfPlug"
                                     id="isReportByJsPdfPlugYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isReportByJsPdfPlug === 'yes'}
+                                    checked={radioValues?.isReportByJsPdfPlug === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1100,9 +1113,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isReportByJsPdfPlug"
                                     id="isReportByJsPdfPlugNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isReportByJsPdfPlug === 'no'}
+                                    checked={radioValues?.isReportByJsPdfPlug === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1121,9 +1134,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isGlobalHeaderReq"
                                     id="isGlobalHeaderReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isGlobalHeaderReq === 'yes'}
+                                    checked={radioValues?.isGlobalHeaderReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1135,9 +1148,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isGlobalHeaderReq"
                                     id="isGlobalHeaderReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isGlobalHeaderReq === 'no'}
+                                    checked={radioValues?.isGlobalHeaderReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1170,9 +1183,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isDirectDownloadBtn"
                                     id="isDirectDownloadBtnYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDirectDownloadBtn === 'yes'}
+                                    checked={radioValues?.isDirectDownloadBtn === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1184,9 +1197,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isDirectDownloadBtn"
                                     id="isDirectDownloadBtnNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isDirectDownloadBtn === 'no'}
+                                    checked={radioValues?.isDirectDownloadBtn === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1205,9 +1218,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isTreeChildReq"
                                     id="isTreeChildReqYes"
-                                    value={'yes'}
+                                    value={'Yes'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isTreeChildReq === 'yes'}
+                                    checked={radioValues?.isTreeChildReq === 'Yes'}
                                 />
                                 <label className="form-check-label" htmlFor="dbYes">
                                     Yes
@@ -1219,9 +1232,9 @@ const TableDetails = (props) => {
                                     type="radio"
                                     name="isTreeChildReq"
                                     id="isTreeChildReqNo"
-                                    value={'no'}
+                                    value={'No'}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.isTreeChildReq === 'no'}
+                                    checked={radioValues?.isTreeChildReq === 'No'}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     No
@@ -1233,308 +1246,346 @@ const TableDetails = (props) => {
             </div>
 
             {/* <b><h6 className='header-devider m-0'>Table - Popup Details</h6></b> */}
-            <b>Popup Details:-</b><br />
-            {/* SECTION DEVIDER parents and widgets*/}
-            <div className="table-responsive row p-1">
-                <table className="table table-borderless text-center mb-0">
-                    <thead className="text-white">
-                        <tr className='header-devider m-0'>
-                            <th style={{ width: "15%" }}>Mode No.</th>
-                            <th style={{ width: "25%" }}>Drill Down Type</th>
-                            <th style={{ width: "25%" }}>Widget</th>
-                            <th style={{ width: "15%" }}>Title Message</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <InputField
-                                    type="text"
-                                    className="backcolorinput"
-                                    name='serviceRefName'
-                                    id='serviceRefName'
-                                // value={serverDetails?.serviceRefName}
-                                // onChange={handleServerChange}
-                                />
-                            </td>
-                            <td>
-                                <InputSelect
-                                    // type="text"
-                                    className="backcolorinput"
-                                    name='serverUrl'
-                                    id='serverUrl'
-                                    options={[]}
-                                // value={serverDetails?.serverUrl}
-                                // onChange={handleServerChange}
-                                />
-                            </td>
-                            <td>
-                                <InputSelect
-                                    className="backcolorinput"
-                                    options={[]}
-                                    id="defaultMethod"
-                                    name="defaultMethod"
-                                // value={serverDetails?.defaultMethod}
-                                // onChange={handleServerChange}
-                                >
-                                </InputSelect>
-                            </td>
-                            <td>
-                                <InputField
-                                    type="text"
-                                    className="backcolorinput"
-                                    name="serviceUserName"
-                                    id='serviceUserName'
-                                // value={serverDetails?.serviceUserName}
-                                // onChange={handleServerChange}
-                                />
-                            </td>
-                            <td className='px-0 action-buttons'>
-                                <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={handleAddRow}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />Add</button>
-                            </td>
-                        </tr>
-                        {rows.map((row, index) => (
-                            <tr className='table-row-form text-start' key={index}>
-                                <td>{"localhost"}</td>
-                                <td>{"http://localhost:8080"}</td>
-                                <td>{"GET"}</td>
-                                <td>{"admin"}</td>
-                                <td className=''>
-                                    <div className='text-center'>
-                                        <button
-                                            className="btn btn-secondary btn-sm me-1 py-0 px-1"
-                                            onClick={() => alert("Edit feature coming soon!")}
+            {radioValues?.isPopupBasedReq === 'Yes' &&
+                <>
+                    <b>Popup Details:-</b><br />
+                    {/* SECTION DEVIDER parents and widgets*/}
+                    <div className="table-responsive row p-1">
+                        <table className="table table-borderless text-center mb-0">
+                            <thead className="text-white">
+                                <tr className='header-devider m-0'>
+                                    <th style={{ width: "15%" }}>Mode No.</th>
+                                    <th style={{ width: "25%" }}>Drill Down Type</th>
+                                    <th style={{ width: "25%" }}>Widget</th>
+                                    <th style={{ width: "15%" }}>Title Message</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <InputField
+                                            type="text"
+                                            className="backcolorinput"
+                                            name='modeForOpeningPopup'
+                                            id='modeForOpeningPopup'
+                                            onChange={(e) => handleInputChange("modeForOpeningPopup", e)}
+                                            value={newRow?.modeForOpeningPopup}
+                                        />
+                                    </td>
+                                    <td>
+                                        <InputSelect
+                                            // type="text"
+                                            className="backcolorinput"
+                                            name='drillDownType'
+                                            id='drillDownType'
+                                            options={[{ value: 'Widget', label: "Widget" }, { value: "Tab", label: "Tab" }]}
+                                            onChange={(e) => handleInputChange("drillDownType", e)}
+                                            value={newRow.drillDownType}
+                                        />
+                                    </td>
+                                    <td>
+                                        <InputSelect
+                                            className="backcolorinput"
+                                            id="popupWidgetId"
+                                            name="popupWidgetId"
+                                            options={[{ value: 1, label: "widgetData" }, { value: 2, label: "widgetData2" }]}
+                                            onChange={(e) => handleInputChange("popupWidgetId", e)}
+                                            value={newRow.popupWidgetId}
                                         >
-                                            <FontAwesomeIcon icon={faEdit} className="dropdown-gear-icon" size='xs' />
-                                        </button>
-                                        <button
-                                            className="btn btn-secondary btn-sm ms-1 py-0 px-1"
-                                            onClick={() => handleRemoveRow(index)}
-                                        >
-                                            <FontAwesomeIcon icon={faTrash} className="dropdown-gear-icon" size='xs' />
-                                        </button>
+                                        </InputSelect>
+                                    </td>
+                                    <td>
+                                        <InputField
+                                            type="text"
+                                            className="backcolorinput"
+                                            name="titleMsg"
+                                            id='titleMsg'
+                                            onChange={(e) => handleInputChange("titleMsg", e)}
+                                            value={newRow?.titleMsg}
+                                        />
+                                    </td>
+                                    <td className='px-0 action-buttons'>
+                                        <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={handleAddRow}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />Add</button>
+                                    </td>
+                                </tr>
+                                {rows.map((row, index) => (
+                                    <tr className='table-row-form text-start' key={index}>
+                                        <td>{row.modeForOpeningPopup || "---"}</td>
+                                        <td>{row.drillDownType || "---"}</td>
+                                        <td>{row.drillWidgetName || "---"}</td>
+                                        <td>{row.titleMsg || "---"}</td>
+                                        <td className=''>
+                                            <div className='text-center'>
+                                                <button
+                                                    className="btn btn-secondary btn-sm me-1 py-0 px-1"
+                                                    onClick={() => handleEditRow(index)}
+                                                >
+                                                    <FontAwesomeIcon icon={faEdit} className="dropdown-gear-icon" size='xs' />
+                                                </button>
+                                                <button
+                                                    className="btn btn-secondary btn-sm ms-1 py-0 px-1"
+                                                    onClick={() => handleRemoveRow(index)}
+                                                >
+                                                    <FontAwesomeIcon icon={faTrash} className="dropdown-gear-icon" size='xs' />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </>
+            }
+            {radioValues?.isTreeChildReq === 'Yes' &&
+                <>
+                    <b><h6 className='header-devider m-0'>Table - Tree Child</h6></b>
+                    {/* SECTION DEVIDER parents and widgets*/}
+                    <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                        {/* //left columns */}
+                        <div className='col-sm-6'>
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">
+                                    Tree Child Data By :
+                                </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="treeChildDataBy"
+                                            id="treeChildDataByQuery"
+                                            value={'Query'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.treeChildDataBy === 'Query'}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbYes">
+                                            By Query
+                                        </label>
                                     </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="treeChildDataBy"
+                                            id="treeChildDataByProcedure"
+                                            value={'Procedure'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.treeChildDataBy === 'Procedure'}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbNo">
+                                            By Procedure
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            {radioValues?.dataDisplay === 'horizontal' &&
+                                <>
+                                    <div className="form-group row">
+                                        <label className="col-sm-5 col-form-label pe-0">
+                                            Is Datatable Required :
+                                        </label>
+                                        <div className="col-sm-7 ps-0 align-content-center">
+                                            <div className="form-check form-check-inline">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="radio"
+                                                    name="isDataTblReqTree"
+                                                    id="isDataTblReqTreeYes"
+                                                    value={'Yes'}
+                                                    onChange={handleRadioChange}
+                                                    checked={radioValues?.isDataTblReqTree === 'Yes'}
+                                                />
+                                                <label className="form-check-label" htmlFor="dbYes">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                            <div className="form-check form-check-inline">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="radio"
+                                                    name="isDataTblReqTree"
+                                                    id="isDataTblReqTreeNo"
+                                                    value={'No'}
+                                                    onChange={handleRadioChange}
+                                                    checked={radioValues?.isDataTblReqTree === 'No'}
+                                                />
+                                                <label className="form-check-label" htmlFor="dbNo">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {radioValues?.isDataTblReqTree === 'Yes' &&
+                                        <div className="form-group row">
+                                            <label className="col-sm-5 col-form-label pe-0">
+                                                Is Pagination Required :
+                                            </label>
+                                            <div className="col-sm-7 ps-0 align-content-center">
+                                                <div className="form-check form-check-inline">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="isPaginationReqTree"
+                                                        id="isPaginationReqTreeYes"
+                                                        value={'Yes'}
+                                                        onChange={handleRadioChange}
+                                                        checked={radioValues?.isPaginationReqTree === 'Yes'}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="dbYes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div className="form-check form-check-inline">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="isPaginationReqTree"
+                                                        id="isPaginationReqTreeNo"
+                                                        value={'No'}
+                                                        onChange={handleRadioChange}
+                                                        checked={radioValues?.isPaginationReqTree === 'No'}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="dbNo">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </>
+                            }
 
-            <b><h6 className='header-devider m-0'>Table - Tree Child</h6></b>
-            {/* SECTION DEVIDER parents and widgets*/}
-            <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
-                {/* //left columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Tree Child Data By :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="treeChildDataBy"
-                                    id="treeChildDataByQuery"
-                                    value={'query'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.treeChildDataBy === 'query'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    By Query
+                            {radioValues?.treeChildDataBy === 'Query' &&
+                                <div className="form-group row">
+                                    <label className="col-sm-5 col-form-label pe-0">Query : </label>
+                                    <div className="col-sm-7 ps-0 align-content-center">
+                                        <textarea
+                                            className="form-control backcolorinput"
+                                            placeholder="Enter value..."
+                                            name="treeChildQuery"
+                                            id='treeChildQuery'
+                                            rows="2"
+                                            onChange={handleValueChange}
+                                            value={values?.treeChildQuery}
+                                        ></textarea>
+                                    </div>
+                                </div>
+                            }
+                            {radioValues?.treeChildDataBy === 'Procedure' &&
+                                <div className="form-group row">
+                                    <label className="col-sm-5 col-form-label pe-0">Procedure Name : </label>
+                                    <div className="col-sm-7 ps-0 align-content-center">
+                                        <InputField
+                                            type='text'
+                                            className="backcolorinput "
+                                            placeholder="Enter value..."
+                                            name='treeChildProcedure'
+                                            id="treeChildProcedure"
+                                            onChange={handleValueChange}
+                                            value={values?.treeChildProcedure}
+                                        />
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                        {/* //right columns */}
+                        <div className='col-sm-6'>
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">
+                                    Data Display :
                                 </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="dataDisplay"
+                                            id="dataDisplayHorizontal"
+                                            value={'horizontal'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.dataDisplay === 'horizontal'}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbYes">
+                                            Horizontal
+                                        </label>
+                                    </div>
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="dataDisplay"
+                                            id="dataDisplayVertical"
+                                            value={'vertical'}
+                                            onChange={handleRadioChange}
+                                            checked={radioValues?.dataDisplay === 'vertical'}
+                                        />
+                                        <label className="form-check-label" htmlFor="dbNo">
+                                            Vertical
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="treeChildDataBy"
-                                    id="treeChildDataByProcedure"
-                                    value={'procedure'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.treeChildDataBy === 'procedure'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    By Procedure
-                                </label>
-                            </div>
+                            {(radioValues?.dataDisplay === 'horizontal' && radioValues?.isDataTblReqTree === 'Yes') &&
+                                <>
+                                    <div className="form-group row">
+                                        <label className="col-sm-5 col-form-label pe-0">
+                                            Is Search Required :
+                                        </label>
+                                        <div className="col-sm-7 ps-0 align-content-center">
+                                            <div className="form-check form-check-inline">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="radio"
+                                                    name="isSearchReqTree"
+                                                    id="isSearchReqTreeYes"
+                                                    value={'Yes'}
+                                                    onChange={handleRadioChange}
+                                                    checked={radioValues?.isSearchReqTree === 'Yes'}
+                                                />
+                                                <label className="form-check-label" htmlFor="dbYes">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                            <div className="form-check form-check-inline">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="radio"
+                                                    name="isSearchReqTree"
+                                                    id="isSearchReqTreeNo"
+                                                    value={'No'}
+                                                    onChange={handleRadioChange}
+                                                    checked={radioValues?.isSearchReqTree === 'No'}
+                                                />
+                                                <label className="form-check-label" htmlFor="dbNo">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {radioValues?.isPaginationReqTree === 'Yes' &&
+                                        <div className="form-group row">
+                                            <label className="col-sm-5 col-form-label pe-0">Record Per Page : </label>
+                                            <div className="col-sm-7 ps-0 align-content-center">
+                                                <InputField
+                                                    type='text'
+                                                    className="backcolorinput "
+                                                    placeholder="Enter value..."
+                                                    name='recordsPerPageTreeCh'
+                                                    id="recordsPerPageTreeCh"
+                                                    onChange={handleValueChange}
+                                                    value={values?.recordsPerPageTreeCh}
+                                                />
+                                            </div>
+                                        </div>
+                                    }
+                                </>}
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is Datatable Required :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isDataTblReqTree"
-                                    id="isDataTblReqTreeYes"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isDataTblReqTree === 'Yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isDataTblReqTree"
-                                    id="isDataTblReqTreeNo"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isDataTblReqTree === 'No'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is Pagination Required :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isPaginationReqTree"
-                                    id="isPaginationReqTreeYes"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isPaginationReqTree === 'Yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isPaginationReqTree"
-                                    id="isPaginationReqTreeNo"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isPaginationReqTree === 'No'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Query : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <textarea
-                                className="form-control backcolorinput"
-                                placeholder="Enter value..."
-                                name="query"
-                                id='query'
-                                rows="2"
-                                onChange={handleValueChange}
-                                value={values?.query}
-                            ></textarea>
-                        </div>
-                    </div>
-                </div>
-                {/* //right columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Data Display :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="dataDisplay"
-                                    id="dataDisplayHorizontal"
-                                    value={'horizontal'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.dataDisplay === 'horizontal'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Horizontal
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="dataDisplay"
-                                    id="dataDisplayVertical"
-                                    value={'vertical'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.dataDisplay === 'vertical'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    Vertical
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is Search Required :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isSearchReqTree"
-                                    id="isSearchReqTreeYes"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isSearchReqTree === 'Yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isSearchReqTree"
-                                    id="isSearchReqTreeNo"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isSearchReqTree === 'No'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Record Per Page : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputField
-                                type='text'
-                                className="backcolorinput "
-                                placeholder="Enter value..."
-                                name='recordsPerPageTreeCh'
-                                id="recordsPerPageTreeCh"
-                                onChange={handleValueChange}
-                                value={values?.recordsPerPageTreeCh}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
+                </>
+            }
 
         </>
     )

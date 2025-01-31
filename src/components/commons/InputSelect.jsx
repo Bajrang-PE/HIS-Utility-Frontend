@@ -14,7 +14,8 @@ const InputSelect = ({
     style,
     errorMessage,
     placeholder,
-    multiple
+    multiple,
+    onClick
 }) => {
     return (
         <>
@@ -30,6 +31,7 @@ const InputSelect = ({
                 className={`form-select form-select-sm ${className}`}
                 style={style}
                 multiple={multiple ? multiple : false}
+                onClick={onClick}
                 
             >
                 {/* Render options dynamically */}
