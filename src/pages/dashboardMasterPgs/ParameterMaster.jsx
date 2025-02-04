@@ -24,6 +24,7 @@ const ParameterMaster = () => {
   const [values, setValues] = useState({
     "parameterFor": "", "parameterType": "1", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "1", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "1", "stmtTimeOut": "", "id": "", "shouldBeLess": "", "shouldBeGreater": "", "minDaysBefore": "", "maxDaysAfter": "", "parameterQueryForDate": ""
   })
+
   const [searchInput, setSearchInput] = useState('');
   const [showParamsTable, setShowParamsTable] = useState(false);
   const [showWebServiceTable, setShowWebServiceTable] = useState(false);
@@ -75,17 +76,17 @@ const ParameterMaster = () => {
       ToastAlert('Please select a record', 'warning');
     }
   }
-  
+
   const handleDeleteParams = () => {
     if (selectedOption?.length > 0) {
       const val = { "id": selectedOption[0]?.id, "dashboardFor": values?.parameterFor, "masterName": "ParameterMst" };
       fetchPostData("/hisutils/parameterDelete", val).then((data) => {
         if (data) {
           ToastAlert('Deleted Successfully!', 'success');
-          // setLoading(false);
+          getAllParameterData(values?.parameterFor)
           setSelectedOption([]);
+          reset();
         } else {
-          // setLoading(false);
           ToastAlert('Deletion Failed!', 'error');
         }
       })
@@ -119,7 +120,9 @@ const ParameterMaster = () => {
 
         placeHolder: placeHolder, defaultValueIfEmpty: defaultValueIfLeft,
         defaultValue: defaultValue, textBoxValidation: validation, textboxMaxlength: maxLength,
-        textboxMinlength: minLength, isMultipleSelectionRequired: isMultiSelectReq
+        textboxMinlength: minLength, isMultipleSelectionRequired: isMultiSelectReq,
+
+        lstOption : rows
       }
     };
 
@@ -127,6 +130,7 @@ const ParameterMaster = () => {
       if (data) {
         ToastAlert("Data Saved Successfully", "success");
         getAllParameterData(values?.parameterFor)
+        setActionMode('home');
         reset();
       } else {
         ToastAlert("Internal Error!", "error");
@@ -156,7 +160,9 @@ const ParameterMaster = () => {
 
         placeHolder: placeHolder, defaultValueIfEmpty: defaultValueIfLeft,
         defaultValue: defaultValue, textBoxValidation: validation, textboxMaxlength: maxLength,
-        textboxMinlength: minLength, isMultipleSelectionRequired: isMultiSelectReq
+        textboxMinlength: minLength, isMultipleSelectionRequired: isMultiSelectReq,
+
+        lstOption : rows
       }
     };
 
@@ -165,6 +171,7 @@ const ParameterMaster = () => {
         ToastAlert("Data Updated Successfully", "success");
         getAllParameterData(values?.parameterFor)
         reset();
+        setActionMode('home');
       } else {
         ToastAlert("Internal Error!", "error");
       }
@@ -218,7 +225,14 @@ const ParameterMaster = () => {
         defOptFilterTxt: jsonData.defaultOptionForFilter?.optionText || "",
         jndiSavingData: singleData[0]?.jndiIdForGettingData || "",
         stmtTimeOut: singleData[0]?.statementTimeout || "",
+
+        maxDaysAfter: jsonData?.maxDaysAfterCurrentDate || "",
+        minDaysBefore: jsonData?.minDaysBeforeCurrentDate || "",
+        shouldBeGreater: jsonData?.shouldBeGreaterThanField || "",
+        shouldBeLess: jsonData?.shouldBeLessThanField || "",
+        parameterQueryForDate: jsonData?.parameterQueryForDate || "",
       });
+      setRows(jsonData?.lstOption?.length > 0 ? jsonData?.lstOption : [])
       ToastAlert("Data Fetched", "success");
     }
   }, [singleData]);
@@ -244,6 +258,10 @@ const ParameterMaster = () => {
   const reset = () => {
     setValues({ "parameterFor": "", "parameterType": "combo", "parameterInternal": "", "parameterDisplay": "", "placeHolder": "", "parameterWidth": "", "parameterAlignment": "", "paraLabelWidth": "", "paraLabelAlignment": "", "paraControlWidth": "", "paraControlAlignment": "", "mandatory": "", "defaultValueIfLeft": "", "defaultValue": "", "validation": "", "maxLength": "", "minLength": "", "parentID": [], "modeForQuery": 'query', "query": "", "defaultOptValue": "", "defaultOptText": "", "defOptFilterVal": "", "defOptFilterTxt": "", "jndiSavingData": "", "stmtTimeOut": "", "id": "", "shouldBeLess": "", "shouldBeGreater": "", "minDaysBefore": "", "maxDaysAfter": "" })
     setActionMode('home');
+    setShowParamsTable(false);
+    setShowDataTable(false);
+    setShowWebServiceTable(false);
+    setRows([{ optionValue: "", optionText: "" }]);
   }
 
   const column = [
@@ -290,12 +308,16 @@ const ParameterMaster = () => {
     },
   ]
 
+  // console.log(singleData, 'single')
+  // console.log(values, 'val')
+  // console.log(parameterData?.filter(dt=>dt?.jsonData?.modeForQuery === 'multiRowOption'), 'vabgbl')
+
   return (
     <>
       <NavbarHeader />
       <div className='main-master-page'>
         {values?.parameterFor &&
-          <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={actionMode === 'edit' ? updateParametersData : saveParametersData} onOpen={onOpenDataTable} onReset={null} onParams={null} onWeb={onOpenWebService} />
+          <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={actionMode === 'edit' ? updateParametersData : saveParametersData} onOpen={onOpenDataTable} onReset={reset} onParams={null} onWeb={onOpenWebService} />
         }
         <div className='form-card m-auto p-2'>
           <div className='p-1'>
@@ -333,7 +355,7 @@ const ParameterMaster = () => {
                       // placeholder="Select value..."
                       options={parameterType}
                       value={values?.parameterType}
-                      onChange={handleValueChange}
+                      onChange={(e) => { handleValueChange(e);  }}
                       disabled={actionMode === 'edit' ? true : false}
                     />
                   </div>
@@ -774,7 +796,7 @@ const ParameterMaster = () => {
             }
 
             {/* MAIN DEVIDER for list options */}
-            {values?.modeForQuery === "multiRowOption" &&
+            {(values?.modeForQuery === "multiRowOption" && values?.parameterType !== '3' && values?.parameterType !== '2') &&
               <>
                 <b><h6 className='header-devider mt-2'> List Options</h6></b>
                 <div className="mx-4">

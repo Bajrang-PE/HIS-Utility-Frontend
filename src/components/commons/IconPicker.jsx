@@ -4,10 +4,16 @@ import InputField from "./InputField";
 
 const iconList = Object.keys(FaIcons);
 
-const IconPicker = ({setTabIcon}) => {
+const IconPicker = ({ setTabIcon, tabIcon, setValues,values }) => {
     const [selectedIcon, setSelectedIcon] = useState("");
     const [showPicker, setShowPicker] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+
+    useEffect(() => {
+        if (tabIcon) {
+            setSelectedIcon(tabIcon)
+        }
+    }, [tabIcon])
 
     // Filter icons based on search
     const filteredIcons = iconList.filter((icon) =>
@@ -19,6 +25,7 @@ const IconPicker = ({setTabIcon}) => {
         setSelectedIcon(iconName);
         setTabIcon(iconName);
         setShowPicker(false);
+        setValues({ ...values, ['iconName']: iconName })
     };
 
     const SelectedIconComponent = selectedIcon ? FaIcons[selectedIcon] : null;
@@ -28,26 +35,28 @@ const IconPicker = ({setTabIcon}) => {
     }
 
     const modalRef = useRef();
-    
-      const handleClickOutside = (event) => {
+
+    const handleClickOutside = (event) => {
         if (modalRef.current && !modalRef.current.contains(event.target)) {
-            setShowPicker(false); 
+            setShowPicker(false);
         }
-      };
-    
-      useEffect(() => {
+    };
+
+    useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
-          document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
-      }, []);
+    }, []);
+
+
 
     return (
         <div style={{ position: "relative" }} ref={modalRef}>
             {/* Input Field */}
             <div class="input-group flex-nowrap">
                 <span class="input-group-text backcolorinput-icon" id="addon-wrapping">
-                    {selectedIcon && (
+                    {(selectedIcon && SelectedIconComponent) && (
                         <SelectedIconComponent />
                     )}
                 </span>
@@ -58,7 +67,7 @@ const IconPicker = ({setTabIcon}) => {
                     readOnly
                     onClick={onOpenBox}
                     className='backcolorinput-icons form-select form-select-sm'
-                    style={{ cursor: "pointer"}}
+                    style={{ cursor: "pointer" }}
                 />
             </div>
 
@@ -79,7 +88,7 @@ const IconPicker = ({setTabIcon}) => {
                         boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
                         borderRadius: "5px"
                     }}
-                    
+
                 >
                     {/* Search Input */}
                     <input

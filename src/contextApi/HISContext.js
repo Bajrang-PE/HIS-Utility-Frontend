@@ -15,11 +15,14 @@ const HISContextData = ({ children }) => {
   const [allWidgetData, setAllWidgetData] = useState([]);
   const [dataServiceData, setDataServiceData] = useState([]);
   const [allTabsData, setAllTabsData] = useState([]);
+  const [userServiceData, setUserServiceData] = useState([]);
 
   //DROPDOWN DATA
   const [dashboardForDt, setDashboardForDt] = useState([]);
   const [parameterDrpData, setParameterDrpData] = useState([]);
   const [widgetDrpData, setWidgetDrpData] = useState([]);
+  const [tabDrpData, setTabDrpData] = useState([]);
+  const [dataServiceDrpData, setDataServiceDrpData] = useState([]);
 
   // dropdowns api call
   const getDashboardForDrpData = () => {
@@ -47,12 +50,24 @@ const HISContextData = ({ children }) => {
   }
 
   const getAllServiceData = () => {
-    fetchData("/hisutils/DataService").then((data) => {
+    fetchData("/hisutils/DataServiceDetails", { 'masterName': "GLOBAL" }).then((data) => {
       if (data) {
         setDataServiceData(data);
-        // setParameterDrpData(DrpDataValLab(data, 'parameterId', 'parameterName',true))
+        setDataServiceDrpData(DrpDataValLab(data, 'serviceId', 'serviceName',true))
       } else {
         setDataServiceData([]);
+        setDataServiceDrpData([]);
+      }
+    })
+  }
+
+  const getUserServiceData = () => {
+    fetchData("/hisutils/ServiceUserDetails", { 'masterName': "GLOBAL" }).then((data) => {
+      if (data) {
+        setUserServiceData(data);
+        // setParameterDrpData(DrpDataValLab(data, 'parameterId', 'parameterName',true))
+      } else {
+        setUserServiceData([]);
         // setParameterDrpData([]);
       }
     })
@@ -62,10 +77,10 @@ const HISContextData = ({ children }) => {
     fetchData("/hisutils/TabDetails", { 'masterName': dashFor }).then((data) => {
       if (data) {
         setAllTabsData(data);
-        // setParameterDrpData(DrpDataValLab(data, 'parameterId', 'parameterName',true))
+        setTabDrpData(DrpDataValLab(data, 'dashboardId', 'dashboardName', true))
       } else {
         setAllTabsData([]);
-        // setParameterDrpData([]);
+        setTabDrpData([]);
       }
     })
   }
@@ -73,8 +88,8 @@ const HISContextData = ({ children }) => {
   const getAllWidgetData = (dashFor) => {
     fetchData("http://10.226.29.211:8025/hisutils/allWidgetConfiguration", { 'dashboardFor': dashFor }).then((data) => {
       if (data) {
-        console.log(data?.filter(dt=>dt?.rptId === 11600025),'fdt')
-      const fdt =  data.filter(dt => dt?.rptId !== undefined && dt?.rptId !== null && dt?.rptId !== '');
+        console.log(data?.filter(dt => dt?.rptId === 11600025), 'fdt')
+        const fdt = data.filter(dt => dt?.rptId !== undefined && dt?.rptId !== null && dt?.rptId !== '');
         setAllWidgetData(fdt);
         setWidgetDrpData(DrpDataValLab(fdt, 'rptId', 'rptName', false))
       } else {
@@ -97,6 +112,8 @@ const HISContextData = ({ children }) => {
       dashboardForDt, getDashboardForDrpData,
       parameterDrpData,
       widgetDrpData,
+      tabDrpData,
+      dataServiceDrpData,
 
       // ALL DATA----------------------------------
       //PARAMETER DATA
@@ -106,7 +123,9 @@ const HISContextData = ({ children }) => {
       //data/web services
       getAllServiceData, dataServiceData,
       //tabs data
-      getAllTabsData, allTabsData
+      getAllTabsData, allTabsData,
+      //userservice
+      getUserServiceData, userServiceData
     }}>
       {children}
     </HISContext.Provider>

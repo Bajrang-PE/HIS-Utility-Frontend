@@ -9,19 +9,36 @@ import { HISContext } from '../../../contextApi/HISContext'
 const QueryDetails = (props) => {
 
     const { showDataTable, setShowDataTable } = useContext(HISContext);
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues, singleData } = props;
 
     const [rows, setRows] = useState([{ queryLabel: "", mainQuery: "", isMultiRowDataTable: "", tableDataDisplay: "", totalRecordCountQuery: "" }]);
 
     const [procedureRows, setProcedureRows] = useState([{ queryLabel: "", serviceReferenceNumber: "", webserviceName: "", isMultiRowDataTable: "", tableDataDisplay: "" }]);
 
     const [showFormatModal, setShowFormatModal] = useState(false);
+    const [isRightTab, setIsRightTab] = useState(true);
 
     useEffect(() => {
-        if (values?.query?.length > 0 && radioValues?.selectedModeQuery === 'Query') {
+        if (singleData?.length > 0) {
+            if (singleData[0]?.reportViewed === radioValues?.widgetViewed) {
+                setIsRightTab(true);
+            } else {
+                setIsRightTab(false);
+            }
+        } else {
+            setIsRightTab(true);
+        }
+    }, [singleData, radioValues?.widgetViewed])
+
+    // const isRightTab = (singleData?.length > 0 && singleData[0]?.reportViewed) === radioValues?.widgetViewed;
+
+    useEffect(() => {
+        if (values?.query?.length > 0 && radioValues?.selectedModeQuery !== 'WebSevice') {
             setRows(values?.query);
-        } else if (values?.query?.length > 0 && radioValues?.selectedModeQuery === 'WebSevice') {
-            setProcedureRows(values?.query);
+            setProcedureRows([{ queryLabel: "", serviceReferenceNumber: "", webserviceName: "", isMultiRowDataTable: "", tableDataDisplay: "" }])
+        } else if (values?.webQuery?.length > 0 && radioValues?.selectedModeQuery === 'WebSevice') {
+            setProcedureRows(values?.webQuery);
+            setRows([{ queryLabel: "", mainQuery: "", isMultiRowDataTable: "", tableDataDisplay: "", totalRecordCountQuery: "" }])
         }
     }, [values?.query, radioValues?.selectedModeQuery])
 
@@ -37,8 +54,9 @@ const QueryDetails = (props) => {
         const updatedRows = [...procedureRows];
         updatedRows[index][field] = value;
         setProcedureRows(updatedRows);
-        setValues({ ...values, ['query']: updatedRows })
+        setValues({ ...values, ['webQuery']: updatedRows })
     };
+
 
     // Add a new row
     const handleAddRow = (name) => {
@@ -64,7 +82,9 @@ const QueryDetails = (props) => {
         setShowFormatModal(false);
     }
 
-    console.log(procedureRows, 'rows');
+    // console.log(procedureRows, 'prows');
+    // console.log(rows, 'rows');
+    // console.log(isRightTab, 'values');
 
     return (
         <>
@@ -142,9 +162,9 @@ const QueryDetails = (props) => {
                                         type="radio"
                                         id="selectedModeQueryHtmlText"
                                         name="selectedModeQuery"
-                                        value={'HTML'}
+                                        value={'HTMLText'}
                                         onChange={handleRadioChange}
-                                        checked={radioValues?.selectedModeQuery === "HTML"}
+                                        checked={radioValues?.selectedModeQuery === "HTMLText"}
                                     />
                                     <label className="form-check-label" htmlFor="dbNo">
                                         By HTML Text
@@ -456,7 +476,7 @@ const QueryDetails = (props) => {
             }
 
             {/* FOR GRAPH AND QUERY */}
-            {((radioValues?.widgetViewed === "Graph" || radioValues?.widgetViewed === "Map") && radioValues?.selectedModeQuery === "Query") &&
+            {((radioValues?.widgetViewed === "Graph" || radioValues?.widgetViewed === "Criteria_Map") && radioValues?.selectedModeQuery === "Query") &&
                 <div className="table-responsive row p-1">
                     <table className="table table-borderless text-center mb-0">
                         <thead className="text-white">
@@ -472,21 +492,21 @@ const QueryDetails = (props) => {
                                     <InputField
                                         type="text"
                                         className="backcolorinput"
-                                        name='serviceRefName'
-                                        id='serviceRefName'
-                                    // value={serverDetails?.serviceRefName}
-                                    // onChange={handleServerChange}
+                                        name='queryLabel'
+                                        id='queryLabel'
+                                        value={values?.queryLabel}
+                                        onChange={(e) => { setValues({ ...values, ['queryLabel']: [e.target.value] }) }}
                                     />
                                 </td>
                                 <td>
                                     <textarea
                                         className="form-control backcolorinput"
                                         placeholder="Enter value..."
-                                        name="query"
-                                        id='query'
+                                        name="mainQuery"
+                                        id={`mainQuery-${0}`}
                                         rows="1"
-                                    // onChange={handleValueChange}
-                                    // value={values?.query}
+                                        value={rows[0]?.mainQuery}
+                                        onChange={(e) => handleInputRowChange(0, 'mainQuery', e.target.value)}
                                     ></textarea>
                                 </td>
                             </tr>
@@ -505,13 +525,12 @@ const QueryDetails = (props) => {
                             <label className="col-sm-5 col-form-label pe-0">Webservice Reference Name : </label>
                             <div className="col-sm-7 ps-0 align-content-center">
                                 <InputSelect
-                                    className="backcolorinput "
-                                    placeholder="Enter value..."
-                                    name='parameterOption'
-                                    id="parameterOption"
-                                    options={[]}
-                                    onChange={handleValueChange}
-                                    value={values?.parameterOption}
+                                    placeholder="Select value..."
+                                    options={[{ value: '1', label: "Localhost" }]}
+                                    className="backcolorinput"
+                                    id={`serviceReferenceNumber-${0}`}
+                                    value={procedureRows[0]?.serviceReferenceNumber}
+                                    onChange={(e) => handleInputWebChange(0, 'serviceReferenceNumber', e.target.value)}
                                 />
                             </div>
                         </div>
@@ -525,10 +544,10 @@ const QueryDetails = (props) => {
                                     type='text'
                                     className="backcolorinput "
                                     placeholder="Enter value..."
-                                    name='paraComboFontColor'
-                                    id="paraComboFontColor"
-                                    onChange={handleValueChange}
-                                    value={values?.paraComboFontColor}
+                                    name='webserviceName'
+                                    id={`webserviceName-${0}`}
+                                    value={procedureRows[0]?.webserviceName}
+                                    onChange={(e) => handleInputWebChange(0, 'webserviceName', e.target.value)}
                                 />
                             </div>
                         </div>
@@ -539,24 +558,42 @@ const QueryDetails = (props) => {
 
             {/* FOR KPI AND QUERY AND HTML TEXT */}
             {/* SECTION DEVIDER*/}
-            {((radioValues?.widgetViewed === "KPI" || radioValues?.widgetViewed === "newsTicker") && radioValues?.selectedModeQuery === "Query") &&
+            {((radioValues?.widgetViewed === "KPI" || radioValues?.widgetViewed === "News_Ticker") && (radioValues?.selectedModeQuery === "Query" || radioValues?.selectedModeQuery === "HTMLText")) &&
                 <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                     {/* //left columns */}
                     <div className='col-sm-6'>
-                        <div className="form-group row">
-                            <label className="col-sm-5 col-form-label pe-0">Main Query : </label>
-                            <div className="col-sm-7 ps-0 align-content-center">
-                                <textarea
-                                    className="form-control backcolorinput"
-                                    placeholder="Enter value..."
-                                    name="lastUpdatedQuery"
-                                    id='lastUpdatedQuery'
-                                    rows="2"
-                                    onChange={handleValueChange}
-                                    value={values?.lastUpdatedQuery}
-                                ></textarea>
+                        {radioValues?.selectedModeQuery === "Query" &&
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">Main Query : </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <textarea
+                                        className="form-control backcolorinput"
+                                        placeholder="Enter value..."
+                                        name="mainQuery"
+                                        id={`mainQuery-${0}`}
+                                        rows="2"
+                                        value={rows[0]?.mainQuery}
+                                        onChange={(e) => handleInputRowChange(0, 'mainQuery', e.target.value)}
+                                    ></textarea>
+                                </div>
                             </div>
-                        </div>
+                        }
+                        {radioValues?.selectedModeQuery === "HTMLText" &&
+                            <div className="form-group row">
+                                <label className="col-sm-5 col-form-label pe-0">HTML : </label>
+                                <div className="col-sm-7 ps-0 align-content-center">
+                                    <textarea
+                                        className="form-control backcolorinput"
+                                        placeholder="Enter value..."
+                                        name="htmlText"
+                                        id={`htmlText-${0}`}
+                                        rows="2"
+                                        value={values?.htmlText}
+                                        onChange={handleValueChange}
+                                    ></textarea>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             }

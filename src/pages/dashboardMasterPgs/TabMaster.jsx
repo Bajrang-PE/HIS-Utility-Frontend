@@ -15,24 +15,27 @@ import HelpDocs from '../../components/dashboardMasters/tabMaster/HelpDocs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import GlobalDataTable from '../../components/commons/GlobalDataTable';
+import { fetchPostData } from '../../utils/ApiHooks';
+import { ToastAlert } from '../../utils/commonFunction';
 
 const TabMaster = () => {
 
-  const { dashboardForDt, getDashboardForDrpData, widgetDrpData, getAllWidgetData, getAllParameterData, parameterDrpData, getAllTabsData, allTabsData, setShowDataTable, setSelectedOption, selectedOption } = useContext(HISContext);
+  const { dashboardForDt, getDashboardForDrpData, widgetDrpData, getAllWidgetData, getAllParameterData, parameterDrpData, getAllTabsData, allTabsData, setShowDataTable, setSelectedOption, selectedOption, actionMode, setActionMode, tabDrpData } = useContext(HISContext);
   const [tabIndex, setTabIndex] = useState(1);
   const [tabName, setTabName] = useState({ value: 1, label: "About Tab" });
   const [showTabsTable, setShowTabsTable] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const [singleData, setSingleData] = useState([]);
 
 
   const [values, setValues] = useState({
     "tabFor": "", "tabNameDisplay": "", "tabNameInternal": "", "parentTab": "", "ellipseInDisplay": "",
-    "tabIconImage": "",
+    "tabIconImage": "", "iconName": "", "id": '',
     //tab details
     "tabNameFontWeight": "", "tabDetailBgColor": "", "tabTopPadding": "", "buttonMarginHeading": "",
     "tabNameFontSize": "", "tabNameTxtDecorat": "", "tabDetailTitleColor": "",
     //parameter detail
-    "parameterOption": "1", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "paraRemark": "",
+    "parameterOption": "1", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "paraRemark": "", "selectedPara": "",
     //jndi
     "jndiSavingData": "", "stmtTimeOut": "",
     //footer
@@ -89,7 +92,7 @@ const TabMaster = () => {
 
   ]);
 
-  const saveTabsData = () => {
+  const saveMenuTabsData = () => {
     let nextTab = tabIndex + 1;
     if (tabNavMenus?.length >= nextTab) {
       setTabName(tabNavMenus[nextTab - 1])
@@ -116,6 +119,252 @@ const TabMaster = () => {
     setSelectedOption([]);
   }
 
+  const handleUpdateData = () => {
+    if (selectedOption?.length > 0) {
+      const selectedRow = allTabsData?.filter(dt => dt?.id === selectedOption[0]?.id)
+      setSingleData(selectedRow);
+      setActionMode('edit');
+      setShowDataTable(false);
+      setShowTabsTable(false);
+      setSelectedOption([]);
+    } else {
+      ToastAlert('Please select a record', 'warning');
+    }
+  }
+
+  useEffect(() => {
+    if (singleData?.length > 0) {
+      const jsonData = singleData[0]?.jsonData || {};
+      setValues({
+        ...values,
+        id: singleData[0]?.id,//
+        tabFor: singleData[0]?.dashboardFor,//
+        tabNameDisplay: jsonData?.dashboardName,///
+        tabNameInternal: jsonData?.dashboardActualName,//
+        parentTab: jsonData?.parentTabId,//
+        ellipseInDisplay: jsonData?.ellipseAfterNoOfCharacterInTabDisplayName,//
+        tabIconImage: jsonData?.iconImageName,//
+        iconName: jsonData?.iconName,//
+        // tab details:
+        tabNameFontWeight: jsonData?.tabnameFontWeight,//
+        tabDetailBgColor: jsonData?.tabBackgroundColor,
+        tabTopPadding: jsonData?.tabTopPadding,//
+        buttonMarginHeading: jsonData?.marginBottom,//
+        tabNameFontSize: jsonData?.tabnameFontSize,//
+        tabNameTxtDecorat: jsonData?.tabnameDecoration,//
+        tabDetailTitleColor: jsonData?.tabTitleFontColor,//
+        // parameter detail
+        parameterOption: jsonData?.parameterOptions,//
+        loadOption: jsonData?.tabLoadOption,//
+        paraComboBgColor: jsonData?.tabParameterComboBGColor,//
+        paraComboFontColor: jsonData?.tabParameterComboFontColor,//
+        paraLabelFontColor: jsonData?.tabParameterLabelFontColor,//
+        paraRemark: jsonData?.parameterRemarks,//
+        selectedPara: jsonData?.allParameters,//
+        // jndi
+        jndiSavingData: jsonData?.JNDIid,//
+        stmtTimeOut: jsonData?.statementTimeOut,//
+        // footer
+        footerAlignment: jsonData?.footerAlign,//
+        footerQuery: jsonData?.lastUpdatedQuery,//
+        footerText: jsonData?.footerText,//
+        webRefName: jsonData?.footerserviceReferenceNo,//
+        webServiceName: jsonData?.footerwebserviceUrl,//
+        // helpDocs
+        helpDocs: JSON.parse(jsonData?.docJsonString) || [],
+        // widget
+        widgetMappingDetail: jsonData?.lstDashboardWidgetMapping || [],
+      });
+
+      setRadioValues({
+        ...radioValues,
+        isTabUsedForDrill: jsonData?.isTabUsedForDrillDown,//
+        isTabNameInReportReq: jsonData?.tabNameInReportRequired,//
+        isCssTabIconReq: jsonData?.isCSSTabIconRequired,//
+
+        showTabNameInDetail: jsonData?.isShowTabNameInDetailTitle,//
+        widgetMaxMin: jsonData?.widgetMaxMinSize,//
+
+        isLegendCollapes: jsonData?.isLegendCollapes,//
+        isMarqueeReq: jsonData?.isMarqueeRequired,//
+        isLegendBorderReq: jsonData?.isLegendBorderRequired,//
+
+      })
+    }
+  }, [singleData]);
+
+
+  const saveTabData = () => {
+    const {
+      tabFor, tabNameDisplay, tabNameInternal, parentTab, ellipseInDisplay, tabIconImage, iconName,
+
+      tabNameFontWeight, tabDetailBgColor, tabTopPadding, buttonMarginHeading, tabNameFontSize, tabNameTxtDecorat, tabDetailTitleColor,
+
+      parameterOption, loadOption, paraComboBgColor, paraComboFontColor, paraLabelFontColor, paraRemark, selectedPara,
+
+      footerAlignment, footerQuery, footerText, webRefName, webServiceName,
+      // helpDocs
+      helpDocs,
+      // widget
+      widgetMappingDetail,
+      jndiSavingData, stmtTimeOut
+    } = values;
+
+    const {
+      isTabUsedForDrill, isTabNameInReportReq, isCssTabIconReq,
+      showTabNameInDetail, widgetMaxMin, isLegendCollapes,
+      isMarqueeReq, isLegendBorderReq, } = radioValues;
+
+    const val = {
+      dashboardFor: tabFor,
+      masterName: "DashboardMst",
+      entryUserId: 101,
+      jndiIdForGettingData: jndiSavingData,
+      statementTimeout: stmtTimeOut,
+      keyName: tabNameDisplay,
+      jsonData: {
+        //about
+        dashboardName: tabNameDisplay, dashboardActualName: tabNameInternal, parentTabId: parentTab, ellipseAfterNoOfCharacterInTabDisplayName: ellipseInDisplay, iconImageName: tabIconImage, iconName: iconName, isTabUsedForDrillDown: isTabUsedForDrill, tabNameInReportRequired: isTabNameInReportReq, isCSSTabIconRequired: isCssTabIconReq,
+        //tab
+        tabnameFontWeight: tabNameFontWeight, tabBackgroundColor: tabDetailBgColor, tabTopPadding: tabTopPadding, marginBottom: buttonMarginHeading, tabnameFontSize: tabNameFontSize, tabnameDecoration: tabNameTxtDecorat, tabTitleFontColor: tabDetailTitleColor,
+        //params
+        parameterOptions: parameterOption, tabLoadOption: loadOption, tabParameterComboBGColor: paraComboBgColor, tabParameterComboFontColor: paraComboFontColor, tabParameterLabelFontColor: paraLabelFontColor, parameterRemarks: paraRemark, allParameters: selectedPara,
+        //jndi
+        statementTimeOut: stmtTimeOut, JNDIid: jndiSavingData,
+        //footer and list
+        footerAlign: footerAlignment, lastUpdatedQuery: footerQuery, footerText: footerText, footerserviceReferenceNo: webRefName, footerwebserviceUrl: webServiceName, docJsonString: JSON.stringify(helpDocs),
+        lstDashboardWidgetMapping: widgetMappingDetail,
+
+        //radios
+        isShowTabNameInDetailTitle: showTabNameInDetail,
+        widgetMaxMinSize: widgetMaxMin,
+        isLegendCollapes: isLegendCollapes,
+        isMarqueeRequired: isMarqueeReq,
+        isLegendBorderRequired: isLegendBorderReq,
+
+      }
+    };
+
+    fetchPostData("/hisutils/Tabsave", val).then((data) => {
+      if (data) {
+        ToastAlert("Data Saved Successfully", "success");
+        getAllTabsData(values?.tabFor)
+        setActionMode('home');
+        reset();
+      } else {
+        ToastAlert("Internal Error!", "error");
+      }
+    });
+  };
+
+  const updateTabData = () => {
+    const {
+      tabFor, tabNameDisplay, tabNameInternal, parentTab, ellipseInDisplay, tabIconImage, iconName, id,
+
+      tabNameFontWeight, tabDetailBgColor, tabTopPadding, buttonMarginHeading, tabNameFontSize, tabNameTxtDecorat, tabDetailTitleColor,
+
+      parameterOption, loadOption, paraComboBgColor, paraComboFontColor, paraLabelFontColor, paraRemark, selectedPara,
+
+      footerAlignment, footerQuery, footerText, webRefName, webServiceName,
+      // helpDocs
+      helpDocs,
+      // widget
+      widgetMappingDetail,
+      jndiSavingData, stmtTimeOut
+    } = values;
+
+    const {
+      isTabUsedForDrill, isTabNameInReportReq, isCssTabIconReq,
+      showTabNameInDetail, widgetMaxMin, isLegendCollapes,
+      isMarqueeReq, isLegendBorderReq, } = radioValues;
+
+    const val = {
+      id: id,
+      dashboardFor: tabFor,
+      masterName: "DashboardMst",
+      entryUserId: 101,
+      jndiIdForGettingData: jndiSavingData,
+      statementTimeout: stmtTimeOut,
+      keyName: tabNameDisplay,
+      jsonData: {
+        //about
+        dashboardName: tabNameDisplay, dashboardActualName: tabNameInternal, parentTabId: parentTab, ellipseAfterNoOfCharacterInTabDisplayName: ellipseInDisplay, iconImageName: tabIconImage, iconName: iconName, isTabUsedForDrillDown: isTabUsedForDrill, tabNameInReportRequired: isTabNameInReportReq, isCSSTabIconRequired: isCssTabIconReq,
+        //tab
+        tabnameFontWeight: tabNameFontWeight, tabBackgroundColor: tabDetailBgColor, tabTopPadding: tabTopPadding, marginBottom: buttonMarginHeading, tabnameFontSize: tabNameFontSize, tabnameDecoration: tabNameTxtDecorat, tabTitleFontColor: tabDetailTitleColor,
+        //params
+        parameterOptions: parameterOption, tabLoadOption: loadOption, tabParameterComboBGColor: paraComboBgColor, tabParameterComboFontColor: paraComboFontColor, tabParameterLabelFontColor: paraLabelFontColor, parameterRemarks: paraRemark, allParameters: selectedPara,
+        //jndi
+        statementTimeOut: stmtTimeOut, JNDIid: jndiSavingData,
+        //footer and list
+        footerAlign: footerAlignment, lastUpdatedQuery: footerQuery, footerText: footerText, footerserviceReferenceNo: webRefName, footerwebserviceUrl: webServiceName, docJsonString: JSON.stringify(helpDocs),
+        lstDashboardWidgetMapping: widgetMappingDetail,
+
+        //radios
+        isShowTabNameInDetailTitle: showTabNameInDetail,
+        widgetMaxMinSize: widgetMaxMin,
+        isLegendCollapes: isLegendCollapes,
+        isMarqueeRequired: isMarqueeReq,
+        isLegendBorderRequired: isLegendBorderReq,
+
+      }
+    };
+
+
+    fetchPostData("/hisutils/parameterUpdate", val).then((data) => {
+      if (data) {
+        ToastAlert("Data Updated Successfully", "success");
+        getAllTabsData(values?.tabFor)
+        reset();
+        setActionMode('home');
+      } else {
+        ToastAlert("Internal Error!", "error");
+      }
+    });
+  };
+
+  const handleDeleteTab = () => {
+    if (selectedOption?.length > 0) {
+      const val = { "id": selectedOption[0]?.id, "dashboardFor": values?.tabFor, "masterName": "DashboardMst" };
+      fetchPostData("/hisutils/TabDelete", val).then((data) => {
+        if (data) {
+          ToastAlert('Deleted Successfully!', 'success');
+          getAllTabsData(values?.tabFor)
+          setSelectedOption([]);
+          reset();
+        } else {
+          ToastAlert('Deletion Failed!', 'error');
+        }
+      })
+    } else {
+      ToastAlert('Please select a record', 'warning');
+    }
+  }
+
+  const reset = () => {
+    setValues({
+      "tabFor": "", "tabNameDisplay": "", "tabNameInternal": "", "parentTab": "", "ellipseInDisplay": "",
+      "tabIconImage": "", "iconName": "",
+      //tab details
+      "tabNameFontWeight": "", "tabDetailBgColor": "", "tabTopPadding": "", "buttonMarginHeading": "",
+      "tabNameFontSize": "", "tabNameTxtDecorat": "", "tabDetailTitleColor": "",
+      //parameter detail
+      "parameterOption": "1", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "paraRemark": "",
+      //jndi
+      "jndiSavingData": "", "stmtTimeOut": "",
+      //footer
+      "footerAlignment": "", "footerQuery": "", "footerText": "", "webRefName": "", "webServiceName": "",
+      //helpDocs
+      "helpDocs": [],
+      //widget
+      "widgetMappingDetail": []
+    })
+    setActionMode('home');
+    setShowTabsTable(false);
+    setShowDataTable(false);
+    setTabIndex(1);
+    // setTabName({ value: 1, label: "About Widget" })
+    setTabName({ value: 1, label: "About Tab" });
+  }
 
   const column = [
     {
@@ -156,36 +405,41 @@ const TabMaster = () => {
     },
     {
       name: 'Parent Name',
-      selector: row => allTabsData.filter(dt =>dt?.jsonData?.parentTabId && dt?.jsonData?.dashboardId === row?.jsonData?.parentTabId)[0]?.jsonData?.dashboardName || "---",
+      selector: row => allTabsData.filter(dt => dt?.jsonData?.parentTabId && dt?.jsonData?.dashboardId === row?.jsonData?.parentTabId)[0]?.jsonData?.dashboardName || "No Parent",
       // selector: row => row?.jsonData?.parentTabId || "---",
       sortable: true,
     },
   ]
+
+  console.log(singleData, 'single')
+  console.log(values, 'values')
 
   return (
     <>
 
       <NavbarHeader />
       <div className='main-master-page'>
-        <div className='row w-100 m-0'>
-          <div className='col-sm-6 p-0 global-button-group'>
-            <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={null} onOpen={onOpenDataTable} onReset={null} onParams={null} onWeb={null} />
+        {values?.tabFor &&
+          <div className='row w-100 m-0'>
+            <div className='col-sm-6 p-0 global-button-group'>
+              <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={actionMode === 'edit' ? updateTabData : saveTabData} onOpen={onOpenDataTable} onReset={reset} onParams={null} onWeb={null} />
+            </div>
+            <div className='col-sm-6 p-0 global-tabs'>
+              <TabNav isTabNav={true} tabNavData={tabNavMenus} setTabIndex={setTabIndex} tabName={tabName} setTabName={setTabName} />
+            </div>
           </div>
-          <div className='col-sm-6 p-0 global-tabs'>
-            <TabNav isTabNav={true} tabNavData={tabNavMenus} setTabIndex={setTabIndex} tabName={tabName} setTabName={setTabName} />
-          </div>
-        </div>
+        }
 
         <div className='form-card m-auto p-2'>
           <div className='p-1'>
             {tabName?.value === 1 &&
-              <AboutTab handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} dashboardForDt={dashboardForDt} />
+              <AboutTab handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} dashboardForDt={dashboardForDt} setValues={setValues} tabDrpData={tabDrpData} />
             }
             {tabName?.value === 2 &&
               <TabDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />
             }
             {tabName?.value === 3 &&
-              <WidgetMapping handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} widgetDrpData={widgetDrpData} />
+              <WidgetMapping handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} widgetDrpData={widgetDrpData} setValues={setValues} />
             }
             {tabName?.value === 4 &&
               <ParamsDetail handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} parameterDrpData={parameterDrpData} pageName={'tab'} />
@@ -197,31 +451,32 @@ const TabMaster = () => {
               <FooterDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />
             }
             {tabName?.value === 7 &&
-              <HelpDocs handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />
+              <HelpDocs handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} />
             }
 
 
             <b><h6 className='header-devider mt-4'></h6></b>
-
-            <div className='text-center mt-2 pre-nxt-btn'>
-              <button className='btn btn-sm ms-1'
-                onClick={previousTab}
-                disabled={tabIndex > 1 ? false : true}
-              >
-                <FontAwesomeIcon icon={faArrowLeft} className="dropdown-gear-icon me-2" />
-                Previous
-              </button>
-              <button className='btn btn-sm ms-1' onClick={saveTabsData}>
-                {`${tabIndex < tabNavMenus?.length ? 'Save & Next' : 'Save'}`}
-                {tabIndex < tabNavMenus?.length &&
-                  <FontAwesomeIcon icon={faArrowRight} className="dropdown-gear-icon ms-2" />
-                }
-              </button>
-            </div>
+            {values?.tabFor &&
+              <div className='text-center mt-2 pre-nxt-btn'>
+                <button className='btn btn-sm ms-1'
+                  onClick={previousTab}
+                  disabled={tabIndex > 1 ? false : true}
+                >
+                  <FontAwesomeIcon icon={faArrowLeft} className="dropdown-gear-icon me-2" />
+                  Previous
+                </button>
+                <button className='btn btn-sm ms-1' onClick={saveMenuTabsData}>
+                  {`${tabIndex < tabNavMenus?.length ? 'Save & Next' : 'Save'}`}
+                  {tabIndex < tabNavMenus?.length &&
+                    <FontAwesomeIcon icon={faArrowRight} className="dropdown-gear-icon ms-2" />
+                  }
+                </button>
+              </div>
+            }
           </div>
         </div>
         {showTabsTable &&
-          <GlobalDataTable title={"Tab List"} column={column} data={allTabsData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
+          <GlobalDataTable title={"Tab List"} column={column} data={allTabsData} onModify={handleUpdateData} onDelete={handleDeleteTab} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
         }
       </div>
     </>

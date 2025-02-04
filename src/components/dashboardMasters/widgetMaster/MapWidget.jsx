@@ -21,7 +21,7 @@ const MapWidget = (props) => {
                                 placeholder="Enter value..."
                                 name='mapName'
                                 id="mapName"
-                                options={[]}
+                                options={[{ value: 'india', label: "India" }]}
                                 onChange={handleValueChange}
                                 value={values?.mapName}
                             />
@@ -86,15 +86,15 @@ const MapWidget = (props) => {
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Parent Widget : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
-                            <Select
+                            <InputSelect
                                 id='parentWidgetMap'
                                 name='parentWidgetMap'
                                 options={parentWidget}
                                 placeholder="Select value..."
-                                className="backcolorinput react-select-multi"
-                                onChange={(e) => setValues({ ...values, ['parentWidgetMap']: e })}
+                                className="backcolorinput"
+                                onChange={handleValueChange}
                                 value={values?.parentWidgetMap}
-                                isClearable
+                            // isClearable
                             // isSearchable={true}
                             />
                         </div>

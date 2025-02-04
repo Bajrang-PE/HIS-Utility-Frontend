@@ -1,28 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "../../commons/InputField";
 import InputSelect from "../../commons/InputSelect";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
 
-const HelpDocs = () => {
+const HelpDocs = (props) => {
+
+  const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+
   const [rows, setRows] = useState([]);
-  const [newRow, setNewRow] = useState({ fileName: "", displayName: "", downloadName: "" });
+  const [newRow, setNewRow] = useState({ fileNameForManualDocument: "", displayNameForManualDocument: "", downloadFileNameForManualDocument: "" });
   const [isEditing, setIsEditing] = useState(null);
 
   const handleInputChange = (field, value) => {
     setNewRow({ ...newRow, [field]: value });
   };
 
+   useEffect(() => {
+          if (values?.helpDocs?.length > 0) {
+              setRows(values?.helpDocs)
+          }
+      }, [values?.helpDocs])
+  
+
   const handleAddRow = () => {
     if (isEditing !== null) {
       const updatedRows = [...rows];
       updatedRows[isEditing] = newRow;
       setRows(updatedRows);
+      setValues({ ...values, ['helpDocs']: updatedRows })
       setIsEditing(null);
     } else {
+      let oldDt = values?.helpDocs?.length > 0 ? values?.helpDocs : [];
       setRows([...rows, newRow]);
+      oldDt?.push(newRow)
+      setValues({ ...values, ['helpDocs']: oldDt })
     }
-    setNewRow({ fileName: "", displayName: "", downloadName: "" });
+    setNewRow({ fileNameForManualDocument: "", displayNameForManualDocument: "", downloadFileNameForManualDocument: "" });
   };
 
   const handleEditRow = (index) => {
@@ -33,6 +47,7 @@ const HelpDocs = () => {
   const handleRemoveRow = (index) => {
     const updatedRows = rows.filter((_, i) => i !== index);
     setRows(updatedRows);
+    setValues({ ...values, ['helpDocs']: updatedRows })
   };
 
   return (
@@ -63,32 +78,32 @@ const HelpDocs = () => {
               <td>
                 <InputSelect
                   className="backcolorinput"
-                  name="fileName"
-                  id="fileName"
+                  name="fileNameForManualDocument"
+                  id="fileNameForManualDocument"
                   placeholder={"Select File"}
                   options={[{ value: 1, label: "pdf file" }]}
-                  onChange={(e) => handleInputChange("fileName", e.target.value)}
-                  value={newRow.fileName}
+                  onChange={(e) => handleInputChange("fileNameForManualDocument", e.target.value)}
+                  value={newRow.fileNameForManualDocument}
                 />
               </td>
               <td>
                 <InputField
                   type="text"
                   className="backcolorinput"
-                  name="displayName"
-                  id="displayName"
-                  onChange={(e) => handleInputChange("displayName", e.target.value)}
-                  value={newRow.displayName}
+                  name="displayNameForManualDocument"
+                  id="displayNameForManualDocument"
+                  onChange={(e) => handleInputChange("displayNameForManualDocument", e.target.value)}
+                  value={newRow.displayNameForManualDocument}
                 />
               </td>
               <td>
                 <InputField
                   type="text"
                   className="backcolorinput"
-                  name="downloadName"
-                  id="downloadName"
-                  onChange={(e) => handleInputChange("downloadName", e.target.value)}
-                  value={newRow.downloadName}
+                  name="downloadFileNameForManualDocument"
+                  id="downloadFileNameForManualDocument"
+                  onChange={(e) => handleInputChange("downloadFileNameForManualDocument", e.target.value)}
+                  value={newRow.downloadFileNameForManualDocument}
                 />
               </td>
               <td className="px-0 action-buttons text-center">
@@ -104,9 +119,9 @@ const HelpDocs = () => {
             </tr>
             {rows.map((row, index) => (
               <tr className="table-row-form text-start" key={index}>
-                <td>{row.fileName || "---"}</td>
-                <td>{row.displayName || "---"}</td>
-                <td>{row.downloadName || "---"}</td>
+                <td>{row.fileNameForManualDocument || "---"}</td>
+                <td>{row.displayNameForManualDocument || "---"}</td>
+                <td>{row.downloadFileNameForManualDocument || "---"}</td>
                 <td className="">
                   <div className="text-center">
                     <button

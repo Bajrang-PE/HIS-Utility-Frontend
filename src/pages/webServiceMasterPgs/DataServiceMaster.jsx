@@ -6,17 +6,21 @@ import InputField from '../../components/commons/InputField'
 import { serviceCategories, timeOutOptions } from '../../localData/DropDownData'
 import DataServiceTable from '../../components/webServiceMasters/dataService/DataServiceTable'
 import { HISContext } from '../../contextApi/HISContext'
+import { ToastAlert } from '../../utils/commonFunction'
+import { fetchPostData } from '../../utils/ApiHooks'
 
 const DataServiceMaster = () => {
-  const { setShowDataTable, getAllServiceData, dataServiceData,setSelectedOption } = useContext(HISContext);
+  const { setShowDataTable, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, setActionMode, actionMode } = useContext(HISContext);
   const [isCacheData, setIsCacheData] = useState(false);
   const [selectedMode, setSelectedMode] = useState("query");
   const [showWebServiceTable, setShowWebServiceTable] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const [singleData, setSingleData] = useState([]);
 
   const [values, setValues] = useState({
-    "serviceCategory": "", "serviceDisplayName": "", "serviceCallingName": "", "procedureFuncName": "", "fetchQuery": "", "webJsonType": "dataHeadingColumnType", "jndiSavingData": "", "stmtTimeOut": ""
+    "serviceCategory": "", "serviceDisplayName": "", "serviceCallingName": "", "procedureFuncName": "", "fetchQuery": "", "webJsonType": "dataHeadingColumnType", "jndiSavingData": "", "stmtTimeOut": "", "dashboardFor": "", "id": ""
   })
+
 
   const handleValueChange = (e) => {
     const { name, value } = e.target;
@@ -28,6 +32,146 @@ const DataServiceMaster = () => {
   useEffect(() => {
     if (dataServiceData?.length === 0) { getAllServiceData(); }
   }, [])
+
+  const handleUpdateData = () => {
+    if (selectedOption?.length > 0) {
+      const selectedRow = dataServiceData?.filter(dt => dt?.id === selectedOption[0]?.id)
+      setSingleData(selectedRow);
+      setActionMode('edit');
+      setShowDataTable(false);
+      setShowWebServiceTable(false);
+      setSelectedOption([]);
+    } else {
+      ToastAlert('Please select a record', 'warning');
+    }
+  }
+
+  useEffect(() => {
+    if (singleData?.length > 0) {
+      const jsonData = singleData[0]?.jsonData || {};
+      setValues({
+        ...values,
+        id: singleData[0]?.id,
+        dashboardFor: singleData[0]?.dashboardFor,
+        serviceCategory: jsonData?.serviceCategory,
+        serviceDisplayName: jsonData?.serviceName,
+        serviceCallingName: jsonData?.serviceInternalName,
+        procedureFuncName: jsonData?.mainProcedureName,
+        fetchQuery: jsonData?.mainFetchQuery,
+        webJsonType: jsonData?.webserviceJsonType,
+        jndiSavingData: jsonData?.JNDIid,
+        stmtTimeOut: jsonData?.statementTimeOut,
+
+      })
+      setSelectedMode(jsonData?.modeOfQuery);
+      setIsCacheData(jsonData?.isCacheData);
+    }
+  }, [singleData])
+
+  const saveDataServiceData = () => {
+    const {
+      serviceCategory, serviceDisplayName, serviceCallingName, procedureFuncName, fetchQuery, webJsonType,
+      jndiSavingData, stmtTimeOut,
+    } = values;
+    const val = {
+      dashboardFor: "GLOBAL",
+      masterName: "DataServiceMst",
+      entryUserId: 101,
+      jndiIdForGettingData: jndiSavingData,
+      statementTimeout: stmtTimeOut,
+      keyName: serviceCallingName,
+      jsonData: {
+        serviceCategory: serviceCategory,
+        serviceName: serviceDisplayName,
+        serviceInternalName: serviceCallingName,
+        mainProcedureName: procedureFuncName,
+        mainFetchQuery: fetchQuery,
+        webserviceJsonType: webJsonType,
+        JNDIid: jndiSavingData,
+        statementTimeOut: stmtTimeOut,
+        modeOfQuery: selectedMode,
+        isCacheData: isCacheData
+      }
+    };
+
+    fetchPostData("/hisutils/DataServicesave", val).then((data) => {
+      if (data) {
+        ToastAlert("Data Saved Successfully", "success");
+        getAllServiceData();
+        setActionMode('home');
+        reset();
+      } else {
+        ToastAlert("Internal Error!", "error");
+      }
+    });
+  };
+
+  const updateDataServiceData = () => {
+    const {
+      serviceCategory, serviceDisplayName, serviceCallingName, procedureFuncName, fetchQuery, webJsonType,
+      jndiSavingData, stmtTimeOut, id
+    } = values;
+    const val = {
+      id: id,
+      dashboardFor: "GLOBAL",
+      masterName: "DataServiceMst",
+      entryUserId: 101,
+      jndiIdForGettingData: jndiSavingData,
+      statementTimeout: stmtTimeOut,
+      keyName: serviceCallingName,
+      jsonData: {
+        serviceCategory: serviceCategory,
+        serviceName: serviceDisplayName,
+        serviceInternalName: serviceCallingName,
+        mainProcedureName: procedureFuncName,
+        mainFetchQuery: fetchQuery,
+        webserviceJsonType: webJsonType,
+        JNDIid: jndiSavingData,
+        statementTimeOut: stmtTimeOut,
+        modeOfQuery: selectedMode,
+        isCacheData: isCacheData
+      }
+    };
+
+    fetchPostData("/hisutils/DataServiceUpdate", val).then((data) => {
+      if (data) {
+        ToastAlert("Data Updated Successfully", "success");
+        getAllServiceData();
+        setActionMode('home');
+        reset();
+      } else {
+        ToastAlert("Internal Error!", "error");
+      }
+    });
+  };
+
+  const handleDeleteDataService = () => {
+    if (selectedOption?.length > 0) {
+      const val = { "id": selectedOption[0]?.id, "dashboardFor": "GLOBAL", "masterName": "DataServiceMst" };
+      fetchPostData("/hisutils/DataServiceDelete", val).then((data) => {
+        if (data) {
+          ToastAlert('Deleted Successfully!', 'success');
+          getAllServiceData();
+          setSelectedOption([]);
+          reset();
+        } else {
+          ToastAlert('Deletion Failed!', 'error');
+        }
+      })
+    } else {
+      ToastAlert('Please select a record', 'warning');
+    }
+  }
+
+  const reset = () => {
+    setValues({ "serviceCategory": "", "serviceDisplayName": "", "serviceCallingName": "", "procedureFuncName": "", "fetchQuery": "", "webJsonType": "dataHeadingColumnType", "jndiSavingData": "", "stmtTimeOut": "", "dashboardFor": "", "id": "" })
+    setActionMode('home');
+    setShowWebServiceTable(false);
+    setShowDataTable(false);
+  }
+
+  console.log(singleData, 'single')
+  console.log(values, 'value')
 
   const onOpenWebService = () => {
     setShowDataTable(true);
@@ -44,7 +188,7 @@ const DataServiceMaster = () => {
     <div>
       <NavbarHeader />
       <div className='main-master-page'>
-        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={false} onSave={null} onOpen={onOpenWebService} onReset={null} onParams={null} onWeb={null} />
+        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={false} onSave={actionMode === 'edit' ? updateDataServiceData : saveDataServiceData} onOpen={onOpenWebService} onReset={reset} onParams={null} onWeb={null} />
         <div className='form-card m-auto p-3'>
           <b><h6 className='header-devider mt-0 mb-1'>Data Service Master</h6></b>
 
@@ -193,8 +337,8 @@ const DataServiceMaster = () => {
                       id="selectedModeFunctionDml"
                       name="selectedMode"
                       value={selectedMode}
-                      onChange={(e) => setSelectedMode("functionDml")}
-                      checked={selectedMode === "functionDml"}
+                      onChange={(e) => setSelectedMode("functionDML")}
+                      checked={selectedMode === "functionDML"}
                     />
                     <label className="form-check-label" htmlFor="dbNo">
                       By Function For DML
@@ -398,7 +542,7 @@ const DataServiceMaster = () => {
         </div>
       </div>
       {showWebServiceTable &&
-        <DataServiceTable data={dataServiceData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
+        <DataServiceTable data={dataServiceData} onModify={handleUpdateData} onDelete={handleDeleteDataService} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
       }
     </div>
   )

@@ -1,17 +1,30 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import NavbarHeader from '../../components/headers/NavbarHeader'
 import GlobalButtonGroup from '../../components/commons/GlobalButtonGroup'
 import InputField from '../../components/commons/InputField'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faMinus } from '@fortawesome/free-solid-svg-icons'
 import InputSelect from '../../components/commons/InputSelect'
+import { HISContext } from '../../contextApi/HISContext'
+import { ToastAlert } from '../../utils/commonFunction'
+import GlobalDataTable from '../../components/commons/GlobalDataTable'
 
 const ServiceUserMaster = () => {
+  const { setShowDataTable, getAllServiceData, dataServiceDrpData, selectedOption, setSelectedOption, setActionMode, actionMode, getUserServiceData, userServiceData } = useContext(HISContext);
+
   const [values, setValues] = useState({
-    "username": "", "password": ""
+    "username": "", "password": "", "id": '', "dashboardFor": ""
   })
-  const [previlegeFor, setPrevilegeFor] = useState('all')
-  const [rows, setRows] = useState([{ serviceName: "", numberOfUse: "" }]);
+  const [previlegeFor, setPrevilegeFor] = useState('allServices')
+  const [rows, setRows] = useState([{ serviceId: "", noOfServiceUsageAllowed: "" }]);
+  const [showServiceUserTable, setShowServiceUserTable] = useState(false)
+  const [singleData, setSingleData] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
+
+  useEffect(() => {
+    if (dataServiceDrpData?.length === 0) { getAllServiceData(); }
+    if (userServiceData?.length === 0) { getUserServiceData(); }
+  }, [])
 
   const handleValueChange = (e) => {
     const { name, value } = e.target;
@@ -19,6 +32,36 @@ const ServiceUserMaster = () => {
       setValues({ ...values, [name]: value })
     }
   }
+
+  const handleUpdateData = () => {
+    if (selectedOption?.length > 0) {
+      const selectedRow = userServiceData?.filter(dt => dt?.id === selectedOption[0]?.id)
+      setSingleData(selectedRow);
+      setActionMode('edit');
+      setShowDataTable(false);
+      setShowServiceUserTable(false);
+      setSelectedOption([]);
+    } else {
+      ToastAlert('Please select a record', 'warning');
+    }
+  }
+
+  useEffect(() => {
+    if (singleData?.length > 0) {
+      const jsonData = singleData[0]?.jsonData || {};
+      setValues({
+        ...values,
+        id: singleData[0]?.id,
+        dashboardFor: singleData[0]?.dashboardFor,
+        username: jsonData?.userName,
+        password: jsonData?.password
+      })
+      setPrevilegeFor(jsonData?.previlege);
+      setRows(jsonData?.lstServiceMapped);
+    }
+  }, [singleData])
+
+  console.log(singleData, 'single')
 
   // Handle input change
   const handleInputChange = (index, field, value) => {
@@ -29,7 +72,7 @@ const ServiceUserMaster = () => {
 
   // Add a new row
   const handleAddRow = () => {
-    setRows([...rows, { serviceName: "", numberOfUse: "" }]);
+    setRows([...rows, { serviceId: "", noOfServiceUsageAllowed: "" }]);
   };
 
   // Remove a row
@@ -38,11 +81,62 @@ const ServiceUserMaster = () => {
     setRows(updatedRows);
   };
 
+  const column = [
+    {
+      name: <input
+        type="checkbox"
+        // checked={selectAll}
+        // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
+        disabled={true}
+        className="form-check-input log-select"
+      />,
+      cell: row =>
+        <div style={{ position: 'absolute', top: 4, left: 10 }}>
+          <span className="btn btn-sm text-white px-1 py-0 mr-1" >
+            <input
+              type="checkbox"
+              checked={selectedOption[0]?.id === row?.id}
+              onChange={(e) => { setSelectedOption([row]) }}
+            />
+          </span>
+        </div>,
+      width: "8%"
+    },
+    {
+      name: 'ID',
+      selector: row => row.id,
+      sortable: true,
+      width: "10%"
+    },
+    {
+      name: 'Service User Name',
+      selector: row => row?.jsonData?.userName || "---",
+      sortable: true,
+    },
+    {
+      name: 'Previlege For',
+      selector: row => row?.jsonData?.previlege || "---",
+      sortable: true,
+    },
+  ]
+
+
+  const onOpenUserService = () => {
+    setShowDataTable(true);
+    setShowServiceUserTable(true);
+  }
+
+  const onTableClose = () => {
+    setShowServiceUserTable(false);
+    setSearchInput('');
+    setSelectedOption([]);
+  }
+
   return (
     <div>
       <NavbarHeader />
       <div className='main-master-page'>
-      <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={null} onOpen={null} onReset={null} onParams={null} onWeb={null} />
+        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={null} onOpen={onOpenUserService} onReset={null} onParams={null} onWeb={null} />
         <div className='form-card m-auto p-3'>
           <b><h6 className='header-devider mt-0 mb-1'>Service User Master</h6></b>
           {/* SECTION DEVIDER*/}
@@ -99,8 +193,8 @@ const ServiceUserMaster = () => {
                       id="previlegeForAll"
                       name="previlegeFor"
                       value={previlegeFor}
-                      onChange={(e) => setPrevilegeFor("all")}
-                      checked={previlegeFor === "all"}
+                      onChange={(e) => setPrevilegeFor("allServices")}
+                      checked={previlegeFor === "allServices"}
                     />
                     <label className="form-check-label" htmlFor="dbYes">
                       All Services
@@ -113,8 +207,8 @@ const ServiceUserMaster = () => {
                       name="previlegeFor"
                       id="previlegeForSelected"
                       value={previlegeFor}
-                      onChange={(e) => setPrevilegeFor("selected")}
-                      checked={previlegeFor === "selected"}
+                      onChange={(e) => setPrevilegeFor("selectedServices")}
+                      checked={previlegeFor === "selectedServices"}
                     />
                     <label className="form-check-label" htmlFor="dbNo">
                       Selected Services
@@ -124,10 +218,10 @@ const ServiceUserMaster = () => {
               </div>
             </div>
           </div>
-          {previlegeFor !== "selected" &&
+          {previlegeFor !== "selectedServices" &&
             <b><h6 className='header-devider m-1' style={{ padding: "10px" }}></h6></b>
           }
-          {previlegeFor === "selected" &&
+          {previlegeFor === "selectedServices" &&
             <>
               <b><h6 className='header-devider mt-0 mb-1'>Service Previleges</h6></b>
               <div className="table-responsive">
@@ -165,9 +259,9 @@ const ServiceUserMaster = () => {
                             className="backcolorinput w-50 m-auto"
                             name='serviceName'
                             id='serviceName'
-                            options={[{ value: 'query', label: "By Query" }, { value: 'multiRowOption', label: "By Multi Row Option" }]}
-                            value={row.serviceName}
-                            onChange={(e) => handleInputChange(index, "serviceName", e.target.value)}
+                            options={dataServiceDrpData}
+                            value={row.serviceId}
+                            onChange={(e) => handleInputChange(index, "serviceId", e.target.value)}
                             placeholder="Select Value..."
                           />
                         </td>
@@ -177,8 +271,8 @@ const ServiceUserMaster = () => {
                             className="backcolorinput w-25 m-auto"
                             name='serverUrl'
                             id='serverUrl'
-                            value={row.numberOfUse}
-                            onChange={(e) => handleInputChange(index, "numberOfUse", e.target.value)}
+                            value={row.noOfServiceUsageAllowed}
+                            onChange={(e) => handleInputChange(index, "noOfServiceUsageAllowed", e.target.value)}
                             placeholder="Enter counts..."
                           />
                         </td>
@@ -203,6 +297,9 @@ const ServiceUserMaster = () => {
 
         </div>
       </div>
+      {showServiceUserTable &&
+        <GlobalDataTable title={"Service User List"} column={column} data={userServiceData} onModify={handleUpdateData} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
+      }
     </div>
   )
 }

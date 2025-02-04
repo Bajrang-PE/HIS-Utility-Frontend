@@ -1,9 +1,23 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import InputSelect from '../../commons/InputSelect'
 import InputField from '../../commons/InputField'
+import { FaIcons } from 'react-icons/fa';
+import IconPicker from '../../commons/IconPicker';
 
 const AboutTab = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, dashboardForDt } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, dashboardForDt, setValues,tabDrpData } = props;
+
+    const [tabIcon, setTabIcon] = useState('');
+    const SelectedIconComponent = tabIcon ? FaIcons[tabIcon] : '';
+
+    useEffect(() => {
+        if (values?.iconName !== '') {
+            setTabIcon(values?.iconName);
+        } else {
+            setTabIcon('');
+        }
+    }, [values?.iconName])
+
     return (
         <>
             <b><h6 className='header-devider m-0'> Tab Master</h6></b>
@@ -54,12 +68,12 @@ const AboutTab = (props) => {
                             <InputSelect
                                 // type="text"
                                 className="backcolorinput"
-                                placeholder="Enter value..."
+                                placeholder="No Parent"
                                 name='parentTab'
                                 id="parentTab"
                                 onChange={handleValueChange}
                                 value={values?.parentTab}
-                                options={[]}
+                                options={tabDrpData}
                             />
                         </div>
                     </div>
@@ -202,16 +216,30 @@ const AboutTab = (props) => {
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Tab Icon Image : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
-                            <InputSelect
-                                // type="text"
-                                className="backcolorinput"
-                                placeholder="Enter value..."
-                                name='tabIconImage'
-                                id="tabIconImage"
-                                onChange={handleValueChange}
-                                value={values?.tabIconImage}
-                                options={[]}
-                            />
+                            {radioValues?.isCssTabIconReq === 'No' &&
+                                <InputSelect
+                                    className="backcolorinput "
+                                    placeholder="Select Image"
+                                    name='tabIconImage'
+                                    id="tabIconImage"
+                                    options={[{ value: "default", label: "Default-Image.png" }]}
+                                    onChange={handleValueChange}
+                                    value={values?.tabIconImage}
+                                />
+                            }
+                            {radioValues?.isCssTabIconReq === 'Yes' &&
+                                <IconPicker setTabIcon={setTabIcon} tabIcon={tabIcon} setValues={setValues} values={values} />
+                                // <InputSelect
+                                //     className="backcolorinput "
+                                //     placeholder="Select Icon"
+                                //     name='kpiTabIconImage'
+                                //     id="kpiTabIconImage"
+                                //     options={iconOptions}
+                                //     onChange={handleChange}
+                                //     value={selectedIcon}
+                                //     style={{ width: "100%", padding: "5px" }}
+                                // />
+                            }
                         </div>
                     </div>
 

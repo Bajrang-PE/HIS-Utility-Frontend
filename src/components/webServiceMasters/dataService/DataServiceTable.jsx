@@ -3,7 +3,8 @@ import GlobalDataTable from '../../commons/GlobalDataTable'
 import { HISContext } from '../../../contextApi/HISContext';
 
 const DataServiceTable = (props) => {
-    const { data, onModify, onDelete, onClose, setSearchInput, isShowBtn } = props;
+    const { data, onModify, onDelete, onClose, setSearchInput, isShowBtn, } = props;
+    const { selectedOption, setSelectedOption } = useContext(HISContext);
 
     const webServiceColumn = [
         {
@@ -19,8 +20,8 @@ const DataServiceTable = (props) => {
                     <span className="btn btn-sm text-white px-1 py-0 mr-1" >
                         <input
                             type="checkbox"
-                        // checked={selectedRows.includes(row.gnumUserId)}
-                        // onChange={(e) => { handleRowSelect(row.gnumUserId) }}
+                            checked={selectedOption[0]?.id === row?.id}
+                            onChange={(e) => { setSelectedOption([row]) }}
                         />
                     </span>
                 </div>,
@@ -28,23 +29,23 @@ const DataServiceTable = (props) => {
         },
         {
             name: 'Service ID',
-            selector: row => row.serviceId,
+            selector: row => row.id,
             sortable: true,
             width: "10%"
         },
         {
             name: 'Service Name',
-            selector: row => row?.serviceName,
+            selector: row => row?.jsonData?.serviceInternalName,
             sortable: true,
         },
         {
             name: 'Service Display Name',
-            selector: row => row?.serviceDisplayName,
+            selector: row => row?.jsonData?.serviceName,
             sortable: true,
         },
         {
             name: 'Service Category',
-            selector: row => row?.parameterType || "---",
+            selector: row => row?.jsonData?.serviceCategory || "---",
             sortable: true,
         },
     ]

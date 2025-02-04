@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InputField from '../../commons/InputField'
 import InputSelect from '../../commons/InputSelect'
 import { iconType, kpiBoxClickOptions, kpiTypes } from '../../../localData/DropDownData';
@@ -8,10 +8,19 @@ import IconPicker from '../../commons/IconPicker';
 
 const KpiWidget = (props) => {
     const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
-    const [tabIcon, setTabIcon] = useState(null);
+    const [tabIcon, setTabIcon] = useState('');
+    const SelectedIconComponent = tabIcon ? FaIcons[tabIcon] : '';
 
+    useEffect(() => {
+        if (values?.iconName !== '') {
+            setTabIcon(values?.iconName);
+        } else {
+            setTabIcon('');
+        }
+    }, [values?.iconName])
 
-    const SelectedIconComponent = tabIcon ? FaIcons[tabIcon] : null;
+    console.log(values?.iconName, 'tabicon')
+    // console.log(SelectedIconComponent, 'SelectedIconComponent')
 
     return (
         <div>
@@ -91,8 +100,8 @@ const KpiWidget = (props) => {
                                         value={values?.kpiTabIconImage}
                                     />
                                 }
-                                {values?.kpiIconType === 'FONT' &&
-                                    <IconPicker setTabIcon={setTabIcon} />
+                                {values?.kpiIconType === 'FONT_ICON' &&
+                                    <IconPicker setTabIcon={setTabIcon} tabIcon={tabIcon} setValues={setValues} values={values}/>
                                     // <InputSelect
                                     //     className="backcolorinput "
                                     //     placeholder="Select Icon"
@@ -373,7 +382,7 @@ const KpiWidget = (props) => {
                 </div>
             </div>
             <div>
-                {tabIcon && (
+                {(tabIcon && SelectedIconComponent) && (
                     <SelectedIconComponent />
                 )}
             </div>

@@ -147,7 +147,7 @@ export const newsTimeIntervals = [
 
 export const iconType = [
     { value: "IMAGE", label: "Image" },
-    { value: "FONT", label: "Font Icon" },
+    { value: "FONT_ICON", label: "Font Icon" },
     { value: "NOICON", label: "No Icon Required" },
 ]
 

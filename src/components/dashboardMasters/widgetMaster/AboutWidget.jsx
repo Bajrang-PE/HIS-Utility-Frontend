@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InputSelect from '../../commons/InputSelect'
 import InputField from '../../commons/InputField'
 import { cachingStatusForWidgetOptions, itemForDashboard, widgetRefreshTimeOptions, widgetTypeOptions } from '../../../localData/DropDownData'
@@ -6,15 +6,37 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faEdit, faMinus, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const AboutWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, dashboardForDt } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, dashboardForDt, setValues } = props;
 
     const [rows, setRows] = useState([{ columnNo: "", widget: "" }]);
-    const [otherLinkData, setOtherLinkData] = useState([{ otherLinkName: "", otherLinkUrl: "" }]);
+    const [otherLinkData, setOtherLinkData] = useState([{ otherLinkName: "", otherLinkURL: "" }]);
+
 
     const handleInputChange = (index, field, value) => {
         const updatedRows = [...rows];
         updatedRows[index][field] = value;
         setRows(updatedRows);
+    };
+
+    useEffect(() => {
+        if (values?.lstOtherLink?.length > 0 && radioValues?.widgetViewed === "Other_Link") {
+            setOtherLinkData(values?.lstOtherLink);
+        }
+    }, [values?.lstOtherLink, radioValues?.selectedModeQuery])
+
+    // Handle input change
+    const handleInputLinkChange = (index, field, value) => {
+        const updatedRows = [...otherLinkData];
+        updatedRows[index][field] = value;
+        setOtherLinkData(updatedRows);
+        setValues({ ...values, ['lstOtherLink']: updatedRows })
+    };
+    const handleAddLinkRow = () => {
+        setOtherLinkData([...otherLinkData, { otherLinkName: "", otherLinkURL: "" }]);
+    };
+    const handleRemoveLinkRow = (index) => {
+        const updatedRows = otherLinkData.filter((_, i) => i !== index);
+        setOtherLinkData(updatedRows);
     };
 
     // Add a new row
@@ -233,9 +255,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="widgetViewedMap"
                                     name="widgetViewed"
-                                    value={"Map"}
+                                    value={"Criteria_Map"}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.widgetViewed === "Map"}
+                                    checked={radioValues?.widgetViewed === "Criteria_Map"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Map
@@ -247,9 +269,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="widgetViewedNewsTicker"
                                     name="widgetViewed"
-                                    value={"newsTicker"}
+                                    value={"News_Ticker"}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.widgetViewed === "newsTicker"}
+                                    checked={radioValues?.widgetViewed === "News_Ticker"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     News Ticker
@@ -261,9 +283,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="widgetViewedOtherLink"
                                     name="widgetViewed"
-                                    value={"otherLink"}
+                                    value={"Other_Link"}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.widgetViewed === "otherLink"}
+                                    checked={radioValues?.widgetViewed === "Other_Link"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Other Link
@@ -275,9 +297,9 @@ const AboutWidget = (props) => {
                                     type="radio"
                                     id="widgetViewedIframe"
                                     name="widgetViewed"
-                                    value={"iframe"}
+                                    value={"Iframe"}
                                     onChange={handleRadioChange}
-                                    checked={radioValues?.widgetViewed === "iframe"}
+                                    checked={radioValues?.widgetViewed === "Iframe"}
                                 />
                                 <label className="form-check-label" htmlFor="dbNo">
                                     Iframe
@@ -366,7 +388,7 @@ const AboutWidget = (props) => {
             </div>
 
             {/* SECTION DEVIDER widget refresh and delay time*/}
-            {(radioValues?.widgetViewed !== "otherLink" && radioValues?.widgetViewed !== "iframe") &&
+            {(radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe") &&
                 <>
                     <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                         {/* //left columns */}
@@ -660,7 +682,7 @@ const AboutWidget = (props) => {
             }
 
             {/* IF OTHER LINK SELECTED */}
-            {radioValues?.widgetViewed === "otherLink" &&
+            {radioValues?.widgetViewed === "Other_Link" &&
                 <div className="table-responsive row p-2">
                     <table className="table table-borderless text-center mb-0">
                         <thead className="text-white">
@@ -670,7 +692,7 @@ const AboutWidget = (props) => {
                                 <th >
                                     <button
                                         className="btn btn-secondary btn-sm"
-                                        // onClick={() => handleAddRow('procedure')}
+                                        onClick={() => handleAddLinkRow()}
                                         style={{ padding: "0 4px" }}
                                     >
                                         <FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />
@@ -679,16 +701,16 @@ const AboutWidget = (props) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {otherLinkData.map((row, index) => (
+                            {otherLinkData?.map((row, index) => (
                                 <tr>
                                     <td>
                                         <InputField
                                             type="text"
                                             className="backcolorinput"
-                                            name='serviceRefName'
-                                            id='serviceRefName'
-                                        // value={serverDetails?.serviceRefName}
-                                        // onChange={handleServerChange}
+                                            name='otherLinkName'
+                                            id={`otherLinkName-${index}`}
+                                            value={row?.otherLinkName}
+                                            onChange={(e) => handleInputLinkChange(index, 'otherLinkName', e.target.value)}
                                         />
                                     </td>
 
@@ -697,10 +719,10 @@ const AboutWidget = (props) => {
                                         <InputField
                                             type="text"
                                             className="backcolorinput"
-                                            name='serviceRefName'
-                                            id='serviceRefName'
-                                        // value={serverDetails?.serviceRefName}
-                                        // onChange={handleServerChange}
+                                            name='otherLinkURL'
+                                            id={`otherLinkURL-${index}`}
+                                            value={row?.otherLinkURL}
+                                            onChange={(e) => handleInputLinkChange(index, 'otherLinkURL', e.target.value)}
                                         />
                                     </td>
 
@@ -709,7 +731,7 @@ const AboutWidget = (props) => {
                                         <div>
                                             <button
                                                 className="btn btn-outline-secondary btn-sm ms-1"
-                                                // onClick={() => handleRemoveRow(index, "procedure")}
+                                                onClick={() => handleRemoveLinkRow(index)}
                                                 style={{ padding: "0 4px" }}
                                             >
                                                 <FontAwesomeIcon icon={faMinus} className="dropdown-gear-icon" size='sm' />
@@ -725,7 +747,7 @@ const AboutWidget = (props) => {
             }
 
             {/* IF IFRAME SELECTED */}
-            {radioValues?.widgetViewed === "iframe" &&
+            {radioValues?.widgetViewed === "Iframe" &&
                 <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                     {/* //left columns */}
                     <div className='col-sm-6'>

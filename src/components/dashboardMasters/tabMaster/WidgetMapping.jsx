@@ -1,24 +1,25 @@
 import { faAdd, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InputSelect from '../../commons/InputSelect';
 import InputField from '../../commons/InputField';
 import { parameterWidth } from '../../../localData/DropDownData';
 
 const WidgetMapping = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values,widgetDrpData } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, widgetDrpData, setValues } = props;
 
-    const [rows, setRows] = useState([{ widgetName: "", DisplayOrder: "", widgetWidth: "", widgetHeight: "", widgetColor: "", widgetDisplay: "" }]);
+    const [rows, setRows] = useState([{ rptId: "", displayOrder: "", widgetWidth: "", widgetHeight: "", widgetColor: "", widgetDisplay: "", sectionId: "1", animation: "" }]);
 
     const handleInputChange = (index, field, value) => {
         const updatedRows = [...rows];
         updatedRows[index][field] = value;
         setRows(updatedRows);
+        setValues({ ...values, ['widgetMappingDetail']: updatedRows })
     };
 
     const handleAddRow = (name) => {
         if (name === 'query') {
-            setRows([...rows, { widgetName: "", DisplayOrder: "", widgetWidth: "", widgetHeight: "", widgetColor: "", widgetDisplay: "" }]);
+            setRows([...rows, { rptId: "", displayOrder: "", widgetWidth: "", widgetHeight: "", widgetColor: "", widgetDisplay: "", sectionId: "1", animation: "" }]);
         }
     };
 
@@ -29,7 +30,13 @@ const WidgetMapping = (props) => {
         }
     };
 
-    console.log(rows,'rroro')
+    useEffect(() => {
+        if (values?.widgetMappingDetail?.length > 0) {
+            setRows(values?.widgetMappingDetail);
+        }
+    }, [values?.widgetMappingDetail])
+
+    console.log(rows, 'rroro')
 
     return (
         <>
@@ -58,16 +65,16 @@ const WidgetMapping = (props) => {
                     </thead>
                     <tbody>
                         {rows.map((row, index) => (
-                            <tr key={index}> 
+                            <tr key={index}>
                                 <td>
                                     <InputSelect
-                                        id={`widgetName-${index}`} 
+                                        id={`widgetName-${index}`}
                                         name="widgetName"
                                         placeholder="Select widget..."
                                         options={widgetDrpData}
                                         className="backcolorinput"
-                                        value={row.widgetName} 
-                                        onChange={(e) => handleInputChange(index, 'widgetName', e.target.value)} 
+                                        value={row.rptId}
+                                        onChange={(e) => handleInputChange(index, 'rptId', e.target.value)}
                                     />
                                 </td>
                                 <td>
@@ -76,13 +83,13 @@ const WidgetMapping = (props) => {
                                         className="backcolorinput"
                                         name='DisplayOrder'
                                         id={`DisplayOrder-${index}`}
-                                        value={row.DisplayOrder} 
-                                        onChange={(e) => handleInputChange(index, 'DisplayOrder', e.target.value)} 
+                                        value={row.displayOrder}
+                                        onChange={(e) => handleInputChange(index, 'displayOrder', e.target.value)}
                                     />
                                 </td>
                                 <td>
                                     <InputSelect
-                                        id={`widgetWidth-${index}`} 
+                                        id={`widgetWidth-${index}`}
                                         name="widgetWidth"
                                         placeholder="Select value..."
                                         options={parameterWidth}
@@ -98,32 +105,32 @@ const WidgetMapping = (props) => {
                                         name='widgetHeight'
                                         id={`widgetHeight-${index}`}
                                         value={row.widgetHeight}
-                                        onChange={(e) => handleInputChange(index, 'widgetHeight', e.target.value)} 
+                                        onChange={(e) => handleInputChange(index, 'widgetHeight', e.target.value)}
                                     />
                                 </td>
                                 <td>
                                     <InputSelect
-                                        id={`widgetColor-${index}`} 
+                                        id={`widgetColor-${index}`}
                                         name="widgetColor"
                                         options={[{ value: 1, label: "Red" }, { value: 0, label: "Blue" }]}
                                         className="backcolorinput"
                                         value={row.widgetColor}
-                                        onChange={(e) => handleInputChange(index, 'widgetColor', e.target.value)} 
+                                        onChange={(e) => handleInputChange(index, 'widgetColor', e.target.value)}
                                     />
                                 </td>
                                 <td>
                                     <InputSelect
-                                        id={`widgetDisplay-${index}`} 
+                                        id={`widgetDisplay-${index}`}
                                         name="widgetDisplay"
                                         options={[{ value: 1, label: "OnLoad" }, { value: 0, label: "OnClick" }]}
                                         className="backcolorinput"
                                         value={row.widgetDisplay}
-                                        onChange={(e) => handleInputChange(index, 'widgetDisplay', e.target.value)} 
+                                        onChange={(e) => handleInputChange(index, 'widgetDisplay', e.target.value)}
                                     />
                                 </td>
 
                                 <td className='px-0'>
-                                    {rows.length > 1 && ( 
+                                    {rows.length > 1 && (
                                         <div>
                                             <button
                                                 className="btn btn-outline-secondary btn-sm ms-1"

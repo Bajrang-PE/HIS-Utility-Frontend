@@ -179,7 +179,7 @@ const FooterDetails = (props) => {
                                 id="webRefName"
                                 name="webRefName"
                                 placeholder="Select value..."
-                                options={[]}
+                                options={[{value:'1',label:'Localhost'}]}
                                 className="backcolorinput"
                                 value={values?.webRefName}
                                 onChange={handleValueChange}
