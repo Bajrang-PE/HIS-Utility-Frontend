@@ -28,6 +28,26 @@ const ParameterMaster = () => {
   const [searchInput, setSearchInput] = useState('');
   const [showParamsTable, setShowParamsTable] = useState(false);
   const [showWebServiceTable, setShowWebServiceTable] = useState(false);
+  const [filterData, setFilterData] = useState(parameterData)
+
+
+  useEffect(() => {
+    if (!searchInput) {
+      setFilterData(parameterData);
+    } else {
+      const lowercasedText = searchInput.toLowerCase();
+      const newFilteredData = parameterData.filter(row => {
+        const paramId = row?.id?.toString() || "";
+        const paramName = row?.jsonData?.parameterName?.toLowerCase() || "";
+        const paramDisplayName = row?.jsonData?.parameterDisplayName?.toLowerCase() || "";
+
+        return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText);
+      });
+      setFilterData(newFilteredData);
+      console.log(newFilteredData, 'newFilteredData')
+    }
+  }, [searchInput, parameterData]);
+
 
   useEffect(() => {
     if (values?.parameterFor) { getAllParameterData(values?.parameterFor); }
@@ -62,6 +82,12 @@ const ParameterMaster = () => {
     const updatedRows = rows.filter((_, i) => i !== index);
     setRows(updatedRows);
   };
+
+  useEffect(() => {
+    if (searchInput !== '' && searchInput !== null) {
+
+    }
+  }, [searchInput])
 
   const handleUpdateData = () => {
     if (selectedOption?.length > 0) {
@@ -122,7 +148,7 @@ const ParameterMaster = () => {
         defaultValue: defaultValue, textBoxValidation: validation, textboxMaxlength: maxLength,
         textboxMinlength: minLength, isMultipleSelectionRequired: isMultiSelectReq,
 
-        lstOption : rows
+        lstOption: rows
       }
     };
 
@@ -162,7 +188,7 @@ const ParameterMaster = () => {
         defaultValue: defaultValue, textBoxValidation: validation, textboxMaxlength: maxLength,
         textboxMinlength: minLength, isMultipleSelectionRequired: isMultiSelectReq,
 
-        lstOption : rows
+        lstOption: rows
       }
     };
 
@@ -355,7 +381,7 @@ const ParameterMaster = () => {
                       // placeholder="Select value..."
                       options={parameterType}
                       value={values?.parameterType}
-                      onChange={(e) => { handleValueChange(e);  }}
+                      onChange={(e) => { handleValueChange(e); }}
                       disabled={actionMode === 'edit' ? true : false}
                     />
                   </div>
@@ -1013,7 +1039,7 @@ const ParameterMaster = () => {
         </div>
 
         {showParamsTable &&
-          <GlobalDataTable title={"Parameter List"} column={column} data={parameterData} onModify={handleUpdateData} onDelete={handleDeleteParams} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
+          <GlobalDataTable title={"Parameter List"} column={column} data={filterData} onModify={handleUpdateData} onDelete={handleDeleteParams} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
         }
         {showWebServiceTable &&
           <DataServiceTable data={dataServiceData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={false} />

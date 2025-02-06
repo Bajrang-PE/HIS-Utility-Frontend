@@ -26,6 +26,7 @@ const TabMaster = () => {
   const [showTabsTable, setShowTabsTable] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [singleData, setSingleData] = useState([]);
+  const [filterData, setFilterData] = useState(allTabsData)
 
 
   const [values, setValues] = useState({
@@ -65,6 +66,24 @@ const TabMaster = () => {
       getAllTabsData(values?.tabFor)
     }
   }, [values?.tabFor])
+
+  //parameter search
+  useEffect(() => {
+    if (!searchInput) {
+      setFilterData(allTabsData);
+    } else {
+      const lowercasedText = searchInput.toLowerCase();
+      const newFilteredData = allTabsData.filter(row => {
+        const paramId = row?.id?.toString() || "";
+        const paramName = row?.jsonData?.dashboardName?.toLowerCase() || "";
+        const paramDisplayName = row?.jsonData?.dashboardActualName?.toLowerCase() || "";
+
+        return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText);
+      });
+      setFilterData(newFilteredData);
+      console.log(newFilteredData, 'newFilteredData')
+    }
+  }, [searchInput, allTabsData]);
 
   const handleRadioChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -358,6 +377,13 @@ const TabMaster = () => {
       //widget
       "widgetMappingDetail": []
     })
+    setRadioValues({
+      "isTabUsedForDrill": "No", "isTabNameInReportReq": "No", "isCssTabIconReq": "No",
+      //tab details
+      "showTabNameInDetail": "Yes", "widgetMaxMin": "",
+      //footer detail
+      "isLegendCollapes": "Yes", "isMarqueeReq": "No", "isLegendBorderReq": "Yes",
+    })
     setActionMode('home');
     setShowTabsTable(false);
     setShowDataTable(false);
@@ -411,8 +437,8 @@ const TabMaster = () => {
     },
   ]
 
-  console.log(singleData, 'single')
-  console.log(values, 'values')
+  // console.log(singleData, 'single')
+  // console.log(values, 'values')
 
   return (
     <>
@@ -476,7 +502,7 @@ const TabMaster = () => {
           </div>
         </div>
         {showTabsTable &&
-          <GlobalDataTable title={"Tab List"} column={column} data={allTabsData} onModify={handleUpdateData} onDelete={handleDeleteTab} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
+          <GlobalDataTable title={"Tab List"} column={column} data={filterData} onModify={handleUpdateData} onDelete={handleDeleteTab} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
         }
       </div>
     </>

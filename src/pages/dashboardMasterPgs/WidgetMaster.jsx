@@ -69,7 +69,11 @@ const WidgetMaster = () => {
   const [showParamsTable, setShowParamsTable] = useState(false);
   const [showWebServiceTable, setShowWebServiceTable] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const [filterData, setFilterData] = useState(parameterData)
+  const [widgetSearchInput, setWidgetSearchInput] = useState('');
+  const [widgetFilterData, setWidgetFilterData] = useState(allWidgetData);
   const [singleData, setSingleData] = useState([]);
+
 
   useEffect(() => {
     if (values?.widgetFor) {
@@ -111,7 +115,6 @@ const WidgetMaster = () => {
   ]);
 
   // HANDLE TAB MENUS ACCORDING TO WIDGET
-
   useEffect(() => {
     const widgetTabMapping = {
       Tabular: { value: 3, label: "Table Details" },
@@ -434,6 +437,43 @@ const WidgetMaster = () => {
       });
     }
   }, [singleData]);
+
+  //parameter search
+  useEffect(() => {
+    if (!searchInput) {
+      setFilterData(parameterData);
+    } else {
+      const lowercasedText = searchInput.toLowerCase();
+      const newFilteredData = parameterData.filter(row => {
+        const paramId = row?.id?.toString() || "";
+        const paramName = row?.jsonData?.parameterName?.toLowerCase() || "";
+        const paramDisplayName = row?.jsonData?.parameterDisplayName?.toLowerCase() || "";
+
+        return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText);
+      });
+      setFilterData(newFilteredData);
+      console.log(newFilteredData, 'newFilteredData')
+    }
+  }, [searchInput, parameterData]);
+
+  //widget search
+  useEffect(() => {
+    if (!widgetSearchInput) {
+      setWidgetFilterData(allWidgetData);
+    } else {
+      const lowercasedText = widgetSearchInput.toLowerCase();
+      const newFilteredData = allWidgetData.filter(row => {
+        const paramId = row?.rptId?.toString() || "";
+        const paramName = row?.rptName?.toLowerCase() || "";
+        const paramDisplayName = row?.rptDisplayName?.toLowerCase() || "";
+        const paramType = row?.reportViewed?.toLowerCase() || "";
+
+        return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText) || paramType?.includes(lowercasedText);
+      });
+      setWidgetFilterData(newFilteredData);
+      console.log(newFilteredData, 'newFilteredData')
+    }
+  }, [widgetSearchInput, allWidgetData]);
 
   const saveWidgetData = () => {
     const {
@@ -960,9 +1000,9 @@ const WidgetMaster = () => {
     },
   ]
 
-  console.log(values, 'values')
+  // console.log(values, 'values')
   // console.log(radioValues, 'rdovalues')
-  console.log(singleData)
+  // console.log(singleData)
   // console.log(allWidgetData?.filter(dt=>dt?.rptId == 11600023))
 
   return (
@@ -1026,10 +1066,10 @@ const WidgetMaster = () => {
                 <FooterDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />}
 
               {showWidgetTable &&
-                <GlobalDataTable title={"Widget List"} column={widgetColumn} data={allWidgetData} onModify={handleUpdateData} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} isShowBtn={true} />
+                <GlobalDataTable title={"Widget List"} column={widgetColumn} data={widgetFilterData} onModify={handleUpdateData} onDelete={null} onClose={onTableClose} setSearchInput={setWidgetSearchInput} isShowBtn={true} />
               }
               {showParamsTable &&
-                <GlobalDataTable title={"Parameter List"} column={paramsColumn} data={parameterData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} isShowBtn={false} />
+                <GlobalDataTable title={"Parameter List"} column={paramsColumn} data={filterData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} isShowBtn={false} />
               }
               {showWebServiceTable &&
                 <DataServiceTable data={dataServiceData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={false} />

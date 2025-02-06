@@ -5,10 +5,11 @@ import { Modal, Button } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import InputField from './InputField';
 import { HISContext } from '../../contextApi/HISContext';
+import InputSelect from './InputSelect';
 
 
 const GlobalDataTable = (props) => {
-    const { showDataTable, setShowDataTable } = useContext(HISContext);
+    const { showDataTable, setShowDataTable} = useContext(HISContext);
     const { title, column, data, onModify, onDelete, onClose, setSearchInput, isShowBtn } = props;
 
     const handleClose = () => { setShowDataTable(false); onClose(); }

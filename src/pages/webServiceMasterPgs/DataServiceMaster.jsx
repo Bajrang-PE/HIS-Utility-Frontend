@@ -3,24 +3,28 @@ import NavbarHeader from '../../components/headers/NavbarHeader'
 import GlobalButtonGroup from '../../components/commons/GlobalButtonGroup'
 import InputSelect from '../../components/commons/InputSelect'
 import InputField from '../../components/commons/InputField'
-import { serviceCategories, timeOutOptions } from '../../localData/DropDownData'
+import { parameterType, serviceCategories, timeOutOptions } from '../../localData/DropDownData'
 import DataServiceTable from '../../components/webServiceMasters/dataService/DataServiceTable'
 import { HISContext } from '../../contextApi/HISContext'
 import { ToastAlert } from '../../utils/commonFunction'
 import { fetchPostData } from '../../utils/ApiHooks'
+import GlobalDataTable from '../../components/commons/GlobalDataTable'
 
 const DataServiceMaster = () => {
-  const { setShowDataTable, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, setActionMode, actionMode } = useContext(HISContext);
+  const { setShowDataTable, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, setActionMode, actionMode, parameterData, getAllParameterData, } = useContext(HISContext);
+
   const [isCacheData, setIsCacheData] = useState(false);
   const [selectedMode, setSelectedMode] = useState("query");
   const [showWebServiceTable, setShowWebServiceTable] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [singleData, setSingleData] = useState([]);
+  const [filterData, setFilterData] = useState(parameterData)
+  const [showParamsTable, setShowParamsTable] = useState(false);
+
 
   const [values, setValues] = useState({
     "serviceCategory": "", "serviceDisplayName": "", "serviceCallingName": "", "procedureFuncName": "", "fetchQuery": "", "webJsonType": "dataHeadingColumnType", "jndiSavingData": "", "stmtTimeOut": "", "dashboardFor": "", "id": ""
   })
-
 
   const handleValueChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +35,24 @@ const DataServiceMaster = () => {
 
   useEffect(() => {
     if (dataServiceData?.length === 0) { getAllServiceData(); }
+    if (parameterData?.length === 0) { getAllParameterData('CENTRAL DASHBOARD'); }
   }, [])
+
+  useEffect(() => {
+    if (!searchInput) {
+      setFilterData(parameterData);
+    } else {
+      const lowercasedText = searchInput.toLowerCase();
+      const newFilteredData = parameterData.filter(row => {
+        const paramId = row?.id?.toString() || "";
+        const paramName = row?.jsonData?.parameterName?.toLowerCase() || "";
+        const paramDisplayName = row?.jsonData?.parameterDisplayName?.toLowerCase() || "";
+
+        return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText);
+      });
+      setFilterData(newFilteredData);
+    }
+  }, [searchInput, parameterData]);
 
   const handleUpdateData = () => {
     if (selectedOption?.length > 0) {
@@ -170,25 +191,73 @@ const DataServiceMaster = () => {
     setShowDataTable(false);
   }
 
-  console.log(singleData, 'single')
-  console.log(values, 'value')
-
   const onOpenWebService = () => {
     setShowDataTable(true);
     setShowWebServiceTable(true);
+  }
+
+  const onOpenDataParams = () => {
+    setShowDataTable(true);
+    setShowParamsTable(true);
   }
 
   const onTableClose = () => {
     setShowWebServiceTable(false);
     setSearchInput('');
     setSelectedOption([]);
+    setShowParamsTable(false);
   }
+
+  const column = [
+    {
+      name: <input
+        type="checkbox"
+        // checked={selectAll}
+        // onChange={(e) => handleSelectAll(e.target.checked, "gnumUserId")}
+        disabled={true}
+        className="form-check-input log-select"
+      />,
+      cell: row =>
+        <div style={{ position: 'absolute', top: 4, left: 10 }}>
+          <span className="btn btn-sm text-white px-1 py-0 mr-1" >
+            <input
+              type="checkbox"
+              checked={selectedOption[0]?.id === row?.id}
+              onChange={(e) => { setSelectedOption([row]) }}
+            />
+          </span>
+        </div>,
+      width: "8%"
+    },
+    {
+      name: 'ID',
+      selector: row => row.id,
+      sortable: true,
+      width: "8%"
+    },
+    {
+      name: 'Parameter Name',
+      selector: row => row?.jsonData?.parameterName || "---",
+      sortable: true,
+    },
+    {
+      name: 'Display Name',
+      selector: row => row?.jsonData?.parameterDisplayName || "---",
+      sortable: true,
+    },
+    {
+      name: 'Type',
+      selector: row => parameterType?.filter(dt => dt?.value === row?.jsonData?.parameterType)[0]?.label || "---",
+      sortable: true,
+    },
+  ]
+
 
   return (
     <div>
       <NavbarHeader />
       <div className='main-master-page'>
-        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={false} onSave={actionMode === 'edit' ? updateDataServiceData : saveDataServiceData} onOpen={onOpenWebService} onReset={reset} onParams={null} onWeb={null} />
+        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={false} onSave={actionMode === 'edit' ? updateDataServiceData : saveDataServiceData} onOpen={onOpenWebService} onReset={reset} onParams={onOpenDataParams} onWeb={null} />
         <div className='form-card m-auto p-3'>
           <b><h6 className='header-devider mt-0 mb-1'>Data Service Master</h6></b>
 
@@ -542,7 +611,10 @@ const DataServiceMaster = () => {
         </div>
       </div>
       {showWebServiceTable &&
-        <DataServiceTable data={dataServiceData} onModify={handleUpdateData} onDelete={handleDeleteDataService} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
+        <DataServiceTable data={dataServiceData} onModify={handleUpdateData} onDelete={handleDeleteDataService} onClose={onTableClose} isShowBtn={true} />
+      }
+      {showParamsTable &&
+        <GlobalDataTable title={"Parameter List"} column={column} data={filterData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={false} />
       }
     </div>
   )

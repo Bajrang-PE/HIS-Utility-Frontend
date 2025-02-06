@@ -164,3 +164,25 @@ export const kpiBoxClickOptions = [
     { value: '2', label: 'Show Widget' },
     { value: '3', label: 'Show Dashboard' },
 ]
+
+export const tabDisplayOptions = [
+    { value: 'TOP', label: 'Top Tab' },
+    { value: 'SIDE', label: 'Side Tab' },
+    { value: 'BIG_ICON', label: 'Big Icon Tab' },
+]
+
+export const dataLoadOptions = [
+    { value: "ALL", label: "All configuration on dashboard load" },
+    { value: "TAB CLICK", label: "On tab Click" },
+    { value: "FIRST TAB", label: "First tab configuration only on dashboard load" }
+];
+
+export const tabShapeOptions = [
+    { value: "rectangle", label: "rectangle" },
+    { value: "rectangle-toprightcurve", label: "rectangle top right" },
+    { value: "rectangle-rounded", label: "rectangle-rounded" },
+    { value: "circle", label: "circle" },
+    { value: "oval", label: "oval" },
+    { value: "square", label: "square" },
+    { value: "square-rounded", label: "square-rounded" }
+];

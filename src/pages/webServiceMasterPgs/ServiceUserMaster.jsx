@@ -8,6 +8,7 @@ import InputSelect from '../../components/commons/InputSelect'
 import { HISContext } from '../../contextApi/HISContext'
 import { ToastAlert } from '../../utils/commonFunction'
 import GlobalDataTable from '../../components/commons/GlobalDataTable'
+import { fetchPostData } from '../../utils/ApiHooks'
 
 const ServiceUserMaster = () => {
   const { setShowDataTable, getAllServiceData, dataServiceDrpData, selectedOption, setSelectedOption, setActionMode, actionMode, getUserServiceData, userServiceData } = useContext(HISContext);
@@ -20,6 +21,7 @@ const ServiceUserMaster = () => {
   const [showServiceUserTable, setShowServiceUserTable] = useState(false)
   const [singleData, setSingleData] = useState([]);
   const [searchInput, setSearchInput] = useState('');
+    const [filterData, setFilterData] = useState(userServiceData)
 
   useEffect(() => {
     if (dataServiceDrpData?.length === 0) { getAllServiceData(); }
@@ -32,6 +34,23 @@ const ServiceUserMaster = () => {
       setValues({ ...values, [name]: value })
     }
   }
+
+   useEffect(() => {
+      if (!searchInput) {
+        setFilterData(userServiceData);
+      } else {
+        const lowercasedText = searchInput.toLowerCase();
+        const newFilteredData = userServiceData.filter(row => {
+          const paramId = row?.id?.toString() || "";
+          const paramName = row?.jsonData?.userName?.toLowerCase() || "";
+          const paramDisplayName = row?.jsonData?.previlege?.toLowerCase() || "";
+  
+          return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText);
+        });
+        setFilterData(newFilteredData);
+        console.log(newFilteredData, 'newFilteredData')
+      }
+    }, [searchInput, userServiceData]);
 
   const handleUpdateData = () => {
     if (selectedOption?.length > 0) {
@@ -57,9 +76,97 @@ const ServiceUserMaster = () => {
         password: jsonData?.password
       })
       setPrevilegeFor(jsonData?.previlege);
-      setRows(jsonData?.lstServiceMapped);
+      setRows(jsonData?.lstServiceMapped?.length > 0 ? jsonData?.lstServiceMapped : []);
     }
   }, [singleData])
+
+  const saveServiceUserData = () => {
+    const {
+      username, password, id, dashboardFor
+    } = values;
+    const val = {
+      dashboardFor: "GLOBAL",
+      masterName: "ServiceUserMst",
+      entryUserId: 101,
+      keyName: username,
+      jsonData: {
+        userName: username,
+        password: password,
+        isLogsRequired: "",
+        previlege: previlegeFor,
+        lstServiceMapped: rows
+      }
+    };
+
+    fetchPostData("/hisutils/ServiceUsersave", val).then((data) => {
+      if (data) {
+        ToastAlert("Data Saved Successfully", "success");
+        getUserServiceData();
+        setActionMode('home');
+        reset();
+      } else {
+        ToastAlert("Internal Error!", "error");
+      }
+    });
+  };
+
+  const updateServiceUserData = () => {
+    const {
+      username, password, id, dashboardFor
+    } = values;
+    const val = {
+      id: id,
+      dashboardFor: "GLOBAL",
+      masterName: "ServiceUserMst",
+      entryUserId: 101,
+      keyName: username,
+      jsonData: {
+        userName: username,
+        password: password,
+        isLogsRequired: "",
+        previlege: previlegeFor,
+        lstServiceMapped: rows
+      }
+    };
+
+    fetchPostData("/hisutils/ServiceUserUpdate", val).then((data) => {
+      if (data) {
+        ToastAlert("Data Updated Successfully", "success");
+        getUserServiceData();
+        setActionMode('home');
+        reset();
+      } else {
+        ToastAlert("Internal Error!", "error");
+      }
+    });
+  };
+
+   const handleDeleteServiceUser = () => {
+      if (selectedOption?.length > 0) {
+        const val = { "id": selectedOption[0]?.id, "dashboardFor": "GLOBAL", "masterName": "ServiceUserMst" };
+        fetchPostData("/hisutils/ServiceUserDelete", val).then((data) => {
+          if (data) {
+            ToastAlert('Deleted Successfully!', 'success');
+            getUserServiceData();
+            setSelectedOption([]);
+            reset();
+          } else {
+            ToastAlert('Deletion Failed!', 'error');
+          }
+        })
+      } else {
+        ToastAlert('Please select a record', 'warning');
+      }
+    }
+
+  const reset = () => {
+    setValues({ "username": "", "password": "", "id": '', "dashboardFor": "" });
+    setRows([{ serviceId: "", noOfServiceUsageAllowed: "" }]);
+    setPrevilegeFor('allServices');
+    setActionMode('home');
+    setShowServiceUserTable(false);
+    setShowDataTable(false);
+  }
 
   console.log(singleData, 'single')
 
@@ -136,7 +243,7 @@ const ServiceUserMaster = () => {
     <div>
       <NavbarHeader />
       <div className='main-master-page'>
-        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={null} onOpen={onOpenUserService} onReset={null} onParams={null} onWeb={null} />
+        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={actionMode === 'edit' ? updateServiceUserData : saveServiceUserData} onOpen={onOpenUserService} onReset={reset} onParams={null} onWeb={null} />
         <div className='form-card m-auto p-3'>
           <b><h6 className='header-devider mt-0 mb-1'>Service User Master</h6></b>
           {/* SECTION DEVIDER*/}
@@ -268,7 +375,7 @@ const ServiceUserMaster = () => {
                         <td>
                           <InputField
                             type="number"
-                            className="backcolorinput w-25 m-auto"
+                            className="backcolorinput w-50 m-auto"
                             name='serverUrl'
                             id='serverUrl'
                             value={row.noOfServiceUsageAllowed}
@@ -298,7 +405,7 @@ const ServiceUserMaster = () => {
         </div>
       </div>
       {showServiceUserTable &&
-        <GlobalDataTable title={"Service User List"} column={column} data={userServiceData} onModify={handleUpdateData} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
+        <GlobalDataTable title={"Service User List"} column={column} data={filterData} onModify={handleUpdateData} onDelete={handleDeleteServiceUser} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={true} />
       }
     </div>
   )
