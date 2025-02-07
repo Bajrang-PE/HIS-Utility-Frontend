@@ -15,7 +15,7 @@ import { fetchPostData } from '../../utils/ApiHooks'
 
 const DashboardMaster = () => {
 
-  const { dashboardForDt, getDashboardForDrpData, getAllParameterData, parameterDrpData, getAllTabsData, setShowDataTable, setSelectedOption, selectedOption, actionMode, setActionMode, tabDrpData, getAllDashboardData, dashboardData } = useContext(HISContext);
+  const { dashboardForDt, getDashboardForDrpData, getAllParameterData, parameterDrpData, getAllTabsData, setShowDataTable, setSelectedOption, selectedOption, actionMode, setActionMode, tabDrpData, getAllDashboardData, dashboardData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
 
   const [tabIndex, setTabIndex] = useState(1);
   const [tabName, setTabName] = useState({ value: 1, label: "About Dashboard" });
@@ -42,6 +42,7 @@ const DashboardMaster = () => {
     //header
     "isHeaderReq": "No", "showHeader": "Only in Big Icon Menu", "showHeaderInGlobalDash": "No", "rptHeaderTypePdfExl": "1", "isActive": "Yes",
   })
+  const [errors, setErrors] = useState({ dashboardForErr: "", dashNameDisplayErr: "", dashNameInternalErr: "", rptHeaderbyQueryErr: "" });
 
   const [tabNavMenus, setTabNavMenus] = useState([
     { value: 1, label: "About Dashboard" },
@@ -90,8 +91,12 @@ const DashboardMaster = () => {
 
   const handleValueChange = (e) => {
     const { name, value } = e.target;
+    const error = name + 'Err'
     if (name) {
       setValues({ ...values, [name]: value })
+    }
+    if (error && name) {
+      setErrors({ ...errors, [error]: '' })
     }
   }
 
@@ -228,8 +233,10 @@ const DashboardMaster = () => {
         getAllDashboardData(values?.dashboardFor)
         setActionMode('home');
         reset();
+        setConfirmSave(false);
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false);
       }
     });
   };
@@ -310,8 +317,10 @@ const DashboardMaster = () => {
         getAllDashboardData(values?.dashboardFor)
         reset();
         setActionMode('home');
+        setConfirmSave(false);
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false);
       }
     });
   };
@@ -333,6 +342,40 @@ const DashboardMaster = () => {
       ToastAlert('Please select a record', 'warning');
     }
   }
+
+  const handleSaveUpdate = () => {
+    let isValid = true;
+    if (!values?.dashboardFor?.trim()) {
+      setErrors(prev => ({ ...prev, 'dashboardForErr': "dashboard for is required" }));
+      isValid = false;
+    }
+    if (!values?.dashNameDisplay?.trim()) {
+      setErrors(prev => ({ ...prev, 'dashNameDisplayErr': "display name is required" }));
+      isValid = false;
+    }
+    if (!values?.dashNameInternal?.trim()) {
+      setErrors(prev => ({ ...prev, 'dashNameInternalErr': "internal name is required" }));
+      isValid = false;
+    }
+    if (radioValues?.rptHeaderTypePdfExl === '2' && !values?.rptHeaderbyQuery?.trim()) {
+      setErrors(prev => ({ ...prev, 'rptHeaderbyQueryErr': "query is required" }));
+      isValid = false;
+    }
+
+    if (isValid) {
+      setShowConfirmSave(true);
+    }
+  }
+
+  useEffect(() => {
+    if (confirmSave) {
+      if (actionMode === 'edit') {
+        updateDashboardData();
+      } else {
+        saveDashboardData();
+      }
+    }
+  }, [confirmSave])
 
   const saveMenuTabsData = () => {
     let nextTab = tabIndex + 1;
@@ -393,6 +436,7 @@ const DashboardMaster = () => {
       //header
       "isHeaderReq": "No", "showHeader": "Only in Big Icon Menu", "showHeaderInGlobalDash": "No", "rptHeaderTypePdfExl": "1", "isActive": "Yes",
     });
+    setErrors({ dashboardForErr: "", dashNameDisplayErr: "", dashNameInternalErr: "", rptHeaderbyQueryErr: "" });
     setActionMode('home');
     setShowDashboardTable(false);
     setShowDataTable(false);
@@ -440,7 +484,7 @@ const DashboardMaster = () => {
     }
   ]
 
-  console.log(singleData, 'single')
+  console.log(errors, 'single')
 
   return (
     <div>
@@ -449,7 +493,7 @@ const DashboardMaster = () => {
         {values?.dashboardFor &&
           <div className='row w-100 m-0'>
             <div className='col-sm-6 p-0 global-button-group'>
-              <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={actionMode === 'edit' ? updateDashboardData : saveDashboardData} onOpen={onOpenDataTable} onReset={reset} onParams={null} onWeb={null} />
+              <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={handleSaveUpdate} onOpen={onOpenDataTable} onReset={reset} onParams={null} onWeb={null} />
             </div>
             <div className='col-sm-6 p-0 global-tabs'>
               <TabNav isTabNav={true} tabNavData={tabNavMenus} setTabIndex={setTabIndex} tabName={tabName} setTabName={setTabName} />
@@ -460,11 +504,11 @@ const DashboardMaster = () => {
         <div className='form-card m-auto p-2'>
           <div className='p-1'>
             {tabName?.value === 1 &&
-              <AboutDashboard handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} dashboardForDt={dashboardForDt} />}
+              <AboutDashboard handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} dashboardForDt={dashboardForDt} errors={errors} />}
             {tabName?.value === 2 &&
               <TabDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} tabDrpData={tabDrpData} />}
             {tabName?.value === 3 &&
-              <HeaderDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} />}
+              <HeaderDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} errors={errors} />}
             {tabName?.value === 4 &&
               <ParamsDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} parameterDrpData={parameterDrpData} />}
 

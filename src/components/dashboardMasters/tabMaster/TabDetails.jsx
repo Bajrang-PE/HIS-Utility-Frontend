@@ -3,7 +3,7 @@ import InputField from '../../commons/InputField'
 
 const TabDetails = (props) => {
 
-    const { handleValueChange, handleRadioChange, radioValues, values } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, errors } = props;
 
     return (
         <>
@@ -16,7 +16,7 @@ const TabDetails = (props) => {
                         <label className="col-sm-5 col-form-label pe-0 required-label">
                             Show Tab Name In Detail Title :
                         </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
+                        <di v className="col-sm-7 ps-0 align-content-center">
                             <div className="form-check form-check-inline">
                                 <input
                                     className="form-check-input"
@@ -45,7 +45,12 @@ const TabDetails = (props) => {
                                     No
                                 </label>
                             </div>
-                        </div>
+                            {errors?.showTabNameInDetailErr &&
+                                <div className="required-input">
+                                    {errors?.showTabNameInDetailErr}
+                                </div>
+                            }
+                        </di>
                     </div>
                     <div className="form-group row" style={{ paddingBottom: "1px" }}>
                         <label className="col-sm-5 col-form-label pe-0 required-label">Tab Name Font Weight : </label>
@@ -59,6 +64,11 @@ const TabDetails = (props) => {
                                 onChange={handleValueChange}
                                 value={values?.tabNameFontWeight}
                             />
+                            {errors?.tabNameFontWeightErr &&
+                                <div className="required-input">
+                                    {errors?.tabNameFontWeightErr}
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className="form-group row" style={{ paddingBottom: "1px" }}>
@@ -118,6 +128,11 @@ const TabDetails = (props) => {
                                 onChange={handleValueChange}
                                 value={values?.tabNameFontSize}
                             />
+                            {errors?.tabNameFontSizeErr &&
+                                <div className="required-input">
+                                    {errors?.tabNameFontSizeErr}
+                                </div>
+                            }
                         </div>
                     </div>
 
@@ -133,6 +148,11 @@ const TabDetails = (props) => {
                                 onChange={handleValueChange}
                                 value={values?.tabNameTxtDecorat}
                             />
+                            {errors?.tabNameTxtDecoratErr &&
+                                <div className="required-input">
+                                    {errors?.tabNameTxtDecoratErr}
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className="form-group row">

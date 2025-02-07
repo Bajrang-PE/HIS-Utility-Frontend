@@ -11,17 +11,18 @@ import GlobalDataTable from '../../components/commons/GlobalDataTable'
 import { fetchPostData } from '../../utils/ApiHooks'
 
 const ServiceUserMaster = () => {
-  const { setShowDataTable, getAllServiceData, dataServiceDrpData, selectedOption, setSelectedOption, setActionMode, actionMode, getUserServiceData, userServiceData } = useContext(HISContext);
+  const { setShowDataTable, getAllServiceData, dataServiceDrpData, selectedOption, setSelectedOption, setActionMode, actionMode, getUserServiceData, userServiceData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave, } = useContext(HISContext);
 
   const [values, setValues] = useState({
     "username": "", "password": "", "id": '', "dashboardFor": ""
   })
+  const [errors, setErrors] = useState({ usernameErr: "", passwordErr: "", serviceIdErr: "" });
   const [previlegeFor, setPrevilegeFor] = useState('allServices')
-  const [rows, setRows] = useState([{ serviceId: "", noOfServiceUsageAllowed: "" }]);
+  const [rows, setRows] = useState([{ serviceId: "", noOfServiceUsageAllowed: "-1" }]);
   const [showServiceUserTable, setShowServiceUserTable] = useState(false)
   const [singleData, setSingleData] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-    const [filterData, setFilterData] = useState(userServiceData)
+  const [filterData, setFilterData] = useState(userServiceData)
 
   useEffect(() => {
     if (dataServiceDrpData?.length === 0) { getAllServiceData(); }
@@ -30,27 +31,31 @@ const ServiceUserMaster = () => {
 
   const handleValueChange = (e) => {
     const { name, value } = e.target;
+    const error = name + 'Err'
     if (name) {
       setValues({ ...values, [name]: value })
     }
+    if (error && name) {
+      setErrors({ ...errors, [error]: '' })
+    }
   }
 
-   useEffect(() => {
-      if (!searchInput) {
-        setFilterData(userServiceData);
-      } else {
-        const lowercasedText = searchInput.toLowerCase();
-        const newFilteredData = userServiceData.filter(row => {
-          const paramId = row?.id?.toString() || "";
-          const paramName = row?.jsonData?.userName?.toLowerCase() || "";
-          const paramDisplayName = row?.jsonData?.previlege?.toLowerCase() || "";
-  
-          return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText);
-        });
-        setFilterData(newFilteredData);
-        console.log(newFilteredData, 'newFilteredData')
-      }
-    }, [searchInput, userServiceData]);
+  useEffect(() => {
+    if (!searchInput) {
+      setFilterData(userServiceData);
+    } else {
+      const lowercasedText = searchInput.toLowerCase();
+      const newFilteredData = userServiceData.filter(row => {
+        const paramId = row?.id?.toString() || "";
+        const paramName = row?.jsonData?.userName?.toLowerCase() || "";
+        const paramDisplayName = row?.jsonData?.previlege?.toLowerCase() || "";
+
+        return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText);
+      });
+      setFilterData(newFilteredData);
+      console.log(newFilteredData, 'newFilteredData')
+    }
+  }, [searchInput, userServiceData]);
 
   const handleUpdateData = () => {
     if (selectedOption?.length > 0) {
@@ -104,8 +109,10 @@ const ServiceUserMaster = () => {
         getUserServiceData();
         setActionMode('home');
         reset();
+        setConfirmSave(false);
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false);
       }
     });
   };
@@ -135,14 +142,18 @@ const ServiceUserMaster = () => {
         getUserServiceData();
         setActionMode('home');
         reset();
+        setConfirmSave(false);
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false);
       }
     });
   };
 
-   const handleDeleteServiceUser = () => {
-      if (selectedOption?.length > 0) {
+  const handleDeleteServiceUser = () => {
+    if (selectedOption?.length > 0) {
+      const isReset = window.confirm('Do you want to reset whole form!');
+      if (isReset) {
         const val = { "id": selectedOption[0]?.id, "dashboardFor": "GLOBAL", "masterName": "ServiceUserMst" };
         fetchPostData("/hisutils/ServiceUserDelete", val).then((data) => {
           if (data) {
@@ -155,23 +166,59 @@ const ServiceUserMaster = () => {
           }
         })
       } else {
-        ToastAlert('Please select a record', 'warning');
+        setSelectedOption([]);
+      }
+    } else {
+      ToastAlert('Please select a record', 'warning');
+    }
+  }
+
+  const handleSaveUpdate = () => {
+    let isValid = true;
+    if (!values?.username?.trim()) {
+      setErrors(prev => ({ ...prev, 'usernameErr': "user name is required" }));
+      isValid = false;
+    }
+    if (!values?.password?.trim()) {
+      setErrors(prev => ({ ...prev, 'passwordErr': "password is required" }));
+      isValid = false;
+    }
+
+    if (previlegeFor === "selectedServices" && rows?.length > 0 && !rows[rows?.length - 1]?.serviceId) {
+      setErrors(prev => ({ ...prev, 'serviceIdErr': "please select service name" }));
+      isValid = false;
+    }
+
+    if (isValid) {
+      setShowConfirmSave(true);
+    }
+  }
+
+  useEffect(() => {
+    if (confirmSave) {
+      if (actionMode === 'edit') {
+        updateServiceUserData();
+      } else {
+        saveServiceUserData();
       }
     }
+  }, [confirmSave])
 
   const reset = () => {
     setValues({ "username": "", "password": "", "id": '', "dashboardFor": "" });
-    setRows([{ serviceId: "", noOfServiceUsageAllowed: "" }]);
+    setRows([{ serviceId: "", noOfServiceUsageAllowed: "-1" }]);
+    setErrors({usernameErr: "", passwordErr: "", serviceIdErr: "" })
     setPrevilegeFor('allServices');
     setActionMode('home');
     setShowServiceUserTable(false);
     setShowDataTable(false);
   }
 
-  console.log(singleData, 'single')
-
   // Handle input change
   const handleInputChange = (index, field, value) => {
+    if (field && value) {
+      setErrors({ ...errors, [field + "Err"]: '' })
+    }
     const updatedRows = [...rows];
     updatedRows[index][field] = value;
     setRows(updatedRows);
@@ -179,7 +226,11 @@ const ServiceUserMaster = () => {
 
   // Add a new row
   const handleAddRow = () => {
-    setRows([...rows, { serviceId: "", noOfServiceUsageAllowed: "" }]);
+    if (rows?.length > 0 && !rows[rows?.length - 1]?.serviceId) {
+      setErrors(prev => ({ ...prev, 'serviceIdErr': "please select service name" }));
+    } else {
+      setRows([...rows, { serviceId: "", noOfServiceUsageAllowed: "-1" }]);
+    }
   };
 
   // Remove a row
@@ -243,7 +294,7 @@ const ServiceUserMaster = () => {
     <div>
       <NavbarHeader />
       <div className='main-master-page'>
-        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={actionMode === 'edit' ? updateServiceUserData : saveServiceUserData} onOpen={onOpenUserService} onReset={reset} onParams={null} onWeb={null} />
+        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={handleSaveUpdate} onOpen={onOpenUserService} onReset={reset} onParams={null} onWeb={null} />
         <div className='form-card m-auto p-3'>
           <b><h6 className='header-devider mt-0 mb-1'>Service User Master</h6></b>
           {/* SECTION DEVIDER*/}
@@ -262,6 +313,11 @@ const ServiceUserMaster = () => {
                     onChange={handleValueChange}
                     value={values?.username}
                   />
+                  {errors?.usernameErr &&
+                    <div className="required-input">
+                      {errors?.usernameErr}
+                    </div>
+                  }
                 </div>
               </div>
             </div>
@@ -279,6 +335,11 @@ const ServiceUserMaster = () => {
                     onChange={handleValueChange}
                     value={values?.password}
                   />
+                  {errors?.passwordErr &&
+                    <div className="required-input">
+                      {errors?.passwordErr}
+                    </div>
+                  }
                 </div>
               </div>
             </div>
@@ -396,6 +457,11 @@ const ServiceUserMaster = () => {
                         </td>
                       </tr>
                     ))}
+                    {errors?.serviceIdErr &&
+                      <div className="required-input">
+                        {errors?.serviceIdErr}
+                      </div>
+                    }
                   </tbody>
                 </table>
               </div>

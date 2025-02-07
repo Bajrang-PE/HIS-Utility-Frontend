@@ -15,7 +15,7 @@ import { fetchPostData } from '../../utils/ApiHooks'
 
 const ParameterMaster = () => {
 
-  const { parameterData, getAllParameterData, selectedOption, setSelectedOption, setShowDataTable, dashboardForDt, getDashboardForDrpData, actionMode, setActionMode, parameterDrpData, getAllServiceData, dataServiceData } = useContext(HISContext);
+  const { parameterData, getAllParameterData, selectedOption, setSelectedOption, setShowDataTable, dashboardForDt, getDashboardForDrpData, actionMode, setActionMode, parameterDrpData, getAllServiceData, dataServiceData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
 
   const [rows, setRows] = useState([{ optionValue: "", optionText: "" }]);
   const [showAsLabel, setShowAsLabel] = useState(false);
@@ -30,6 +30,7 @@ const ParameterMaster = () => {
   const [showWebServiceTable, setShowWebServiceTable] = useState(false);
   const [filterData, setFilterData] = useState(parameterData)
 
+  const [errors, setErrors] = useState({ parameterForErr: "", parameterTypeErr: "", parameterInternalErr: "", parameterDisplayErr: "", mandatoryErr: "", queryErr: "", parameterQueryForDateErr: "", defaultOptValueErr: "", defaultOptTextErr: "", defOptFilterValErr: "", defOptFilterTxtErr: "", listOptValErr: "", listOptTxtErr: "" });
 
   useEffect(() => {
     if (!searchInput) {
@@ -44,10 +45,8 @@ const ParameterMaster = () => {
         return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText);
       });
       setFilterData(newFilteredData);
-      console.log(newFilteredData, 'newFilteredData')
     }
   }, [searchInput, parameterData]);
-
 
   useEffect(() => {
     if (values?.parameterFor) { getAllParameterData(values?.parameterFor); }
@@ -60,8 +59,12 @@ const ParameterMaster = () => {
 
   const handleValueChange = (e) => {
     const { name, value } = e.target;
+    const error = name + 'Err'
     if (name) {
       setValues({ ...values, [name]: value })
+    }
+    if (error && name) {
+      setErrors({ ...errors, [error]: '' })
     }
   }
 
@@ -74,7 +77,14 @@ const ParameterMaster = () => {
 
   // Add a new row
   const handleAddRow = () => {
-    setRows([...rows, { optionValue: "", optionText: "" }]);
+    if (rows?.length > 0 && !rows[rows?.length - 1]?.optionValue) {
+      setErrors(prev => ({ ...prev, 'listOptValErr': "list option value is required" }));
+    } else if (rows?.length > 0 && !rows[rows?.length - 1]?.optionText) {
+      setErrors(prev => ({ ...prev, 'listOptTxtErr': "list option text is required" }));
+    } else {
+      setRows([...rows, { optionValue: "", optionText: "" }]);
+      setErrors(prev => ({ ...prev, 'listOptValErr': "", 'listOptTxtErr': "" }));
+    }
   };
 
   // Remove a row
@@ -158,8 +168,10 @@ const ParameterMaster = () => {
         getAllParameterData(values?.parameterFor)
         setActionMode('home');
         reset();
+        setConfirmSave(false);
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false);
       }
     });
   };
@@ -198,11 +210,83 @@ const ParameterMaster = () => {
         getAllParameterData(values?.parameterFor)
         reset();
         setActionMode('home');
+        setConfirmSave(false);
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false);
       }
     });
   };
+
+  const handleSaveUpdate = () => {
+    let isValid = true;
+    if (!values?.parameterFor?.trim()) {
+      setErrors(prev => ({ ...prev, 'parameterForErr': "parameter for is required" }));
+      isValid = false;
+    }
+    if (!values?.parameterType?.trim()) {
+      setErrors(prev => ({ ...prev, 'parameterTypeErr': "parameter typr is required" }));
+      isValid = false;
+    }
+    if (!values?.parameterInternal?.trim()) {
+      setErrors(prev => ({ ...prev, 'parameterInternalErr': "internal name is required" }));
+      isValid = false;
+    }
+    if (!values?.parameterDisplay?.trim()) {
+      setErrors(prev => ({ ...prev, 'parameterDisplayErr': "display name is required" }));
+      isValid = false;
+    }
+    if (!values?.mandatory?.trim()) {
+      setErrors(prev => ({ ...prev, 'mandatoryErr': "mandatory is required" }));
+      isValid = false;
+    }
+    if (values?.modeForQuery === "query" && values?.parameterType !== '2' && values?.parameterType !== '3' && !values?.query?.trim()) {
+      setErrors(prev => ({ ...prev, 'queryErr': "query is required" }));
+      isValid = false;
+    }
+    if (values?.parameterType === '3' && !values?.parameterQueryForDate?.trim()) {
+      setErrors(prev => ({ ...prev, 'parameterQueryForDateErr': "query is required" }));
+      isValid = false;
+    }
+    if (values?.parameterType !== '2' && values?.parameterType !== '3' && !values?.defaultOptValue?.trim()) {
+      setErrors(prev => ({ ...prev, 'defaultOptValueErr': "default Value is required" }));
+      isValid = false;
+    }
+    if (values?.parameterType !== '2' && values?.parameterType !== '3' && !values?.defaultOptText?.trim()) {
+      setErrors(prev => ({ ...prev, 'defaultOptTextErr': "default text is required" }));
+      isValid = false;
+    }
+    if (values?.parameterType !== '2' && values?.parameterType !== '3' && !values?.defOptFilterVal?.trim()) {
+      setErrors(prev => ({ ...prev, 'defOptFilterValErr': "filter value is required" }));
+      isValid = false;
+    }
+    if (values?.parameterType !== '2' && values?.parameterType !== '3' && !values?.defOptFilterTxt?.trim()) {
+      setErrors(prev => ({ ...prev, 'defOptFilterTxtErr': "filter text is required" }));
+      isValid = false;
+    }
+    if (values?.parameterType !== '2' && values?.parameterType !== '3' && values?.modeForQuery === "multiRowOption" && rows?.length > 0 && !rows[rows?.length - 1]?.optionValue) {
+      setErrors(prev => ({ ...prev, 'listOptValErr': "list option value is required" }));
+      isValid = false;
+    }
+    if (values?.parameterType !== '2' && values?.parameterType !== '3' && values?.modeForQuery === "multiRowOption" && rows?.length > 0 && !rows[rows?.length - 1]?.optionText) {
+      setErrors(prev => ({ ...prev, 'listOptTxtErr': "list option text is required" }));
+      isValid = false;
+    }
+
+    if (isValid) {
+      setShowConfirmSave(true);
+    }
+  }
+
+  useEffect(() => {
+    if (confirmSave) {
+      if (actionMode === 'edit') {
+        updateParametersData();
+      } else {
+        saveParametersData();
+      }
+    }
+  }, [confirmSave])
 
 
   const returnAlignment = (val) => {
@@ -288,6 +372,7 @@ const ParameterMaster = () => {
     setShowDataTable(false);
     setShowWebServiceTable(false);
     setRows([{ optionValue: "", optionText: "" }]);
+    setErrors({ parameterForErr: "", parameterTypeErr: "", parameterInternalErr: "", parameterDisplayErr: "", mandatoryErr: "", queryErr: "", parameterQueryForDateErr: "", defaultOptValueErr: "", defaultOptTextErr: "", defOptFilterValErr: "", defOptFilterTxtErr: "", listOptValErr: "", listOptTxtErr: "" });
   }
 
   const column = [
@@ -334,16 +419,12 @@ const ParameterMaster = () => {
     },
   ]
 
-  // console.log(singleData, 'single')
-  // console.log(values, 'val')
-  // console.log(parameterData?.filter(dt=>dt?.jsonData?.modeForQuery === 'multiRowOption'), 'vabgbl')
-
   return (
     <>
       <NavbarHeader />
       <div className='main-master-page'>
         {values?.parameterFor &&
-          <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={actionMode === 'edit' ? updateParametersData : saveParametersData} onOpen={onOpenDataTable} onReset={reset} onParams={null} onWeb={onOpenWebService} />
+          <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={true} onSave={handleSaveUpdate} onOpen={onOpenDataTable} onReset={reset} onParams={null} onWeb={onOpenWebService} />
         }
         <div className='form-card m-auto p-2'>
           <div className='p-1'>
@@ -366,6 +447,11 @@ const ParameterMaster = () => {
                       onChange={handleValueChange}
                       disabled={actionMode === 'edit' ? true : false}
                     />
+                    {errors?.parameterForErr &&
+                      <div className="required-input">
+                        {errors?.parameterForErr}
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
@@ -384,6 +470,11 @@ const ParameterMaster = () => {
                       onChange={(e) => { handleValueChange(e); }}
                       disabled={actionMode === 'edit' ? true : false}
                     />
+                    {errors?.parameterTypeErr &&
+                      <div className="required-input">
+                        {errors?.parameterTypeErr}
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
@@ -405,6 +496,11 @@ const ParameterMaster = () => {
                       onChange={handleValueChange}
                       value={values?.parameterInternal}
                     />
+                    {errors?.parameterInternalErr &&
+                      <div className="required-input">
+                        {errors?.parameterInternalErr}
+                      </div>
+                    }
                   </div>
                 </div>
                 <div className="form-group row">
@@ -436,6 +532,11 @@ const ParameterMaster = () => {
                       onChange={handleValueChange}
                       value={values?.parameterDisplay}
                     />
+                    {errors?.parameterDisplayErr &&
+                      <div className="required-input">
+                        {errors?.parameterDisplayErr}
+                      </div>
+                    }
                   </div>
                 </div>
                 {values?.parameterType === '1' &&
@@ -589,6 +690,11 @@ const ParameterMaster = () => {
                       onChange={handleValueChange}
                       value={values?.mandatory}
                     />
+                    {errors?.mandatoryErr &&
+                      <div className="required-input">
+                        {errors?.mandatoryErr}
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
@@ -726,25 +832,52 @@ const ParameterMaster = () => {
             }
 
             {/* SECTION DEVIDER query */}
-            {(values?.modeForQuery === "query" && values?.parameterType !== '2') &&
+            {(values?.parameterType !== '2') &&
               <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
-                  <div className="form-group row">
-                    <label className="col-sm-5 col-form-label fix-label pe-0">{values?.parameterType === "3" ? "Query For Default Date" : "Query"}: </label>
-                    <div className="col-sm-7 ps-0 align-content-center">
-                      <textarea
-                        className="form-control backcolorinput"
-                        placeholder="Enter value..."
-                        name={values?.parameterType === "3" ? "parameterQueryForDate" : "query"}
-                        id={values?.parameterType === "3" ? "parameterQueryForDate" : "query"}
-                        rows="1"
-                        onChange={handleValueChange}
-                        value={values?.parameterType === "3" ? values?.parameterQueryForDate : values?.query}
-                      ></textarea>
+                  {values?.parameterType === "3" &&
+                    <div className="form-group row">
+                      <label className="col-sm-5 col-form-label fix-label pe-0 required-label">Query For Default Date : </label>
+                      <div className="col-sm-7 ps-0 align-content-center">
+                        <textarea
+                          className="form-control backcolorinput"
+                          placeholder="Enter value..."
+                          name="parameterQueryForDate"
+                          id="parameterQueryForDate"
+                          rows="1"
+                          onChange={handleValueChange}
+                          value={values?.parameterQueryForDate}
+                        ></textarea>
+                        {errors?.parameterQueryForDateErr &&
+                          <div className="required-input">
+                            {errors?.parameterQueryForDateErr}
+                          </div>
+                        }
+                      </div>
                     </div>
-
-                  </div>
+                  }
+                  {(values?.modeForQuery === "query" && values?.parameterType !== "3") &&
+                    <div className="form-group row">
+                      <label className="col-sm-5 col-form-label fix-label pe-0 required-label">Query : </label>
+                      <div className="col-sm-7 ps-0 align-content-center">
+                        <textarea
+                          className="form-control backcolorinput"
+                          placeholder="Enter value..."
+                          name="query"
+                          id="query"
+                          rows="1"
+                          onChange={handleValueChange}
+                          value={values?.query}
+                        ></textarea>
+                        {errors?.queryErr &&
+                          <div className="required-input">
+                            {errors?.queryErr}
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
                 </div>
                 {/* right columns */}
                 {/* <div className='col-sm-6'>
@@ -828,7 +961,7 @@ const ParameterMaster = () => {
                 <div className="mx-4">
                   <div className="row mb-1">
                     <div className="col-4 text-center">
-                      <label className="form-label">Option Value</label>
+                      <label className="form-label req">Option Value</label>
                     </div>
                     <div className="col-4 text-center">
                       <label className="form-label">Option Text</label>
@@ -852,6 +985,11 @@ const ParameterMaster = () => {
                           value={row.optionValue}
                           onChange={(e) => handleInputChange(index, "optionValue", e.target.value)}
                         />
+                        {(errors?.listOptValErr && !row?.optionValue) &&
+                          <div className="required-input">
+                            {errors?.listOptValErr}
+                          </div>
+                        }
                       </div>
                       <div className="col-4">
                         <InputField
@@ -861,6 +999,11 @@ const ParameterMaster = () => {
                           value={row.optionText}
                           onChange={(e) => handleInputChange(index, "optionText", e.target.value)}
                         />
+                        {(errors?.listOptTxtErr && !row?.optionText) &&
+                          <div className="required-input">
+                            {errors?.listOptTxtErr}
+                          </div>
+                        }
                       </div>
                       <div className="col-2 d-flex">
 
@@ -906,6 +1049,11 @@ const ParameterMaster = () => {
                       value={values?.defaultOptValue}
                       onChange={handleValueChange}
                     />
+                    {errors?.defaultOptValueErr &&
+                      <div className="required-input">
+                        {errors?.defaultOptValueErr}
+                      </div>
+                    }
                   </div>
                   <div className="col-4">
                     <InputField
@@ -917,6 +1065,11 @@ const ParameterMaster = () => {
                       value={values?.defaultOptText}
                       onChange={handleValueChange}
                     />
+                    {errors?.defaultOptTextErr &&
+                      <div className="required-input">
+                        {errors?.defaultOptTextErr}
+                      </div>
+                    }
                   </div>
                 </div>
                 {/* DEFAULT OPTION FOR FILTER */}
@@ -932,6 +1085,11 @@ const ParameterMaster = () => {
                       value={values?.defOptFilterVal}
                       onChange={handleValueChange}
                     />
+                    {errors?.defOptFilterValErr &&
+                      <div className="required-input">
+                        {errors?.defOptFilterValErr}
+                      </div>
+                    }
                   </div>
                   <div className="col-4">
                     <InputField
@@ -943,6 +1101,11 @@ const ParameterMaster = () => {
                       value={values?.defOptFilterTxt}
                       onChange={handleValueChange}
                     />
+                    {errors?.defOptFilterTxtErr &&
+                      <div className="required-input">
+                        {errors?.defOptFilterTxtErr}
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
@@ -1045,7 +1208,7 @@ const ParameterMaster = () => {
           <DataServiceTable data={dataServiceData} onModify={null} onDelete={null} setSearchInput={setSearchInput} onClose={onTableClose} isShowBtn={false} />
         }
 
-      </div>
+      </div >
     </>
   )
 }

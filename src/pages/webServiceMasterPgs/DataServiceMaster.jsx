@@ -11,7 +11,7 @@ import { fetchPostData } from '../../utils/ApiHooks'
 import GlobalDataTable from '../../components/commons/GlobalDataTable'
 
 const DataServiceMaster = () => {
-  const { setShowDataTable, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, setActionMode, actionMode, parameterData, getAllParameterData, } = useContext(HISContext);
+  const { setShowDataTable, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, setActionMode, actionMode, parameterData, getAllParameterData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave, } = useContext(HISContext);
 
   const [isCacheData, setIsCacheData] = useState(false);
   const [selectedMode, setSelectedMode] = useState("query");
@@ -21,15 +21,20 @@ const DataServiceMaster = () => {
   const [filterData, setFilterData] = useState(parameterData)
   const [showParamsTable, setShowParamsTable] = useState(false);
 
-
   const [values, setValues] = useState({
     "serviceCategory": "", "serviceDisplayName": "", "serviceCallingName": "", "procedureFuncName": "", "fetchQuery": "", "webJsonType": "dataHeadingColumnType", "jndiSavingData": "", "stmtTimeOut": "", "dashboardFor": "", "id": ""
   })
 
+  const [errors, setErrors] = useState({ serviceCategoryErr: "", serviceDisplayNameErr: "", serviceCallingNameErr: "", fetchQueryErr: "", selectedModeErr: "", procedureFuncNameErr: "" });
+
   const handleValueChange = (e) => {
     const { name, value } = e.target;
+    const error = name + 'Err'
     if (name) {
       setValues({ ...values, [name]: value })
+    }
+    if (error && name) {
+      setErrors({ ...errors, [error]: '' })
     }
   }
 
@@ -121,8 +126,10 @@ const DataServiceMaster = () => {
         getAllServiceData();
         setActionMode('home');
         reset();
+        setConfirmSave(false)
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false)
       }
     });
   };
@@ -160,8 +167,10 @@ const DataServiceMaster = () => {
         getAllServiceData();
         setActionMode('home');
         reset();
+        setConfirmSave(false)
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false)
       }
     });
   };
@@ -184,8 +193,53 @@ const DataServiceMaster = () => {
     }
   }
 
+  const handleSaveUpdate = () => {
+    let isValid = true;
+    if (!values?.serviceCategory?.trim()) {
+      setErrors(prev => ({ ...prev, 'serviceCategoryErr': "service category is required" }));
+      isValid = false;
+    }
+    if (!values?.serviceDisplayName?.trim()) {
+      setErrors(prev => ({ ...prev, 'serviceDisplayNameErr': "display name is required" }));
+      isValid = false;
+    }
+    if (!values?.serviceCallingName?.trim()) {
+      setErrors(prev => ({ ...prev, 'serviceCallingNameErr': "calling name is required" }));
+      isValid = false;
+    }
+    if ((selectedMode === "query" || selectedMode === "html") && !values?.fetchQuery?.trim()) {
+      setErrors(prev => ({ ...prev, 'fetchQueryErr': "query is required" }));
+      setErrors(prev => ({ ...prev, 'procedureFuncNameErr': "" }));
+      isValid = false;
+    }
+    if (selectedMode !== "query" && selectedMode !== "html" && !values?.procedureFuncName?.trim()) {
+      setErrors(prev => ({ ...prev, 'procedureFuncNameErr': "procedure is required" }));
+      setErrors(prev => ({ ...prev, 'fetchQueryErr': "" }));
+      isValid = false;
+    }
+    if (!selectedMode?.trim()) {
+      setErrors(prev => ({ ...prev, 'selectedModeErr': "mode is required" }));
+      isValid = false;
+    }
+
+    if (isValid) {
+      setShowConfirmSave(true);
+    }
+  }
+
+  useEffect(() => {
+    if (confirmSave) {
+      if (actionMode === 'edit') {
+        updateDataServiceData();
+      } else {
+        saveDataServiceData();
+      }
+    }
+  }, [confirmSave])
+
   const reset = () => {
     setValues({ "serviceCategory": "", "serviceDisplayName": "", "serviceCallingName": "", "procedureFuncName": "", "fetchQuery": "", "webJsonType": "dataHeadingColumnType", "jndiSavingData": "", "stmtTimeOut": "", "dashboardFor": "", "id": "" })
+    setErrors({serviceCategoryErr: "", serviceDisplayNameErr: "", serviceCallingNameErr: "", fetchQueryErr: "", selectedModeErr: "", procedureFuncNameErr: ""})
     setActionMode('home');
     setShowWebServiceTable(false);
     setShowDataTable(false);
@@ -257,7 +311,7 @@ const DataServiceMaster = () => {
     <div>
       <NavbarHeader />
       <div className='main-master-page'>
-        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={false} onSave={actionMode === 'edit' ? updateDataServiceData : saveDataServiceData} onOpen={onOpenWebService} onReset={reset} onParams={onOpenDataParams} onWeb={null} />
+        <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={false} onSave={handleSaveUpdate} onOpen={onOpenWebService} onReset={reset} onParams={onOpenDataParams} onWeb={null} />
         <div className='form-card m-auto p-3'>
           <b><h6 className='header-devider mt-0 mb-1'>Data Service Master</h6></b>
 
@@ -277,6 +331,11 @@ const DataServiceMaster = () => {
                     value={values?.serviceCategory}
                     onChange={handleValueChange}
                   />
+                  {errors?.serviceCategoryErr &&
+                    <div className="required-input">
+                      {errors?.serviceCategoryErr}
+                    </div>
+                  }
                 </div>
               </div>
             </div>
@@ -298,13 +357,18 @@ const DataServiceMaster = () => {
                     onChange={handleValueChange}
                     value={values?.serviceDisplayName}
                   />
+                  {errors?.serviceDisplayNameErr &&
+                    <div className="required-input">
+                      {errors?.serviceDisplayNameErr}
+                    </div>
+                  }
                 </div>
               </div>
             </div>
             {/* right columns */}
             <div className='col-sm-6'>
               <div className="form-group row">
-                <label className="col-sm-5 col-form-label pe-0">Service Name(For Calling Service) : </label>
+                <label className="col-sm-5 col-form-label pe-0 required-label">Service Name(For Calling Service) : </label>
                 <div className="col-sm-7 ps-0 align-content-center">
                   <InputField
                     type="text"
@@ -315,6 +379,11 @@ const DataServiceMaster = () => {
                     onChange={handleValueChange}
                     value={values?.serviceCallingName}
                   />
+                  {errors?.serviceCallingNameErr &&
+                    <div className="required-input">
+                      {errors?.serviceCallingNameErr}
+                    </div>
+                  }
                 </div>
               </div>
             </div>
@@ -328,6 +397,11 @@ const DataServiceMaster = () => {
                 <label className="col-sm-5 col-form-label pe-0 required-label">
                   Select Mode For Data :
                 </label>
+                {errors?.selectedModeErr &&
+                  <div className="required-input">
+                    {errors?.selectedModeErr}
+                  </div>
+                }
                 <div className="col-sm-7 ps-0 align-content-center">
                   <div className="form-check form-check-inline">
                     <input
@@ -475,6 +549,11 @@ const DataServiceMaster = () => {
                       value={values?.procedureFuncName}
                       onChange={handleValueChange}
                     />
+                    {errors?.procedureFuncNameErr &&
+                      <div className="required-input">
+                        {errors?.procedureFuncNameErr}
+                      </div>
+                    }
                   </div>
                 </div>
               }
@@ -491,6 +570,11 @@ const DataServiceMaster = () => {
                       value={values?.fetchQuery}
                       onChange={handleValueChange}
                     ></textarea>
+                    {errors?.fetchQueryErr &&
+                      <div className="required-input">
+                        {errors?.fetchQueryErr}
+                      </div>
+                    }
                   </div>
                 </div>
               }

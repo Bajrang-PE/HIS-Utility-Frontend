@@ -1,7 +1,7 @@
 import React from 'react'
 
 const HeaderDetails = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues, errors } = props;
     return (
         <div>
             <b><h6 className='header-devider m-0'> Dashboard Master - Header Details</h6></b>
@@ -237,31 +237,36 @@ const HeaderDetails = (props) => {
 
             {/* SECTION DEVIDER*/}
             {radioValues?.rptHeaderTypePdfExl === '2' &&
-            <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
-                {/* //left columns */}
-                <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">Report Header By Query : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <textarea
-                                className="form-control backcolorinput"
-                                placeholder="Enter value..."
-                                name="rptHeaderbyQuery"
-                                id='rptHeaderbyQuery'
-                                rows="2"
-                                onChange={handleValueChange}
-                                value={values?.rptHeaderbyQuery}
-                            ></textarea>
+                <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
+                    {/* //left columns */}
+                    <div className='col-sm-6'>
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0 required-label">Report Header By Query : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <textarea
+                                    className="form-control backcolorinput"
+                                    placeholder="Enter value..."
+                                    name="rptHeaderbyQuery"
+                                    id='rptHeaderbyQuery'
+                                    rows="2"
+                                    onChange={handleValueChange}
+                                    value={values?.rptHeaderbyQuery}
+                                ></textarea>
+                                {errors?.rptHeaderbyQueryErr &&
+                                    <div className="required-input">
+                                        {errors?.rptHeaderbyQueryErr}
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div className='col-sm-6'>
+                        <div className="ps-0 align-content-start">
+                            <b>queryFormat :-</b><br />
+                            <i> <span> select col1 as "ReportHeader1",col2 as "ReportHeader2", col3 as "ReportHeader3" , col4 as "LogoImageURL", col5 as "LogoPosition", col6 as "logoAlignment",col8 as "logoCoordinates", col7 as "IsLogoRequired" from table where condition</span></i>
                         </div>
                     </div>
                 </div>
-                <div className='col-sm-6'>
-                    <div className="ps-0 align-content-start">
-                        <b>queryFormat :-</b><br />
-                        <i> <span> select col1 as "ReportHeader1",col2 as "ReportHeader2", col3 as "ReportHeader3" , col4 as "LogoImageURL", col5 as "LogoPosition", col6 as "logoAlignment",col8 as "logoCoordinates", col7 as "IsLogoRequired" from table where condition</span></i>
-                    </div>
-                </div>
-            </div>
             }
 
         </div>

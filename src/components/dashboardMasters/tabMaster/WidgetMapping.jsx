@@ -6,9 +6,7 @@ import InputField from '../../commons/InputField';
 import { parameterWidth } from '../../../localData/DropDownData';
 
 const WidgetMapping = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, widgetDrpData, setValues } = props;
-
-    const [rows, setRows] = useState([{ rptId: "", displayOrder: "", widgetWidth: "", widgetHeight: "", widgetColor: "", widgetDisplay: "", sectionId: "1", animation: "" }]);
+    const { handleValueChange, handleRadioChange, radioValues, values, widgetDrpData, setValues, rows, setRows, errors, setErrors } = props;
 
     const handleInputChange = (index, field, value) => {
         const updatedRows = [...rows];
@@ -18,8 +16,15 @@ const WidgetMapping = (props) => {
     };
 
     const handleAddRow = (name) => {
-        if (name === 'query') {
-            setRows([...rows, { rptId: "", displayOrder: "", widgetWidth: "", widgetHeight: "", widgetColor: "", widgetDisplay: "", sectionId: "1", animation: "" }]);
+        if (rows?.length > 0 && !rows[rows?.length - 1]?.displayOrder) {
+            setErrors(prev => ({ ...prev, 'displayOrderErr': "required" }));
+        } else if (rows?.length > 0 && !rows[rows?.length - 1]?.widgetWidth) {
+            setErrors(prev => ({ ...prev, 'widgetWidthErr': "required" }));
+        } else if (rows?.length > 0 && !rows[rows?.length - 1]?.widgetHeight) {
+            setErrors(prev => ({ ...prev, 'widgetHeightErr': "required" }));
+        } else {
+            setRows([...rows, { rptId: "", displayOrder: "", widgetWidth: "", widgetHeight: "0", widgetColor: "", widgetDisplay: "", sectionId: "1", animation: "" }]);
+            setErrors(prev => ({ ...prev, 'widgetHeightErr': "", 'widgetWidthErr': "", "displayOrderErr": "" }));
         }
     };
 
@@ -36,7 +41,6 @@ const WidgetMapping = (props) => {
         }
     }, [values?.widgetMappingDetail])
 
-    console.log(rows, 'rroro')
 
     return (
         <>
@@ -55,7 +59,7 @@ const WidgetMapping = (props) => {
                             <th >
                                 <button
                                     className="btn btn-secondary btn-sm"
-                                    onClick={() => handleAddRow('query')}
+                                    onClick={handleAddRow}
                                     style={{ padding: "0 4px" }}
                                 >
                                     <FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />
@@ -86,6 +90,11 @@ const WidgetMapping = (props) => {
                                         value={row.displayOrder}
                                         onChange={(e) => handleInputChange(index, 'displayOrder', e.target.value)}
                                     />
+                                    {(errors?.displayOrderErr && !row?.displayOrder) &&
+                                        <div className="required-input">
+                                            {errors?.displayOrderErr}
+                                        </div>
+                                    }
                                 </td>
                                 <td>
                                     <InputSelect
@@ -97,6 +106,11 @@ const WidgetMapping = (props) => {
                                         value={row.widgetWidth}
                                         onChange={(e) => handleInputChange(index, 'widgetWidth', e.target.value)}
                                     />
+                                    {(errors?.widgetWidthErr && !row?.widgetWidth) &&
+                                        <div className="required-input">
+                                            {errors?.widgetWidthErr}
+                                        </div>
+                                    }
                                 </td>
                                 <td>
                                     <InputField
@@ -107,6 +121,11 @@ const WidgetMapping = (props) => {
                                         value={row.widgetHeight}
                                         onChange={(e) => handleInputChange(index, 'widgetHeight', e.target.value)}
                                     />
+                                    {(errors?.widgetHeightErr && !row?.widgetHeight) &&
+                                        <div className="required-input">
+                                            {errors?.widgetHeightErr}
+                                        </div>
+                                    }
                                 </td>
                                 <td>
                                     <InputSelect

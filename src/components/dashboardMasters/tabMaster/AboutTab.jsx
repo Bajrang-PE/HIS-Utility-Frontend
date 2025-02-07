@@ -5,7 +5,7 @@ import { FaIcons } from 'react-icons/fa';
 import IconPicker from '../../commons/IconPicker';
 
 const AboutTab = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, dashboardForDt, setValues,tabDrpData } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, dashboardForDt, setValues, tabDrpData, errors } = props;
 
     const [tabIcon, setTabIcon] = useState('');
     const SelectedIconComponent = tabIcon ? FaIcons[tabIcon] : '';
@@ -39,6 +39,11 @@ const AboutTab = (props) => {
                                 onChange={handleValueChange}
                             // disabled={actionMode === 'edit' ? true : false}
                             />
+                            {errors?.tabForErr &&
+                                <div className="required-input">
+                                    {errors?.tabForErr}
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -60,6 +65,11 @@ const AboutTab = (props) => {
                                 onChange={handleValueChange}
                                 value={values?.tabNameInternal}
                             />
+                            {errors?.tabNameInternalErr &&
+                                <div className="required-input">
+                                    {errors?.tabNameInternalErr}
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className="form-group row">
@@ -162,6 +172,11 @@ const AboutTab = (props) => {
                                 onChange={handleValueChange}
                                 value={values?.tabNameDisplay}
                             />
+                            {errors?.tabNameDisplayErr &&
+                                <div className="required-input">
+                                    {errors?.tabNameDisplayErr}
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className="form-group row">

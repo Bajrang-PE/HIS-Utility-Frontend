@@ -4,7 +4,7 @@ import InputField from '../../commons/InputField'
 import { cachingStatusForWidgetOptions, dataLoadOptions } from '../../../localData/DropDownData'
 
 const AboutDashboard = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues, dashboardForDt } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues, dashboardForDt, errors } = props;
     return (
         <div>
             <b><h6 className='header-devider m-0'> Dashboard Master</h6></b>
@@ -26,6 +26,11 @@ const AboutDashboard = (props) => {
                                 onChange={handleValueChange}
                             // disabled={actionMode === 'edit' ? true : false}
                             />
+                            {errors?.dashboardForErr &&
+                                <div className="required-input">
+                                    {errors?.dashboardForErr}
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -47,6 +52,11 @@ const AboutDashboard = (props) => {
                                 onChange={handleValueChange}
                                 value={values?.dashNameDisplay}
                             />
+                            {errors?.dashNameDisplayErr &&
+                                <div className="required-input">
+                                    {errors?.dashNameDisplayErr}
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className="form-group row" style={{ paddingBottom: "1px" }}>
@@ -141,6 +151,11 @@ const AboutDashboard = (props) => {
                                 onChange={handleValueChange}
                                 value={values?.dashNameInternal}
                             />
+                            {errors?.dashNameInternalErr &&
+                                <div className="required-input">
+                                    {errors?.dashNameInternalErr}
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className="form-group row" style={{ paddingBottom: "1px" }}>

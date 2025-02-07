@@ -20,14 +20,14 @@ import { ToastAlert } from '../../utils/commonFunction';
 
 const TabMaster = () => {
 
-  const { dashboardForDt, getDashboardForDrpData, widgetDrpData, getAllWidgetData, getAllParameterData, parameterDrpData, getAllTabsData, allTabsData, setShowDataTable, setSelectedOption, selectedOption, actionMode, setActionMode, tabDrpData } = useContext(HISContext);
+  const { dashboardForDt, getDashboardForDrpData, widgetDrpData, getAllWidgetData, getAllParameterData, parameterDrpData, getAllTabsData, allTabsData, setShowDataTable, setSelectedOption, selectedOption, actionMode, setActionMode, tabDrpData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
   const [tabIndex, setTabIndex] = useState(1);
   const [tabName, setTabName] = useState({ value: 1, label: "About Tab" });
   const [showTabsTable, setShowTabsTable] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [singleData, setSingleData] = useState([]);
   const [filterData, setFilterData] = useState(allTabsData)
-
+  const [rows, setRows] = useState([{ rptId: "", displayOrder: "", widgetWidth: "", widgetHeight: "0", widgetColor: "", widgetDisplay: "", sectionId: "1", animation: "" }]);
 
   const [values, setValues] = useState({
     "tabFor": "", "tabNameDisplay": "", "tabNameInternal": "", "parentTab": "", "ellipseInDisplay": "",
@@ -54,6 +54,8 @@ const TabMaster = () => {
     //footer detail
     "isLegendCollapes": "Yes", "isMarqueeReq": "No", "isLegendBorderReq": "Yes",
   })
+
+  const [errors, setErrors] = useState({ tabForErr: "", tabNameDisplayErr: "", tabNameInternalErr: "", tabNameFontWeightErr: "", tabNameFontSizeErr: "", tabNameTxtDecoratErr: "", showTabNameInDetailErr: "", displayOrderErr: "", widgetWidthErr: "", widgetHeightErr: "" });
 
   useEffect(() => {
     if (dashboardForDt?.length === 0) { getDashboardForDrpData(); }
@@ -95,8 +97,12 @@ const TabMaster = () => {
 
   const handleValueChange = (e) => {
     const { name, value } = e.target;
+    const error = name + 'Err'
     if (name) {
       setValues({ ...values, [name]: value })
+    }
+    if (error && name) {
+      setErrors({ ...errors, [error]: '' })
     }
   }
 
@@ -359,6 +365,64 @@ const TabMaster = () => {
     }
   }
 
+  const handleSaveUpdate = () => {
+    let isValid = true;
+    if (!values?.tabFor?.trim()) {
+      setErrors(prev => ({ ...prev, 'tabForErr': "tab for is required" }));
+      isValid = false;
+    }
+    if (!values?.tabNameDisplay?.trim()) {
+      setErrors(prev => ({ ...prev, 'tabNameDisplayErr': "display name is required" }));
+      isValid = false;
+    }
+    if (!values?.tabNameInternal?.trim()) {
+      setErrors(prev => ({ ...prev, 'tabNameInternalErr': "internal name is required" }));
+      isValid = false;
+    }
+    if (!values?.tabNameFontWeight?.trim()) {
+      setErrors(prev => ({ ...prev, 'tabNameFontWeightErr': "font weight is required" }));
+      isValid = false;
+    }
+    if (!values?.tabNameFontSize?.trim()) {
+      setErrors(prev => ({ ...prev, 'tabNameFontSizeErr': "font size is required" }));
+      isValid = false;
+    }
+    if (!values?.tabNameTxtDecorat?.trim()) {
+      setErrors(prev => ({ ...prev, 'tabNameTxtDecoratErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (!radioValues?.showTabNameInDetail?.trim()) {
+      setErrors(prev => ({ ...prev, 'showTabNameInDetailErr': "tab name in detail is required" }));
+      isValid = false;
+    }
+    if (rows?.length > 0 && !rows[rows?.length - 1]?.displayOrder) {
+      setErrors(prev => ({ ...prev, 'displayOrderErr': "required" }));
+      isValid = false;
+    }
+    if (rows?.length > 0 && !rows[rows?.length - 1]?.widgetWidth) {
+      setErrors(prev => ({ ...prev, 'widgetWidthErr': "required" }));
+      isValid = false;
+    }
+    if (rows?.length > 0 && !rows[rows?.length - 1]?.widgetHeight) {
+      setErrors(prev => ({ ...prev, 'widgetHeightErr': "required" }));
+      isValid = false;
+    }
+
+    if (isValid) {
+      setShowConfirmSave(true);
+    }
+  }
+
+  useEffect(() => {
+    if (confirmSave) {
+      if (actionMode === 'edit') {
+        updateTabData();
+      } else {
+        saveTabData();
+      }
+    }
+  }, [confirmSave])
+
   const reset = () => {
     setValues({
       "tabFor": "", "tabNameDisplay": "", "tabNameInternal": "", "parentTab": "", "ellipseInDisplay": "",
@@ -390,6 +454,7 @@ const TabMaster = () => {
     setTabIndex(1);
     // setTabName({ value: 1, label: "About Widget" })
     setTabName({ value: 1, label: "About Tab" });
+    setErrors({ tabForErr: "", tabNameDisplayErr: "", tabNameInternalErr: "", tabNameFontWeightErr: "", tabNameFontSizeErr: "", tabNameTxtDecoratErr: "", showTabNameInDetailErr: "" });
   }
 
   const column = [
@@ -448,7 +513,7 @@ const TabMaster = () => {
         {values?.tabFor &&
           <div className='row w-100 m-0'>
             <div className='col-sm-6 p-0 global-button-group'>
-              <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={actionMode === 'edit' ? updateTabData : saveTabData} onOpen={onOpenDataTable} onReset={reset} onParams={null} onWeb={null} />
+              <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={false} isWeb={false} onSave={handleSaveUpdate} onOpen={onOpenDataTable} onReset={reset} onParams={null} onWeb={null} />
             </div>
             <div className='col-sm-6 p-0 global-tabs'>
               <TabNav isTabNav={true} tabNavData={tabNavMenus} setTabIndex={setTabIndex} tabName={tabName} setTabName={setTabName} />
@@ -459,13 +524,13 @@ const TabMaster = () => {
         <div className='form-card m-auto p-2'>
           <div className='p-1'>
             {tabName?.value === 1 &&
-              <AboutTab handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} dashboardForDt={dashboardForDt} setValues={setValues} tabDrpData={tabDrpData} />
+              <AboutTab handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} dashboardForDt={dashboardForDt} setValues={setValues} tabDrpData={tabDrpData} errors={errors} />
             }
             {tabName?.value === 2 &&
-              <TabDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />
+              <TabDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} errors={errors} />
             }
             {tabName?.value === 3 &&
-              <WidgetMapping handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} widgetDrpData={widgetDrpData} setValues={setValues} />
+              <WidgetMapping handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} widgetDrpData={widgetDrpData} setValues={setValues} rows={rows} setRows={setRows} errors={errors} setErrors={setErrors}/>
             }
             {tabName?.value === 4 &&
               <ParamsDetail handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} parameterDrpData={parameterDrpData} pageName={'tab'} />

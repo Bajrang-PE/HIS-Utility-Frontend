@@ -10,6 +10,9 @@ const HISContextData = ({ children }) => {
   const [selectedOption, setSelectedOption] = useState([]);
   const [actionMode, setActionMode] = useState('home');
 
+  const [confirmSave, setConfirmSave] = useState(false);
+  const [showConfirmSave, setShowConfirmSave] = useState(false);
+
   // ALL DATA
   const [parameterData, setParameterData] = useState([]);
   const [allWidgetData, setAllWidgetData] = useState([]);
@@ -17,6 +20,7 @@ const HISContextData = ({ children }) => {
   const [allTabsData, setAllTabsData] = useState([]);
   const [userServiceData, setUserServiceData] = useState([]);
   const [dashboardData, setDashboardData] = useState([]);
+  const [dashboardSubmenuData, setDashboardSubmenuData] = useState([]);
 
   //DROPDOWN DATA
   const [dashboardForDt, setDashboardForDt] = useState([]);
@@ -85,6 +89,18 @@ const HISContextData = ({ children }) => {
     })
   }
 
+  const getDashboardSubmenuData = () => {
+    fetchData("/hisutils/DashboardsubMenuAll").then((data) => {
+      if (data) {
+        setDashboardSubmenuData(data);
+        // setParameterDrpData(DrpDataValLab(data, 'parameterId', 'parameterName',true))
+      } else {
+        setDashboardSubmenuData([]);
+        // setParameterDrpData([]);
+      }
+    })
+  }
+
   const getAllTabsData = (dashFor) => {
     fetchData("/hisutils/TabDetails", { 'masterName': dashFor }).then((data) => {
       if (data) {
@@ -129,6 +145,7 @@ const HISContextData = ({ children }) => {
       showDataTable, setShowDataTable,
       selectedOption, setSelectedOption,
       actionMode, setActionMode,
+      showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave,
 
       // DROP DOWNS-------------------------------
       // DASHBOARD FOR
@@ -151,7 +168,9 @@ const HISContextData = ({ children }) => {
       //userservice
       getUserServiceData, userServiceData,
       //dashboard data
-      getAllDashboardData, dashboardData
+      getAllDashboardData, dashboardData,
+      //dashboard submenu
+      dashboardSubmenuData, getDashboardSubmenuData,
     }}>
       {children}
     </HISContext.Provider>

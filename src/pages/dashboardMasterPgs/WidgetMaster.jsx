@@ -198,8 +198,8 @@ const WidgetMaster = () => {
   }
 
   const reset = () => {
-    const isReset = window.confirm('Do you want to reset whole form!');
-    if (isReset) {
+    // const isReset = window.confirm('Do you want to reset whole form!');
+    // if (isReset) {
       setValues({
         "id": "", "widgetFor": "", "widgetType": "", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "", "treeChildQuery": "", "treeChildProcedure": "", "popUpDetails": [], "webQuery": "", "queryLabel": '', "htmlText": '', 'iconName': "",
         //graphs fields
@@ -233,7 +233,7 @@ const WidgetMaster = () => {
       });
       setTabIndex(1);
       setTabName({ value: 1, label: "About Widget" })
-    }
+    // }
   }
 
   const handleUpdateData = () => {
@@ -912,6 +912,27 @@ const WidgetMaster = () => {
     });
   };
 
+  const handleDeleteParams = () => {
+    if (selectedOption?.length > 0) {
+      const val = { "id": selectedOption[0]?.rptId, "dashboardFor": values?.widgetFor, "masterName": "DashboardWidgetMst" };
+      fetchPostData("http://10.226.29.211:8025/hisutils/widgetDelete", val).then((data) => {
+        if (data) {
+          ToastAlert('Deleted Successfully!', 'success');
+          getAllWidgetData(values?.widgetFor)
+          setSelectedOption([]);
+          setShowParamsTable(false);
+          setShowDataTable(false);
+          setShowWebServiceTable(false);
+          reset();
+        } else {
+          ToastAlert('Deletion Failed!', 'error');
+        }
+      })
+    } else {
+      ToastAlert('Please select a record', 'warning');
+    }
+  }
+
   const widgetColumn = [
     {
       name: <input
@@ -1066,7 +1087,7 @@ const WidgetMaster = () => {
                 <FooterDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />}
 
               {showWidgetTable &&
-                <GlobalDataTable title={"Widget List"} column={widgetColumn} data={widgetFilterData} onModify={handleUpdateData} onDelete={null} onClose={onTableClose} setSearchInput={setWidgetSearchInput} isShowBtn={true} />
+                <GlobalDataTable title={"Widget List"} column={widgetColumn} data={widgetFilterData} onModify={handleUpdateData} onDelete={handleDeleteParams} onClose={onTableClose} setSearchInput={setWidgetSearchInput} isShowBtn={true} />
               }
               {showParamsTable &&
                 <GlobalDataTable title={"Parameter List"} column={paramsColumn} data={filterData} onModify={null} onDelete={null} onClose={onTableClose} setSearchInput={setSearchInput} isShowBtn={false} />
