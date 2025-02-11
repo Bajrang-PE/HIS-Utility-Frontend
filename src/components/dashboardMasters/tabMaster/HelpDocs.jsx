@@ -6,37 +6,48 @@ import { faAdd } from "@fortawesome/free-solid-svg-icons";
 
 const HelpDocs = (props) => {
 
-  const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+  const { values, setValues, errors, setErrors } = props;
 
   const [rows, setRows] = useState([]);
   const [newRow, setNewRow] = useState({ fileNameForManualDocument: "", displayNameForManualDocument: "", downloadFileNameForManualDocument: "" });
   const [isEditing, setIsEditing] = useState(null);
 
   const handleInputChange = (field, value) => {
+    const err = field + 'Err'
     setNewRow({ ...newRow, [field]: value });
+    setErrors(prev => ({ ...prev, [err]: "" }));
   };
 
-   useEffect(() => {
-          if (values?.helpDocs?.length > 0) {
-              setRows(values?.helpDocs)
-          }
-      }, [values?.helpDocs])
-  
+  useEffect(() => {
+    if (values?.helpDocs?.length > 0) {
+      setRows(values?.helpDocs)
+    }
+  }, [values?.helpDocs])
+
 
   const handleAddRow = () => {
-    if (isEditing !== null) {
-      const updatedRows = [...rows];
-      updatedRows[isEditing] = newRow;
-      setRows(updatedRows);
-      setValues({ ...values, ['helpDocs']: updatedRows })
-      setIsEditing(null);
+    if (!newRow?.fileNameForManualDocument?.trim() || !newRow?.displayNameForManualDocument?.trim()) {
+      if (!newRow?.fileNameForManualDocument?.trim()) {
+        setErrors(prev => ({ ...prev, 'fileNameForManualDocumentErr': "required" }));
+      } else {
+        setErrors(prev => ({ ...prev, 'displayNameForManualDocumentErr': "required" }));
+      }
     } else {
-      let oldDt = values?.helpDocs?.length > 0 ? values?.helpDocs : [];
-      setRows([...rows, newRow]);
-      oldDt?.push(newRow)
-      setValues({ ...values, ['helpDocs']: oldDt })
+      if (isEditing !== null) {
+        const updatedRows = [...rows];
+        updatedRows[isEditing] = newRow;
+        setRows(updatedRows);
+        setValues({ ...values, ['helpDocs']: updatedRows })
+        setIsEditing(null);
+      } else {
+        let oldDt = values?.helpDocs?.length > 0 ? values?.helpDocs : [];
+        setRows([...rows, newRow]);
+        oldDt?.push(newRow)
+        setValues({ ...values, ['helpDocs']: oldDt })
+      }
+      setNewRow({ fileNameForManualDocument: "", displayNameForManualDocument: "", downloadFileNameForManualDocument: "" });
+      setErrors(prev => ({ ...prev, 'displayNameForManualDocumentErr': "", 'fileNameForManualDocumentErr': "" }));
     }
-    setNewRow({ fileNameForManualDocument: "", displayNameForManualDocument: "", downloadFileNameForManualDocument: "" });
   };
 
   const handleEditRow = (index) => {
@@ -84,6 +95,7 @@ const HelpDocs = (props) => {
                   options={[{ value: 1, label: "pdf file" }]}
                   onChange={(e) => handleInputChange("fileNameForManualDocument", e.target.value)}
                   value={newRow.fileNameForManualDocument}
+                  errorMessage={errors?.fileNameForManualDocumentErr}
                 />
               </td>
               <td>
@@ -94,6 +106,7 @@ const HelpDocs = (props) => {
                   id="displayNameForManualDocument"
                   onChange={(e) => handleInputChange("displayNameForManualDocument", e.target.value)}
                   value={newRow.displayNameForManualDocument}
+                  errorMessage={errors?.displayNameForManualDocumentErr}
                 />
               </td>
               <td>

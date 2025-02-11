@@ -20,7 +20,7 @@ import { ToastAlert } from '../../utils/commonFunction';
 
 const TabMaster = () => {
 
-  const { dashboardForDt, getDashboardForDrpData, widgetDrpData, getAllWidgetData, getAllParameterData, parameterDrpData, getAllTabsData, allTabsData, setShowDataTable, setSelectedOption, selectedOption, actionMode, setActionMode, tabDrpData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
+  const { dashboardForDt, getDashboardForDrpData, widgetDrpData, getAllWidgetData, getAllParameterData, parameterDrpData, getAllTabsData, allTabsData, setShowDataTable, setSelectedOption, selectedOption, actionMode, setActionMode, tabDrpData, setLoading, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
   const [tabIndex, setTabIndex] = useState(1);
   const [tabName, setTabName] = useState({ value: 1, label: "About Tab" });
   const [showTabsTable, setShowTabsTable] = useState(false);
@@ -28,6 +28,7 @@ const TabMaster = () => {
   const [singleData, setSingleData] = useState([]);
   const [filterData, setFilterData] = useState(allTabsData)
   const [rows, setRows] = useState([{ rptId: "", displayOrder: "", widgetWidth: "", widgetHeight: "0", widgetColor: "", widgetDisplay: "", sectionId: "1", animation: "" }]);
+  const [isInputChanged, setIsInputChanged] = useState(false);
 
   const [values, setValues] = useState({
     "tabFor": "", "tabNameDisplay": "", "tabNameInternal": "", "parentTab": "", "ellipseInDisplay": "",
@@ -59,7 +60,20 @@ const TabMaster = () => {
   const [availableOptions, setAvailableOptions] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState();
 
-  const [errors, setErrors] = useState({ tabForErr: "", tabNameDisplayErr: "", tabNameInternalErr: "", tabNameFontWeightErr: "", tabNameFontSizeErr: "", tabNameTxtDecoratErr: "", showTabNameInDetailErr: "", displayOrderErr: "", widgetWidthErr: "", widgetHeightErr: "" });
+  const [errors, setErrors] = useState({ tabForErr: "", tabNameDisplayErr: "", tabNameInternalErr: "", tabNameFontWeightErr: "", tabNameFontSizeErr: "", tabNameTxtDecoratErr: "", showTabNameInDetailErr: "", displayOrderErr: "", widgetWidthErr: "", widgetHeightErr: "", fileNameForManualDocumentErr: "", displayNameForManualDocumentErr: "" });
+
+  useEffect(() => {
+    const localValues = localStorage.getItem('values');
+    const localRadio = localStorage.getItem('radio');
+    // console.log(localValues, 'bgb')
+    if (localValues && localValues !== '') {
+      setValues(JSON.parse(localValues));
+    }
+    if (localRadio && localRadio !== '') {
+      setRadioValues(JSON.parse(localRadio));
+    }
+
+  }, []);
 
   useEffect(() => {
     if (dashboardForDt?.length === 0) { getDashboardForDrpData(); }
@@ -88,7 +102,15 @@ const TabMaster = () => {
     }
   }, [values?.allParameters, parameterDrpData]);
 
-
+  useEffect(() => {
+    if (selectedOptions?.length > 0) {
+      const selectedIdParams = selectedOptions?.length > 0 ? selectedOptions?.map(option => option?.value).join(",") : '';
+      setValues({
+        ...values,
+        ['allParameters']: selectedIdParams
+      })
+    }
+  }, [selectedOptions])
 
   //parameter search
   useEffect(() => {
@@ -110,10 +132,15 @@ const TabMaster = () => {
 
   const handleRadioChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const error = name + 'Err'
     setRadioValues((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+    if (error && name) {
+      setErrors({ ...errors, [error]: '' })
+    }
+    // setIsInputChanged(true)
   };
 
   const handleValueChange = (e) => {
@@ -125,6 +152,7 @@ const TabMaster = () => {
     if (error && name) {
       setErrors({ ...errors, [error]: '' })
     }
+    // setIsInputChanged(true)
   }
 
   const [tabNavMenus, setTabNavMenus] = useState([
@@ -144,6 +172,8 @@ const TabMaster = () => {
       setTabName(tabNavMenus[nextTab - 1])
       setTabIndex(nextTab)
     }
+    localStorage.setItem('values', JSON.stringify(values));
+    localStorage.setItem('radio', JSON.stringify(radioValues));
   }
 
   const previousTab = () => {
@@ -173,6 +203,9 @@ const TabMaster = () => {
       setShowDataTable(false);
       setShowTabsTable(false);
       setSelectedOption([]);
+      setTabIndex(1);
+      setTabName({ value: 1, label: "About Tab" });
+      // setIsInputChanged(true)
     } else {
       ToastAlert('Please select a record', 'warning');
     }
@@ -180,6 +213,7 @@ const TabMaster = () => {
 
   useEffect(() => {
     if (singleData?.length > 0) {
+      setLoading(true)
       const jsonData = singleData[0]?.jsonData || {};
       setValues({
         ...values,
@@ -236,11 +270,13 @@ const TabMaster = () => {
         isLegendBorderReq: jsonData?.isLegendBorderRequired,//
 
       })
+      setLoading(false)
     }
   }, [singleData]);
 
 
   const saveTabData = () => {
+    setLoading(true);
     const {
       tabFor, tabNameDisplay, tabNameInternal, parentTab, ellipseInDisplay, tabIconImage, iconName,
 
@@ -301,14 +337,17 @@ const TabMaster = () => {
         setActionMode('home');
         reset();
         setConfirmSave(false);
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const updateTabData = () => {
+    setLoading(true)
     const {
       tabFor, tabNameDisplay, tabNameInternal, parentTab, ellipseInDisplay, tabIconImage, iconName, id,
 
@@ -370,15 +409,18 @@ const TabMaster = () => {
         setActionMode('home');
         setConfirmSave(false);
         setSelectedOption([])
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const handleDeleteTab = () => {
     if (selectedOption?.length > 0) {
+      setLoading(true)
       const val = { "id": selectedOption[0]?.id, "dashboardFor": values?.tabFor, "masterName": "DashboardMst" };
       fetchPostData("/hisutils/TabDelete", val).then((data) => {
         if (data) {
@@ -386,8 +428,10 @@ const TabMaster = () => {
           getAllTabsData(values?.tabFor)
           setSelectedOption([]);
           reset();
+          setLoading(false)
         } else {
           ToastAlert('Deletion Failed!', 'error');
+          setLoading(false)
         }
       })
     } else {
@@ -396,50 +440,67 @@ const TabMaster = () => {
   }
 
   const handleSaveUpdate = () => {
+    setLoading(true)
     let isValid = true;
+    let newErrors = {}; // Collect errors first
     if (!values?.tabFor?.trim()) {
-      setErrors(prev => ({ ...prev, 'tabForErr': "tab for is required" }));
+      newErrors.tabForErr = "tab for is required";
       isValid = false;
     }
     if (!values?.tabNameDisplay?.trim()) {
-      setErrors(prev => ({ ...prev, 'tabNameDisplayErr': "display name is required" }));
+      newErrors.tabNameDisplayErr = "display name is required";
       isValid = false;
     }
     if (!values?.tabNameInternal?.trim()) {
-      setErrors(prev => ({ ...prev, 'tabNameInternalErr': "internal name is required" }));
+      newErrors.tabNameInternalErr = "internal name is required";
       isValid = false;
     }
     if (!values?.tabNameFontWeight?.trim()) {
-      setErrors(prev => ({ ...prev, 'tabNameFontWeightErr': "font weight is required" }));
+      newErrors.tabNameFontWeightErr = "font weight is required";
       isValid = false;
     }
     if (!values?.tabNameFontSize?.trim()) {
-      setErrors(prev => ({ ...prev, 'tabNameFontSizeErr': "font size is required" }));
+      newErrors.tabNameFontSizeErr = "font size is required";
       isValid = false;
     }
     if (!values?.tabNameTxtDecorat?.trim()) {
-      setErrors(prev => ({ ...prev, 'tabNameTxtDecoratErr': "decoration is required" }));
+      newErrors.tabNameTxtDecoratErr = "decoration is required";
       isValid = false;
     }
     if (!radioValues?.showTabNameInDetail?.trim()) {
-      setErrors(prev => ({ ...prev, 'showTabNameInDetailErr': "tab name in detail is required" }));
+      newErrors.showTabNameInDetailErr = "tab name in detail is required";
       isValid = false;
     }
     if (rows?.length > 0 && !rows[rows?.length - 1]?.displayOrder) {
-      setErrors(prev => ({ ...prev, 'displayOrderErr': "required" }));
+      newErrors.displayOrderErr = "required";
       isValid = false;
     }
     if (rows?.length > 0 && !rows[rows?.length - 1]?.widgetWidth) {
-      setErrors(prev => ({ ...prev, 'widgetWidthErr': "required" }));
+      newErrors.widgetWidthErr = "required";
       isValid = false;
     }
     if (rows?.length > 0 && !rows[rows?.length - 1]?.widgetHeight) {
-      setErrors(prev => ({ ...prev, 'widgetHeightErr': "required" }));
+      newErrors.widgetHeightErr = "required";
       isValid = false;
     }
 
-    if (isValid) {
+    setErrors(newErrors);
+
+    if (!isValid) {
+      if (newErrors.tabForErr || newErrors.tabNameDisplayErr || newErrors.tabNameInternalErr) {
+        setTabIndex(1);
+        setTabName({ value: 1, label: "About Tab" });
+      } else if (newErrors.showTabNameInDetailErr || newErrors.tabNameFontWeightErr || newErrors.tabNameFontSizeErr || newErrors.tabNameTxtDecoratErr) {
+        setTabIndex(2);
+        setTabName({ value: 2, label: "Configuration" });
+      } else if (newErrors.displayOrderErr || newErrors.widgetWidthErr || newErrors.widgetHeightErr) {
+        setTabIndex(3);
+        setTabName({ value: 3, label: "Widget Mapping" });
+      }
+      setLoading(false)
+    } else {
       setShowConfirmSave(true);
+      setLoading(false)
     }
   }
 
@@ -485,6 +546,10 @@ const TabMaster = () => {
     // setTabName({ value: 1, label: "About Widget" })
     setTabName({ value: 1, label: "About Tab" });
     setErrors({ tabForErr: "", tabNameDisplayErr: "", tabNameInternalErr: "", tabNameFontWeightErr: "", tabNameFontSizeErr: "", tabNameTxtDecoratErr: "", showTabNameInDetailErr: "" });
+    localStorage.removeItem('values');
+    localStorage.removeItem('radio');
+    setLoading(false)
+    // setIsInputChanged(false)
   }
 
   const column = [
@@ -532,7 +597,7 @@ const TabMaster = () => {
     },
   ]
 
-  console.log(singleData, 'single')
+  // console.log(singleData, 'single')
   console.log(values, 'values')
 
   return (
@@ -572,7 +637,7 @@ const TabMaster = () => {
               <FooterDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />
             }
             {tabName?.value === 7 &&
-              <HelpDocs handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} />
+              <HelpDocs handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} {...{ errors, setErrors }} />
             }
 
 

@@ -1,45 +1,46 @@
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Suspense, useContext } from 'react';
-import DbConfigMaster from './pages/dashboardMasterPgs/DbConfigMaster';
-import ParameterMaster from './pages/dashboardMasterPgs/ParameterMaster';
-import DbSubmenuMaster from './pages/webServiceMasterPgs/DbSubmenuMaster';
-import ServiceUserMaster from './pages/webServiceMasterPgs/ServiceUserMaster';
-import DataServiceMaster from './pages/webServiceMasterPgs/DataServiceMaster';
-import WidgetMaster from './pages/dashboardMasterPgs/WidgetMaster';
+import { lazy, Suspense } from 'react';
 import { ToastContainer } from 'react-toastify';
-import TabMaster from './pages/dashboardMasterPgs/TabMaster';
-import DashboardMaster from './pages/dashboardMasterPgs/DashboardMaster';
-import { HISContext } from './contextApi/HISContext';
-import ConfirmBox from './components/commons/ConfirmBox';
+import SpinLoader from './components/commons/Spinner';
+
+const DbConfigMaster = lazy(() => import('./pages/dashboardMasterPgs/DbConfigMaster'));
+const ParameterMaster = lazy(() => import('./pages/dashboardMasterPgs/ParameterMaster'));
+const DbSubmenuMaster = lazy(() => import('./pages/webServiceMasterPgs/DbSubmenuMaster'));
+const ServiceUserMaster = lazy(() => import('./pages/webServiceMasterPgs/ServiceUserMaster'));
+const DataServiceMaster = lazy(() => import('./pages/webServiceMasterPgs/DataServiceMaster'));
+const WidgetMaster = lazy(() => import('./pages/dashboardMasterPgs/WidgetMaster'));
+const TabMaster = lazy(() => import('./pages/dashboardMasterPgs/TabMaster'));
+const DashboardMaster = lazy(() => import('./pages/dashboardMasterPgs/DashboardMaster'));
+const ConfirmBox = lazy(() => import('./components/commons/ConfirmBox'));
+const Loader = lazy(() => import('./components/commons/Loader'));
 
 function App() {
 
   return (
     <BrowserRouter>
-      {/* <Suspense
+      <Suspense
         fallback={
           <div className="pt-3 text-center">
-            
+            <SpinLoader animation="border" variant="primary" />
           </div>
         }
-      > */}
-      <Routes>
-        {/* <Route exact path="/login" name="Login Page" element={<Login />} /> */}
-        <Route exact path="/dashboard-configuration-master" name="Register Page" element={<DbConfigMaster />} />
-        <Route exact path="/" name="login" element={<DbConfigMaster />} />
-        <Route exact path="/parameter-master" name="login" element={<ParameterMaster />} />
-        <Route exact path="/dashboard-submenu-master" name="login" element={<DbSubmenuMaster />} />
-        <Route exact path="/service-user-master" name="login" element={<ServiceUserMaster />} />
-        <Route exact path="/data-service-master" name="login" element={<DataServiceMaster />} />
-        <Route exact path="/widget-master" name="login" element={<WidgetMaster />} />
-        <Route exact path="/tab-master" name="Tab Master" element={<TabMaster />} />
-        <Route exact path="/dashboard-master" name="Dashboard Master" element={<DashboardMaster />} />
-        {/* <Route exact path="*" name='Home' element={<Auth comp={DefaultLayout}/>} /> */}
-      </Routes>
-      {/* </Suspense> */}
+      >
+        <Routes>
+          <Route exact path="/dashboard-configuration-master" name="Register Page" element={<DbConfigMaster />} />
+          <Route exact path="/" name="login" element={<DbConfigMaster />} />
+          <Route exact path="/parameter-master" name="login" element={<ParameterMaster />} />
+          <Route exact path="/dashboard-submenu-master" name="login" element={<DbSubmenuMaster />} />
+          <Route exact path="/service-user-master" name="login" element={<ServiceUserMaster />} />
+          <Route exact path="/data-service-master" name="login" element={<DataServiceMaster />} />
+          <Route exact path="/widget-master" name="login" element={<WidgetMaster />} />
+          <Route exact path="/tab-master" name="Tab Master" element={<TabMaster />} />
+          <Route exact path="/dashboard-master" name="Dashboard Master" element={<DashboardMaster />} />
+        </Routes>
+      </Suspense>
       <ToastContainer />
       <ConfirmBox message={"Do you want to save this data?"} />
+      <Loader />
     </BrowserRouter>
   );
 }

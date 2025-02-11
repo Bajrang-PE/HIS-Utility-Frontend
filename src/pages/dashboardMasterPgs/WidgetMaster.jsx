@@ -24,7 +24,7 @@ import { fetchPostData, fetchUpdateData } from '../../utils/ApiHooks'
 
 const WidgetMaster = () => {
 
-  const { setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, parameterData, getAllParameterData, widgetDrpData, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, actionMode, setActionMode, parameterDrpData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
+  const { setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, parameterData, getAllParameterData, widgetDrpData, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, actionMode, setActionMode, parameterDrpData, setLoading, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
 
   const [values, setValues] = useState({
     "id": "", "widgetFor": "", "widgetType": "columnBased", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "webQuery": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "", "treeChildQuery": "", "treeChildProcedure": "", "popUpDetails": [], "queryLabel": '', "htmlText": '', 'iconName': "",
@@ -74,6 +74,7 @@ const WidgetMaster = () => {
   const [widgetSearchInput, setWidgetSearchInput] = useState('');
   const [widgetFilterData, setWidgetFilterData] = useState(allWidgetData);
   const [singleData, setSingleData] = useState([]);
+  const [isInputChanged, setIsInputChanged] = useState(false);
 
   //multi params
   const [availableOptions, setAvailableOptions] = useState([]);
@@ -93,7 +94,6 @@ const WidgetMaster = () => {
     widgetViewedErr: "", isWidgetNameVisibleErr: "", isThree3DErr: "", isDataLabelsErr: "", isShowLegendErr: "", isDisplayGraphPluginErr: "", isFullLabelReqErr: "", isGraphScrollBarReqErr: "",
   });
 
-
   useEffect(() => {
     if (values?.selFilterIds !== "") {
       const selectedIds = values?.selFilterIds?.split(",")?.map(id => id?.trim());
@@ -109,7 +109,29 @@ const WidgetMaster = () => {
     }
   }, [values?.selFilterIds, parameterDrpData]);
 
+  useEffect(() => {
+    if (selectedOptions?.length > 0) {
+      const selectedIdParams = selectedOptions?.length > 0 ? selectedOptions?.map(option => option?.value).join(",") : '';
+      setValues({
+        ...values,
+        ['selFilterIds']: selectedIdParams
+      })
+    }
+  }, [selectedOptions])
 
+
+  useEffect(() => {
+    const localValues = localStorage.getItem('values');
+    const localRadio = localStorage.getItem('radio');
+    // console.log(localValues, 'bgb')
+    if (localValues && localValues !== '') {
+      setValues(JSON.parse(localValues));
+    }
+    if (localRadio && localRadio !== '') {
+      setRadioValues(JSON.parse(localRadio));
+    }
+
+  }, []);
 
   useEffect(() => {
     if (values?.widgetFor) {
@@ -130,6 +152,7 @@ const WidgetMaster = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+    // setIsInputChanged(true)
   };
 
   const handleValueChange = (e) => {
@@ -141,6 +164,7 @@ const WidgetMaster = () => {
     if (error && name) {
       setErrors({ ...errors, [error]: '' })
     }
+    // setIsInputChanged(true)
   }
 
   // TAB MENUS
@@ -205,6 +229,8 @@ const WidgetMaster = () => {
       setTabName(tabNavMenus[nextTab - 1])
       setTabIndex(nextTab)
     }
+    localStorage.setItem('values', JSON.stringify(values));
+    localStorage.setItem('radio', JSON.stringify(radioValues));
   }
 
   const previousTab = () => {
@@ -271,9 +297,20 @@ const WidgetMaster = () => {
       //iframe
       isSsoUrl: "Yes"
     });
+    setErrors({
+      widgetForErr: "", widgetNameDisplayErr: "", widgetNameInternalErr: "", defaultGraphTypeErr: "", graphTypesErr: "", clmNameForLineGraphErr: "", defaultPluginNameErr: "", noOfNewsVisibleErr: "",
+      alphaGraph3DErr: "", betaGraph3DErr: "", xAxisLabelErr: "", yAxisLabelErr: "", kpiTypeErr: "", kpiIconTypeErr: "", kpiDefaultBgColorErr: "", noOfNewsVisibleErr: "", mapNameErr: "",
+
+      modeForSQCHILDColumnNoErr: "", SQCHILDWidgetIdErr: "", otherLinkNameErr: "", otherLinkURLErr: "", mainQueryErr: "", serviceReferenceNumberErr: "", webserviceNameErr: "", procedureNameErr: "",
+
+      widgetViewedErr: "", isWidgetNameVisibleErr: "", isThree3DErr: "", isDataLabelsErr: "", isShowLegendErr: "", isDisplayGraphPluginErr: "", isFullLabelReqErr: "", isGraphScrollBarReqErr: "",
+    })
     setTabIndex(1);
     setTabName({ value: 1, label: "About Widget" })
-    // }
+    localStorage.removeItem('values');
+    localStorage.removeItem('radio');
+    setLoading(false)
+    // setIsInputChanged(false)
   }
 
   const handleUpdateData = () => {
@@ -285,6 +322,7 @@ const WidgetMaster = () => {
       setShowDataTable(false);
       setShowWebServiceTable(false);
       setSelectedOption([]);
+      // setIsInputChanged(true)
     } else {
       ToastAlert('Please select a record', 'warning');
     }
@@ -302,6 +340,7 @@ const WidgetMaster = () => {
 
   useEffect(() => {
     if (singleData?.length > 0) {
+      setLoading(true)
       setValues({
         ...values,
         id: singleData[0]?.rptId,
@@ -478,6 +517,7 @@ const WidgetMaster = () => {
         // Iframe fields
         isSsoUrl: singleData[0]?.isSSOUrl,//
       });
+      setLoading(false)
     }
   }, [singleData]);
 
@@ -495,7 +535,6 @@ const WidgetMaster = () => {
         return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText);
       });
       setFilterData(newFilteredData);
-      console.log(newFilteredData, 'newFilteredData')
     }
   }, [searchInput, parameterData]);
 
@@ -514,11 +553,11 @@ const WidgetMaster = () => {
         return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText) || paramType?.includes(lowercasedText);
       });
       setWidgetFilterData(newFilteredData);
-      console.log(newFilteredData, 'newFilteredData')
     }
   }, [widgetSearchInput, allWidgetData]);
 
   const saveWidgetData = () => {
+    setLoading(true)
     const {
       widgetFor, widgetType, widgetNameDisplay, widgetNameInternal, widgetRefreshTime, widgetRefreshDelayTime, cachingStatus, limit, widgetHadingClr, widgetTopMargin,
       //table
@@ -735,14 +774,17 @@ const WidgetMaster = () => {
         reset();
         setConfirmSave(false);
         setActionMode('home');
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const updateWidgetData = () => {
+    setLoading(true)
     const {
       id, widgetFor, widgetType, widgetNameDisplay, widgetNameInternal, widgetRefreshTime, widgetRefreshDelayTime, cachingStatus, limit, widgetHadingClr, widgetTopMargin,
       //table
@@ -962,15 +1004,18 @@ const WidgetMaster = () => {
         reset();
         setConfirmSave(false);
         setSelectedOption([])
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const handleDeleteParams = () => {
     if (selectedOption?.length > 0) {
+      setLoading(true)
       const val = { "id": selectedOption[0]?.rptId, "dashboardFor": values?.widgetFor, "masterName": "DashboardWidgetMst" };
       fetchPostData("http://10.226.29.211:8025/hisutils/widgetDelete", val).then((data) => {
         if (data) {
@@ -981,157 +1026,194 @@ const WidgetMaster = () => {
           setShowDataTable(false);
           setShowWebServiceTable(false);
           reset();
+          setLoading(false)
         } else {
           ToastAlert('Deletion Failed!', 'error');
+          setLoading(false)
         }
       })
     } else {
       ToastAlert('Please select a record', 'warning');
     }
   }
+
   const handleSaveUpdate = () => {
     let isValid = true;
+    let newErrors = {};
+
+    //  General Widget Validations
     if (!values?.widgetFor?.trim()) {
-      setErrors(prev => ({ ...prev, 'widgetForErr': "Widget for is required" }));
+      newErrors.widgetForErr = "Widget for is required";
       isValid = false;
     }
     if (!values?.widgetNameDisplay?.trim()) {
-      setErrors(prev => ({ ...prev, 'widgetNameDisplayErr': "display name is required" }));
+      newErrors.widgetNameDisplayErr = "Display name is required";
       isValid = false;
     }
     if (!values?.widgetNameInternal?.trim()) {
-      setErrors(prev => ({ ...prev, 'widgetNameInternalErr': "internal name is required" }));
+      newErrors.widgetNameInternalErr = "Internal name is required";
       isValid = false;
     }
-
-    if (radioValues?.widgetViewed === "Graph" && !values?.defaultGraphType?.trim()) {
-      setErrors(prev => ({ ...prev, 'defaultGraphTypeErr': "font weight is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && values?.graphTypes?.length === 0) {
-      setErrors(prev => ({ ...prev, 'graphTypesErr': "font size is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !values?.clmNameForLineGraph?.trim()) {
-      setErrors(prev => ({ ...prev, 'clmNameForLineGraphErr': "decoration is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !values?.defaultPluginName?.trim()) {
-      setErrors(prev => ({ ...prev, 'defaultPluginNameErr': "decoration is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "News_Ticker"&&!values?.noOfNewsVisible?.trim()) {
-      setErrors(prev => ({ ...prev, 'noOfNewsVisibleErr': "decoration is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !values?.alphaGraph3D?.trim()) {
-      setErrors(prev => ({ ...prev, 'alphaGraph3DErr': "decoration is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !values?.betaGraph3D?.trim()) {
-      setErrors(prev => ({ ...prev, 'betaGraph3DErr': "decoration is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !values?.xAxisLabel?.trim()) {
-      setErrors(prev => ({ ...prev, 'xAxisLabelErr': "decoration is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !values?.yAxisLabel?.trim()) {
-      setErrors(prev => ({ ...prev, 'yAxisLabelErr': "decoration is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "KPI" && !values?.kpiType?.trim()) {
-      setErrors(prev => ({ ...prev, 'kpiTypeErr': "decoration is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "KPI" && !values?.kpiIconType?.trim()) {
-      setErrors(prev => ({ ...prev, 'kpiIconTypeErr': "decoration is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "KPI" && !values?.kpiDefaultBgColor?.trim()) {
-      setErrors(prev => ({ ...prev, 'kpiDefaultBgColorErr': "decoration is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Criteria_Map" && !values?.mapName?.trim()) {
-      setErrors(prev => ({ ...prev, 'mapNameErr': "decoration is required" }));
-      isValid = false;
-    }
-
-
     if (!radioValues?.widgetViewed?.trim()) {
-      setErrors(prev => ({ ...prev, 'widgetViewedErr': "widget view is required" }));
+      newErrors.widgetViewedErr = "Widget view is required";
       isValid = false;
     }
     if (!radioValues?.isWidgetNameVisible?.trim()) {
-      setErrors(prev => ({ ...prev, 'isWidgetNameVisibleErr': "This check is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isThree3D?.trim()) {
-      setErrors(prev => ({ ...prev, 'isThree3DErr': "This check is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isDataLabels?.trim()) {
-      setErrors(prev => ({ ...prev, 'isDataLabelsErr': "This check is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isShowLegend?.trim()) {
-      setErrors(prev => ({ ...prev, 'isShowLegendErr': "This check is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isDisplayGraphPlugin?.trim()) {
-      setErrors(prev => ({ ...prev, 'isDisplayGraphPluginErr': "This check is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isGraphScrollBarReq?.trim()) {
-      setErrors(prev => ({ ...prev, 'isGraphScrollBarReqErr': "This check is required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isFullLabelReq?.trim()) {
-      setErrors(prev => ({ ...prev, 'isFullLabelReqErr': "This check is required" }));
+      newErrors.isWidgetNameVisibleErr = "This check is required";
       isValid = false;
     }
 
-
-    if (values?.widgetType === "singleQueryParent" && values?.sqChildJsonString?.length === 0 && (!newRow?.modeForSQCHILDColumnNo?.trim() || !newRow?.SQCHILDWidgetId?.trim())) {
-      if (!newRow?.SQCHILDWidgetId?.trim()) {
-        setErrors(prev => ({ ...prev, 'SQCHILDWidgetIdErr': "required" }));
+    //  Graph-Specific Validations
+    if (radioValues?.widgetViewed === "Graph") {
+      if (!values?.defaultGraphType?.trim()) {
+        newErrors.defaultGraphTypeErr = "Default graph type is required";
         isValid = false;
-      } else {
-        setErrors(prev => ({ ...prev, 'modeForSQCHILDColumnNoErr': "required" }));
+      }
+      if (values?.graphTypes?.length === 0) {
+        newErrors.graphTypesErr = "Graph type selection is required";
+        isValid = false;
+      }
+      if (!values?.clmNameForLineGraph?.trim()) {
+        newErrors.clmNameForLineGraphErr = "Column name for Line Graph is required";
+        isValid = false;
+      }
+      if (!values?.defaultPluginName?.trim()) {
+        newErrors.defaultPluginNameErr = "Default plugin name is required";
+        isValid = false;
+      }
+      if (!values?.alphaGraph3D?.trim()) {
+        newErrors.alphaGraph3DErr = "Alpha Graph 3D is required";
+        isValid = false;
+      }
+      if (!values?.betaGraph3D?.trim()) {
+        newErrors.betaGraph3DErr = "Beta Graph 3D is required";
+        isValid = false;
+      }
+      if (!values?.xAxisLabel?.trim()) {
+        newErrors.xAxisLabelErr = "X-axis label is required";
+        isValid = false;
+      }
+      if (!values?.yAxisLabel?.trim()) {
+        newErrors.yAxisLabelErr = "Y-axis label is required";
+        isValid = false;
+      }
+      if (!radioValues?.isThree3D?.trim()) {
+        newErrors.isThree3DErr = "3D option selection is required";
+        isValid = false;
+      }
+      if (!radioValues?.isDataLabels?.trim()) {
+        newErrors.isDataLabelsErr = "Data labels option is required";
+        isValid = false;
+      }
+      if (!radioValues?.isShowLegend?.trim()) {
+        newErrors.isShowLegendErr = "Show legend selection is required";
+        isValid = false;
+      }
+      if (!radioValues?.isDisplayGraphPlugin?.trim()) {
+        newErrors.isDisplayGraphPluginErr = "Display Graph Plugin option is required";
+        isValid = false;
+      }
+      if (!radioValues?.isGraphScrollBarReq?.trim()) {
+        newErrors.isGraphScrollBarReqErr = "Graph scrollbar requirement is needed";
+        isValid = false;
+      }
+      if (!radioValues?.isFullLabelReq?.trim()) {
+        newErrors.isFullLabelReqErr = "Full label requirement is needed";
         isValid = false;
       }
     }
-    if (radioValues?.widgetViewed === "Other_Link" && otherLinkData?.length > 0 && !otherLinkData[otherLinkData?.length - 1]?.otherLinkName) {
-      setErrors(prev => ({ ...prev, 'otherLinkNameErr': "required" }));
-      isValid = false;
+
+    //  KPI-Specific Validations
+    if (radioValues?.widgetViewed === "KPI") {
+      if (!values?.kpiType?.trim()) {
+        newErrors.kpiTypeErr = "KPI type is required";
+        isValid = false;
+      }
+      if (!values?.kpiIconType?.trim()) {
+        newErrors.kpiIconTypeErr = "KPI icon type is required";
+        isValid = false;
+      }
+      if (!values?.kpiDefaultBgColor?.trim()) {
+        newErrors.kpiDefaultBgColorErr = "KPI default background color is required";
+        isValid = false;
+      }
     }
-    if (radioValues?.widgetViewed === "Other_Link" && otherLinkData?.length > 0 && !otherLinkData[otherLinkData?.length - 1]?.otherLinkURL) {
-      setErrors(prev => ({ ...prev, 'otherLinkURLErr': "required" }));
+
+    //  News Ticker Validations
+    if (radioValues?.widgetViewed === "News_Ticker" && !values?.noOfNewsVisible?.trim()) {
+      newErrors.noOfNewsVisibleErr = "Number of news visible is required";
       isValid = false;
     }
 
-    if (radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe" && radioValues?.selectedModeQuery === "Query" && rows?.length > 0 && !rows[rows?.length - 1]?.mainQuery) {
-      setErrors(prev => ({ ...prev, 'mainQueryErr': "required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe" && radioValues?.selectedModeQuery === "WebSevice" && procedureRows?.length > 0 && !procedureRows[procedureRows?.length - 1]?.serviceReferenceNumber) {
-      setErrors(prev => ({ ...prev, 'serviceReferenceNumberErr': "required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe" && radioValues?.selectedModeQuery === "WebSevice" && procedureRows?.length > 0 && !procedureRows[procedureRows?.length - 1]?.webserviceName) {
-      setErrors(prev => ({ ...prev, 'webserviceNameErr': "required" }));
-      isValid = false;
-    }
-    if (radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe" && radioValues?.selectedModeQuery === "Procedure" && !values?.procedureName?.trim()) {
-      setErrors(prev => ({ ...prev, 'procedureNameErr': "required" }));
+    //  Criteria Map Validations
+    if (radioValues?.widgetViewed === "Criteria_Map" && !values?.mapName?.trim()) {
+      newErrors.mapNameErr = "Map name is required";
       isValid = false;
     }
 
-    if (isValid) {
+    //  Other Link Validations
+    if (radioValues?.widgetViewed === "Other_Link") {
+      if (otherLinkData?.length > 0 && !otherLinkData[otherLinkData?.length - 1]?.otherLinkName) {
+        newErrors.otherLinkNameErr = "Other link name is required";
+        isValid = false;
+      }
+      if (otherLinkData?.length > 0 && !otherLinkData[otherLinkData?.length - 1]?.otherLinkURL) {
+        newErrors.otherLinkURLErr = "Other link URL is required";
+        isValid = false;
+      }
+    }
+
+    //  Single Query Parent Validations
+    if (values?.widgetType === "singleQueryParent" && values?.sqChildJsonString?.length === 0) {
+      if (!newRow?.SQCHILDWidgetId?.trim()) {
+        newErrors.SQCHILDWidgetIdErr = "SQCHILD Widget ID is required";
+        isValid = false;
+      } else {
+        newErrors.modeForSQCHILDColumnNoErr = "Mode for SQCHILD Column No is required";
+        isValid = false;
+      }
+    }
+
+    //  Query, WebService, Procedure Validations
+    if (radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe") {
+      if (radioValues?.selectedModeQuery === "Query" && rows?.length > 0 && !rows[rows?.length - 1]?.mainQuery) {
+        newErrors.mainQueryErr = "Main query is required";
+        isValid = false;
+      }
+      if (radioValues?.selectedModeQuery === "WebSevice") {
+        if (procedureRows?.length > 0 && !procedureRows[procedureRows?.length - 1]?.serviceReferenceNumber) {
+          newErrors.serviceReferenceNumberErr = "Service reference number is required";
+          isValid = false;
+        }
+        if (procedureRows?.length > 0 && !procedureRows[procedureRows?.length - 1]?.webserviceName) {
+          newErrors.webserviceNameErr = "Web service name is required";
+          isValid = false;
+        }
+      }
+      if (radioValues?.selectedModeQuery === "Procedure" && !values?.procedureName?.trim()) {
+        newErrors.procedureNameErr = "Procedure name is required";
+        isValid = false;
+      }
+    }
+
+    setErrors(newErrors)
+
+    if (!isValid) {
+      if (newErrors.widgetForErr || newErrors.widgetNameDisplayErr || newErrors.widgetNameInternalErr || newErrors.widgetViewedErr || newErrors.isWidgetNameVisibleErr) {
+        setTabIndex(1);
+        setTabName({ value: 1, label: "About Widget" });
+      } else if (newErrors.mainQueryErr || newErrors.serviceReferenceNumberErr || newErrors.webserviceNameErr || newErrors.procedureNameErr) {
+        setTabIndex(2);
+        setTabName({ value: 2, label: "Query Details" });
+      } else if (newErrors.kpiTypeErr || newErrors.kpiIconTypeErr || newErrors.kpiDefaultBgColorErr || newErrors.noOfNewsVisibleErr || newErrors.mapNameErr || newErrors.defaultGraphTypeErr || newErrors.graphTypesErr || newErrors.clmNameForLineGraphErr || newErrors.defaultPluginNameErr || newErrors.defaultPluginNameErr || newErrors.alphaGraph3DErr || newErrors.betaGraph3DErr || newErrors.xAxisLabelErr || newErrors.yAxisLabelErr || newErrors.isThree3DErr || newErrors.isDataLabelsErr || newErrors.isShowLegendErr || newErrors.isDisplayGraphPluginErr || newErrors.isGraphScrollBarReqErr || newErrors.isFullLabelReqErr) {
+        setTabIndex(3);
+        setTabName({ value: 3, label: "" });
+      }
+    } else {
       setShowConfirmSave(true);
     }
   }
-console.log(errors,'err')
+
   useEffect(() => {
     if (confirmSave) {
       if (actionMode === 'edit') {
@@ -1230,8 +1312,8 @@ console.log(errors,'err')
     },
   ]
 
-  console.log(availableOptions, 'availableOptions')
-  console.log(selectedOptions, 'selectedOption')
+  // console.log(values, 'values')
+  // console.log(selectedOptions, 'selectedOption')
   // console.log(singleData)
   // console.log(allWidgetData?.filter(dt=>dt?.rptId == 11600023))
 

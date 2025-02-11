@@ -8,7 +8,7 @@ import { ToastAlert } from '../../utils/commonFunction'
 import { fetchPostData } from '../../utils/ApiHooks'
 
 const DbSubmenuMaster = () => {
-  const { setShowDataTable, selectedOption, setSelectedOption, setActionMode, actionMode, dashboardSubmenuData, getDashboardSubmenuData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
+  const { setShowDataTable, selectedOption, setSelectedOption, setActionMode, actionMode, dashboardSubmenuData, getDashboardSubmenuData, setLoading, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
 
   const [showServiceUserTable, setShowServiceUserTable] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -113,6 +113,7 @@ const DbSubmenuMaster = () => {
   }, [singleData])
 
   const saveSubmenuData = () => {
+    setLoading(true)
     const { subMenuValue, mobileIcon, mobilebgColor, mobileFontColor } = values;
     const val = {
       subMenuValue: subMenuValue,
@@ -129,14 +130,17 @@ const DbSubmenuMaster = () => {
         setActionMode('home');
         reset();
         setConfirmSave(false);
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const updateSubmenuData = () => {
+    setLoading(true)
     const { subMenuValue, mobileIcon, mobilebgColor, mobileFontColor } = values;
     const val = {
       subMenuId: submenuId,
@@ -155,15 +159,18 @@ const DbSubmenuMaster = () => {
         setActionMode('home');
         reset();
         setConfirmSave(false);
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const handleDeleteSubmenu = () => {
     if (selectedOption?.length > 0) {
+      setLoading(true)
       const isReset = window.confirm('Do you want to delete this record ?');
       if (isReset) {
         fetchPostData(`/hisutils/DashboardsubMenudelete/${selectedOption[0]?.subMenuId}`).then((data) => {
@@ -173,9 +180,11 @@ const DbSubmenuMaster = () => {
             setSelectedOption([]);
             reset();
             setConfirmSave(false);
+            setLoading(false)
           } else {
             ToastAlert('Deletion Failed!', 'error');
             setConfirmSave(false);
+            setLoading(false)
           }
         })
       } else {
@@ -219,6 +228,7 @@ const DbSubmenuMaster = () => {
     setShowServiceUserTable(false);
     setShowDataTable(false);
     setSubmenuId('')
+    setLoading(false)
   }
 
 

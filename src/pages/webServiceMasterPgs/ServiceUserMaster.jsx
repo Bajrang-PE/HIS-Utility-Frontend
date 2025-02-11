@@ -11,7 +11,7 @@ import GlobalDataTable from '../../components/commons/GlobalDataTable'
 import { fetchPostData } from '../../utils/ApiHooks'
 
 const ServiceUserMaster = () => {
-  const { setShowDataTable, getAllServiceData, dataServiceDrpData, selectedOption, setSelectedOption, setActionMode, actionMode, getUserServiceData, userServiceData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave, } = useContext(HISContext);
+  const { setShowDataTable, getAllServiceData, dataServiceDrpData, selectedOption, setSelectedOption, setActionMode, actionMode, getUserServiceData, userServiceData, setLoading, setShowConfirmSave, confirmSave, setConfirmSave, } = useContext(HISContext);
 
   const [values, setValues] = useState({
     "username": "", "password": "", "id": '', "dashboardFor": ""
@@ -86,6 +86,7 @@ const ServiceUserMaster = () => {
   }, [singleData])
 
   const saveServiceUserData = () => {
+    setLoading(true)
     const {
       username, password, id, dashboardFor
     } = values;
@@ -110,14 +111,17 @@ const ServiceUserMaster = () => {
         setActionMode('home');
         reset();
         setConfirmSave(false);
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const updateServiceUserData = () => {
+    setLoading(true)
     const {
       username, password, id, dashboardFor
     } = values;
@@ -143,15 +147,18 @@ const ServiceUserMaster = () => {
         setActionMode('home');
         reset();
         setConfirmSave(false);
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const handleDeleteServiceUser = () => {
     if (selectedOption?.length > 0) {
+      setLoading(true)
       const isReset = window.confirm('Do you want to reset whole form!');
       if (isReset) {
         const val = { "id": selectedOption[0]?.id, "dashboardFor": "GLOBAL", "masterName": "ServiceUserMst" };
@@ -161,8 +168,10 @@ const ServiceUserMaster = () => {
             getUserServiceData();
             setSelectedOption([]);
             reset();
+            setLoading(false)
           } else {
             ToastAlert('Deletion Failed!', 'error');
+            setLoading(false)
           }
         })
       } else {
@@ -212,6 +221,7 @@ const ServiceUserMaster = () => {
     setActionMode('home');
     setShowServiceUserTable(false);
     setShowDataTable(false);
+    setLoading(false)
   }
 
   // Handle input change

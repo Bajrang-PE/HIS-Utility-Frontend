@@ -15,7 +15,7 @@ import { fetchPostData } from '../../utils/ApiHooks'
 
 const DashboardMaster = () => {
 
-  const { dashboardForDt, getDashboardForDrpData, getAllParameterData, parameterDrpData, getAllTabsData, setShowDataTable, setSelectedOption, selectedOption, actionMode, setActionMode, tabDrpData, getAllDashboardData, dashboardData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
+  const { dashboardForDt, getDashboardForDrpData, getAllParameterData, parameterDrpData, getAllTabsData, setShowDataTable, setSelectedOption, selectedOption, actionMode, setActionMode, tabDrpData, getAllDashboardData, dashboardData, setLoading, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
 
   const [tabIndex, setTabIndex] = useState(1);
   const [tabName, setTabName] = useState({ value: 1, label: "About Dashboard" });
@@ -29,6 +29,7 @@ const DashboardMaster = () => {
 
   const [availableOptionsTab, setAvailableOptionsTab] = useState([]);
   const [selectedOptionsTab, setSelectedOptionsTab] = useState();
+  const [isInputChanged, setIsInputChanged] = useState(false);
 
   const [values, setValues] = useState({
     "dashboardFor": "", "dashNameDisplay": "", "dashNameInternal": "", "menuContainerBgColor": "", "dashTitlefontColor": "", "iconColor": "", "menuContainerBgImage": "", "cachingStatus": '', "dataLoad": "ALL", "id": "",
@@ -61,6 +62,19 @@ const DashboardMaster = () => {
   useEffect(() => {
     if (dashboardForDt?.length === 0) { getDashboardForDrpData(); }
   }, [])
+
+  useEffect(() => {
+    const localValues = localStorage.getItem('values');
+    const localRadio = localStorage.getItem('radio');
+    // console.log(localValues, 'bgb')
+    if (localValues && localValues !== '') {
+      setValues(JSON.parse(localValues));
+    }
+    if (localRadio && localRadio !== '') {
+      setRadioValues(JSON.parse(localRadio));
+    }
+
+  }, []);
 
   //parameter search
   useEffect(() => {
@@ -104,6 +118,16 @@ const DashboardMaster = () => {
   }, [values?.allSelectedParaList, parameterDrpData]);
 
   useEffect(() => {
+    if (selectedOptions?.length > 0) {
+      const selectedIdParams = selectedOptions?.length > 0 ? selectedOptions?.map(option => option?.value).join(",") : '';
+      setValues({
+        ...values,
+        ['allSelectedParaList']: selectedIdParams
+      })
+    }
+  }, [selectedOptions])
+
+  useEffect(() => {
     if (values?.dashboardIds !== "") {
       const selectedIds = values?.dashboardIds?.split(",")?.map(id => id?.trim());
       // const fdt = tabDrpData?.filter(dt => selectedIds?.includes(dt?.value?.toString()));
@@ -118,12 +142,23 @@ const DashboardMaster = () => {
     }
   }, [values?.dashboardIds, tabDrpData]);
 
+  useEffect(() => {
+    if (selectedOptionsTab?.length > 0) {
+      const selectedIdParams = selectedOptionsTab?.length > 0 ? selectedOptionsTab?.map(option => option?.value).join(",") : '';
+      setValues({
+        ...values,
+        ['dashboardIds']: selectedIdParams
+      })
+    }
+  }, [selectedOptionsTab])
+
   const handleRadioChange = (e) => {
     const { name, value, type, checked } = e.target;
     setRadioValues((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+    // setIsInputChanged(true)
   };
 
   const handleValueChange = (e) => {
@@ -135,10 +170,12 @@ const DashboardMaster = () => {
     if (error && name) {
       setErrors({ ...errors, [error]: '' })
     }
+    // setIsInputChanged(true)
   }
 
   useEffect(() => {
     if (singleData?.length > 0) {
+      setLoading(true)
       const jsonData = singleData[0]?.jsonData || {};
       setValues({
         ...values,
@@ -192,10 +229,12 @@ const DashboardMaster = () => {
         isActive: jsonData?.isActive,  //
 
       })
+      setLoading(false)
     }
   }, [singleData]);
 
   const saveDashboardData = () => {
+    setLoading(true)
     const {
       dashboardFor, dashNameDisplay, dashNameInternal, menuContainerBgColor, dashTitlefontColor, iconColor, menuContainerBgImage, cachingStatus, dataLoad,
       //tab  
@@ -274,14 +313,17 @@ const DashboardMaster = () => {
         setActionMode('home');
         reset();
         setConfirmSave(false);
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const updateDashboardData = () => {
+    setLoading(true)
     const {
       dashboardFor, dashNameDisplay, dashNameInternal, menuContainerBgColor, dashTitlefontColor, iconColor, menuContainerBgImage, cachingStatus, dataLoad, id,
       //tab  
@@ -360,15 +402,18 @@ const DashboardMaster = () => {
         reset();
         setActionMode('home');
         setConfirmSave(false);
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const handleDeleteDashboard = () => {
     if (selectedOption?.length > 0) {
+      setLoading(true)
       const val = { "id": selectedOption[0]?.id, "dashboardFor": values?.dashboardFor, "masterName": "DashboardGroupingMst" };
       fetchPostData("/hisutils/dashboardDelete", val).then((data) => {
         if (data) {
@@ -376,8 +421,10 @@ const DashboardMaster = () => {
           getAllDashboardData(values?.dashboardFor)
           setSelectedOption([]);
           reset();
+          setLoading(false)
         } else {
           ToastAlert('Deletion Failed!', 'error');
+          setLoading(false)
         }
       })
     } else {
@@ -387,24 +434,34 @@ const DashboardMaster = () => {
 
   const handleSaveUpdate = () => {
     let isValid = true;
+    let newErrors = {};
     if (!values?.dashboardFor?.trim()) {
-      setErrors(prev => ({ ...prev, 'dashboardForErr': "dashboard for is required" }));
+      newErrors.dashboardForErr = "tab for is required";
       isValid = false;
     }
     if (!values?.dashNameDisplay?.trim()) {
-      setErrors(prev => ({ ...prev, 'dashNameDisplayErr': "display name is required" }));
+      newErrors.dashNameDisplayErr = "tab for is required";
       isValid = false;
     }
     if (!values?.dashNameInternal?.trim()) {
-      setErrors(prev => ({ ...prev, 'dashNameInternalErr': "internal name is required" }));
+      newErrors.dashNameInternalErr = "tab for is required";
       isValid = false;
     }
     if (radioValues?.rptHeaderTypePdfExl === '2' && !values?.rptHeaderbyQuery?.trim()) {
-      setErrors(prev => ({ ...prev, 'rptHeaderbyQueryErr': "query is required" }));
+      newErrors.rptHeaderbyQueryErr = "tab for is required";
       isValid = false;
     }
+    setErrors(newErrors);
 
-    if (isValid) {
+    if (!isValid) {
+      if (newErrors.dashboardForErr || newErrors.dashNameDisplayErr || newErrors.dashNameInternalErr) {
+        setTabIndex(1);
+        setTabName({ value: 1, label: "About Dashboard" });
+      } else if (newErrors.rptHeaderbyQueryErr) {
+        setTabIndex(3);
+        setTabName({ value: 3, label: "Header Details" });
+      }
+    } else {
       setShowConfirmSave(true);
     }
   }
@@ -425,6 +482,8 @@ const DashboardMaster = () => {
       setTabName(tabNavMenus[nextTab - 1])
       setTabIndex(nextTab)
     }
+    localStorage.setItem('values', JSON.stringify(values));
+    localStorage.setItem('radio', JSON.stringify(radioValues));
   }
 
   const previousTab = () => {
@@ -454,6 +513,8 @@ const DashboardMaster = () => {
       setShowDataTable(false);
       setShowDashboardTable(false);
       setSelectedOption([]);
+      // setIsInputChanged(true)
+
     } else {
       ToastAlert('Please select a record', 'warning');
     }
@@ -485,6 +546,10 @@ const DashboardMaster = () => {
     setTabIndex(1);
     // setTabName({ value: 1, label: "About Widget" })
     setTabName({ value: 1, label: "About Dashboard" });
+    // setIsInputChanged(false)
+    localStorage.removeItem('values');
+    localStorage.removeItem('radio');
+    setLoading(false)
   }
 
   const column = [

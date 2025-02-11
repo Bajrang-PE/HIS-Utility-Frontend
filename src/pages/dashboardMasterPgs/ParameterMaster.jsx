@@ -15,7 +15,7 @@ import { fetchPostData } from '../../utils/ApiHooks'
 
 const ParameterMaster = () => {
 
-  const { parameterData, getAllParameterData, selectedOption, setSelectedOption, setShowDataTable, dashboardForDt, getDashboardForDrpData, actionMode, setActionMode, parameterDrpData, getAllServiceData, dataServiceData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
+  const { parameterData, getAllParameterData, selectedOption, setSelectedOption, setShowDataTable, dashboardForDt, getDashboardForDrpData, actionMode, setActionMode, parameterDrpData, getAllServiceData, dataServiceData, setLoading, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
 
   const [rows, setRows] = useState([{ optionValue: "", optionText: "" }]);
   const [showAsLabel, setShowAsLabel] = useState(false);
@@ -115,6 +115,7 @@ const ParameterMaster = () => {
 
   const handleDeleteParams = () => {
     if (selectedOption?.length > 0) {
+      setLoading(true)
       const val = { "id": selectedOption[0]?.id, "dashboardFor": values?.parameterFor, "masterName": "ParameterMst" };
       fetchPostData("/hisutils/parameterDelete", val).then((data) => {
         if (data) {
@@ -122,8 +123,10 @@ const ParameterMaster = () => {
           getAllParameterData(values?.parameterFor)
           setSelectedOption([]);
           reset();
+          setLoading(false)
         } else {
           ToastAlert('Deletion Failed!', 'error');
+          setLoading(false)
         }
       })
     } else {
@@ -132,6 +135,7 @@ const ParameterMaster = () => {
   }
 
   const saveParametersData = () => {
+    setLoading(true)
     const {
       parameterFor, parameterType, parameterInternal, parameterDisplay, placeHolder, parameterWidth, parameterAlignment, paraLabelWidth, paraLabelAlignment, paraControlWidth, paraControlAlignment, mandatory, defaultValueIfLeft, defaultValue, validation, maxLength, minLength, parentID, modeForQuery, query, defaultOptValue, defaultOptText, defOptFilterVal, defOptFilterTxt, jndiSavingData, stmtTimeOut,
       shouldBeLess, shouldBeGreater, minDaysBefore, maxDaysAfter, parameterQueryForDate
@@ -169,14 +173,17 @@ const ParameterMaster = () => {
         setActionMode('home');
         reset();
         setConfirmSave(false);
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
 
   const updateParametersData = () => {
+    setLoading(false)
     const {
       parameterFor, parameterType, parameterInternal, parameterDisplay, placeHolder, parameterWidth, parameterAlignment, paraLabelWidth, paraLabelAlignment, paraControlWidth, paraControlAlignment, mandatory, defaultValueIfLeft, defaultValue, validation, maxLength, minLength, parentID, modeForQuery, query, defaultOptValue, defaultOptText, defOptFilterVal, defOptFilterTxt, jndiSavingData, stmtTimeOut, id, shouldBeLess, shouldBeGreater, minDaysBefore, maxDaysAfter, parameterQueryForDate
     } = values;
@@ -212,9 +219,11 @@ const ParameterMaster = () => {
         setActionMode('home');
         setConfirmSave(false);
         setSelectedOption([])
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);
+        setLoading(false)
       }
     });
   };
@@ -374,6 +383,7 @@ const ParameterMaster = () => {
     setShowWebServiceTable(false);
     setRows([{ optionValue: "", optionText: "" }]);
     setErrors({ parameterForErr: "", parameterTypeErr: "", parameterInternalErr: "", parameterDisplayErr: "", mandatoryErr: "", queryErr: "", parameterQueryForDateErr: "", defaultOptValueErr: "", defaultOptTextErr: "", defOptFilterValErr: "", defOptFilterTxtErr: "", listOptValErr: "", listOptTxtErr: "" });
+    setLoading(false)
   }
 
   const column = [

@@ -11,7 +11,7 @@ import { fetchPostData } from '../../utils/ApiHooks'
 import GlobalDataTable from '../../components/commons/GlobalDataTable'
 
 const DataServiceMaster = () => {
-  const { setShowDataTable, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, setActionMode, actionMode, parameterData, getAllParameterData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave, } = useContext(HISContext);
+  const { setShowDataTable, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, setActionMode, actionMode, parameterData, getAllParameterData, setLoading, setShowConfirmSave, confirmSave, setConfirmSave, } = useContext(HISContext);
 
   const [isCacheData, setIsCacheData] = useState(false);
   const [selectedMode, setSelectedMode] = useState("query");
@@ -95,6 +95,7 @@ const DataServiceMaster = () => {
   }, [singleData])
 
   const saveDataServiceData = () => {
+    setLoading(true)
     const {
       serviceCategory, serviceDisplayName, serviceCallingName, procedureFuncName, fetchQuery, webJsonType,
       jndiSavingData, stmtTimeOut,
@@ -127,14 +128,17 @@ const DataServiceMaster = () => {
         setActionMode('home');
         reset();
         setConfirmSave(false)
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false)
+        setLoading(false)
       }
     });
   };
 
   const updateDataServiceData = () => {
+    setLoading(true)
     const {
       serviceCategory, serviceDisplayName, serviceCallingName, procedureFuncName, fetchQuery, webJsonType,
       jndiSavingData, stmtTimeOut, id
@@ -168,15 +172,18 @@ const DataServiceMaster = () => {
         setActionMode('home');
         reset();
         setConfirmSave(false)
+        setLoading(false)
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false)
+        setLoading(false)
       }
     });
   };
 
   const handleDeleteDataService = () => {
     if (selectedOption?.length > 0) {
+      setLoading(true)
       const val = { "id": selectedOption[0]?.id, "dashboardFor": "GLOBAL", "masterName": "DataServiceMst" };
       fetchPostData("/hisutils/DataServiceDelete", val).then((data) => {
         if (data) {
@@ -184,8 +191,10 @@ const DataServiceMaster = () => {
           getAllServiceData();
           setSelectedOption([]);
           reset();
+          setLoading(false)
         } else {
           ToastAlert('Deletion Failed!', 'error');
+          setLoading(false)
         }
       })
     } else {
@@ -239,10 +248,11 @@ const DataServiceMaster = () => {
 
   const reset = () => {
     setValues({ "serviceCategory": "", "serviceDisplayName": "", "serviceCallingName": "", "procedureFuncName": "", "fetchQuery": "", "webJsonType": "dataHeadingColumnType", "jndiSavingData": "", "stmtTimeOut": "", "dashboardFor": "", "id": "" })
-    setErrors({serviceCategoryErr: "", serviceDisplayNameErr: "", serviceCallingNameErr: "", fetchQueryErr: "", selectedModeErr: "", procedureFuncNameErr: ""})
+    setErrors({ serviceCategoryErr: "", serviceDisplayNameErr: "", serviceCallingNameErr: "", fetchQueryErr: "", selectedModeErr: "", procedureFuncNameErr: "" })
     setActionMode('home');
     setShowWebServiceTable(false);
     setShowDataTable(false);
+    setLoading(false)
   }
 
   const onOpenWebService = () => {
