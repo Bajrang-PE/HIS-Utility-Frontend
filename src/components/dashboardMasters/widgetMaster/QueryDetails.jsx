@@ -9,11 +9,7 @@ import { HISContext } from '../../../contextApi/HISContext'
 const QueryDetails = (props) => {
 
     const { showDataTable, setShowDataTable } = useContext(HISContext);
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues, singleData } = props;
-
-    const [rows, setRows] = useState([{ queryLabel: "", mainQuery: "", isMultiRowDataTable: "", tableDataDisplay: "", totalRecordCountQuery: "" }]);
-
-    const [procedureRows, setProcedureRows] = useState([{ queryLabel: "", serviceReferenceNumber: "", webserviceName: "", isMultiRowDataTable: "", tableDataDisplay: "" }]);
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues, singleData, rows, setRows, procedureRows, setProcedureRows, errors, setErrors } = props;
 
     const [showFormatModal, setShowFormatModal] = useState(false);
     const [isRightTab, setIsRightTab] = useState(true);
@@ -35,10 +31,10 @@ const QueryDetails = (props) => {
     useEffect(() => {
         if (values?.query?.length > 0 && radioValues?.selectedModeQuery !== 'WebSevice') {
             setRows(values?.query);
-            setProcedureRows([{ queryLabel: "", serviceReferenceNumber: "", webserviceName: "", isMultiRowDataTable: "", tableDataDisplay: "" }])
+            setProcedureRows([{ queryLabel: "", serviceReferenceNumber: "", webserviceName: "", isMultiRowDataTable: "", tableDataDisplay: "horizontal" }])
         } else if (values?.webQuery?.length > 0 && radioValues?.selectedModeQuery === 'WebSevice') {
             setProcedureRows(values?.webQuery);
-            setRows([{ queryLabel: "", mainQuery: "", isMultiRowDataTable: "", tableDataDisplay: "", totalRecordCountQuery: "" }])
+            setRows([{ queryLabel: "", mainQuery: "", isMultiRowDataTable: "", tableDataDisplay: "horizontal", totalRecordCountQuery: "" }])
         }
     }, [values?.query, radioValues?.selectedModeQuery])
 
@@ -61,9 +57,21 @@ const QueryDetails = (props) => {
     // Add a new row
     const handleAddRow = (name) => {
         if (name === 'query') {
-            setRows([...rows, { queryLabel: "", mainQuery: "", dataTableReq: "", tableDataDisplay: "" }]);
+            if (rows?.length > 0 && !rows[rows?.length - 1]?.mainQuery) {
+                setErrors(prev => ({ ...prev, 'mainQueryErr': "required" }));
+            } else {
+                setRows([...rows, { queryLabel: "", mainQuery: "", isMultiRowDataTable: "", tableDataDisplay: "horizontal", totalRecordCountQuery: "" }]);
+                setErrors(prev => ({ ...prev, 'mainQueryErr': "" }));
+            }
         } else if (name === "procedure") {
-            setProcedureRows([...procedureRows, { queryLabel: "", serviceReferenceNumber: "", webserviceName: "", isMultiRowDataTable: "", tableDataDisplay: "" }])
+            if (procedureRows?.length > 0 && !procedureRows[procedureRows?.length - 1]?.serviceReferenceNumber) {
+                setErrors(prev => ({ ...prev, 'serviceReferenceNumberErr': "required" }));
+            } else if (procedureRows?.length > 0 && !procedureRows[procedureRows?.length - 1]?.webserviceName) {
+                setErrors(prev => ({ ...prev, 'webserviceNameErr': "required" }));
+            } else {
+                setProcedureRows([...procedureRows, { queryLabel: "", serviceReferenceNumber: "", webserviceName: "", isMultiRowDataTable: "", tableDataDisplay: "horizontal" }])
+                setErrors(prev => ({ ...prev, 'webserviceNameErr': "",'serviceReferenceNumberErr': "" }));
+            }
         }
     };
 
@@ -81,10 +89,6 @@ const QueryDetails = (props) => {
     const closeFormatModal = () => {
         setShowFormatModal(false);
     }
-
-    // console.log(procedureRows, 'prows');
-    // console.log(rows, 'rows');
-    // console.log(isRightTab, 'values');
 
     return (
         <>
@@ -264,6 +268,11 @@ const QueryDetails = (props) => {
                                             value={row?.mainQuery}
                                             onChange={(e) => handleInputRowChange(index, 'mainQuery', e.target.value)}
                                         ></textarea>
+                                        {(errors?.mainQueryErr && !row?.mainQuery) &&
+                                            <div className="required-input">
+                                                {errors?.mainQueryErr}
+                                            </div>
+                                        }
                                     </td>
                                     <td>
                                         {radioValues?.isDataTblReq === 'Yes' &&
@@ -302,13 +311,15 @@ const QueryDetails = (props) => {
                                     <td className='px-0'>
                                         {rows.length > 0 && (
                                             <div>
-                                                <button
-                                                    className="btn btn-outline-secondary btn-sm me-1"
-                                                    onClick={() => { setShowDataTable(true); setShowFormatModal(true) }}
-                                                    style={{ padding: "0 4px" }}
-                                                >
-                                                    Format
-                                                </button>
+                                                {row?.tableDataDisplay === 'horizontal' &&
+                                                    <button
+                                                        className="btn btn-outline-secondary btn-sm me-1"
+                                                        onClick={() => { setShowDataTable(true); setShowFormatModal(true) }}
+                                                        style={{ padding: "0 4px" }}
+                                                    >
+                                                        Format
+                                                    </button>
+                                                }
                                                 <button
                                                     className="btn btn-outline-secondary btn-sm ms-1"
                                                     onClick={() => handleRemoveRow(index, "query")}
@@ -342,6 +353,7 @@ const QueryDetails = (props) => {
                                     id="procedureName"
                                     onChange={handleValueChange}
                                     value={values?.procedureName}
+                                    errorMessage={errors?.procedureNameErr}
                                 />
                             </div>
                         </div>
@@ -417,6 +429,7 @@ const QueryDetails = (props) => {
                                             id={`serviceReferenceNumber-${index}`}
                                             value={row?.serviceReferenceNumber}
                                             onChange={(e) => handleInputWebChange(index, 'serviceReferenceNumber', e.target.value)}
+                                            errorMessage={!row?.serviceReferenceNumber && errors?.serviceReferenceNumberErr}
                                         />
                                     </td>
                                     <td>
@@ -427,6 +440,7 @@ const QueryDetails = (props) => {
                                             id={`webserviceName-${index}`}
                                             value={row?.webserviceName}
                                             onChange={(e) => handleInputWebChange(index, 'webserviceName', e.target.value)}
+                                            errorMessage={!row?.webserviceName && errors?.webserviceNameErr}
                                         />
                                     </td>
                                     {radioValues?.isDataTblReq === 'Yes' &&
@@ -508,6 +522,11 @@ const QueryDetails = (props) => {
                                         value={rows[0]?.mainQuery}
                                         onChange={(e) => handleInputRowChange(0, 'mainQuery', e.target.value)}
                                     ></textarea>
+                                    {errors?.mainQueryErr &&
+                                        <div className="required-input">
+                                            {errors?.mainQueryErr}
+                                        </div>
+                                    }
                                 </td>
                             </tr>
                         </tbody>
@@ -531,6 +550,7 @@ const QueryDetails = (props) => {
                                     id={`serviceReferenceNumber-${0}`}
                                     value={procedureRows[0]?.serviceReferenceNumber}
                                     onChange={(e) => handleInputWebChange(0, 'serviceReferenceNumber', e.target.value)}
+                                    errorMessage={errors?.serviceReferenceNumberErr}
                                 />
                             </div>
                         </div>
@@ -548,6 +568,7 @@ const QueryDetails = (props) => {
                                     id={`webserviceName-${0}`}
                                     value={procedureRows[0]?.webserviceName}
                                     onChange={(e) => handleInputWebChange(0, 'webserviceName', e.target.value)}
+                                    errorMessage={errors?.webserviceNameErr}
                                 />
                             </div>
                         </div>
@@ -575,6 +596,11 @@ const QueryDetails = (props) => {
                                         value={rows[0]?.mainQuery}
                                         onChange={(e) => handleInputRowChange(0, 'mainQuery', e.target.value)}
                                     ></textarea>
+                                    {errors?.mainQueryErr &&
+                                        <div className="required-input">
+                                            {errors?.mainQueryErr}
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         }

@@ -5,7 +5,7 @@ import InputField from '../../commons/InputField';
 import InputSelect from '../../commons/InputSelect';
 
 const ParamDetails = (props) => {
-    const { availableOptions, setAvailableOptions, mapedDt, isMulti, selectedOptions, setSelectedOptions, handleValueChange, handleRadioChange, radioValues, values } = props;
+    const { availableOptions, setAvailableOptions, mapedDt, isMulti, selectedOptions, setSelectedOptions, handleValueChange, values } = props;
 
     // const [selectedOptions, setSelectedOptions] = useState();
     const [leftSelectedValues, setLeftSelectedValues] = useState([]);
@@ -15,7 +15,7 @@ const ParamDetails = (props) => {
     const rightSelectEle = document.getElementById('leftRightSelect1');
 
     useEffect(() => {
-        // setSelectedOptions(mapedDt)
+        setSelectedOptions(mapedDt)
     }, [mapedDt])
 
 
@@ -51,22 +51,6 @@ const ParamDetails = (props) => {
         }
     };
 
-    //FUNCTION TO MOVE ALL VALUES RIGHT
-    // const moveAllRight = () => {
-    //     if (availableOptions?.length > 0) {
-    //         if ((selectedOptions?.length >= 1 && !isMulti) || (availableOptions?.length > 1 && !isMulti)) {
-    //             ToastAlert('Can not assign multiple roles!', 'warning');
-    //         } else {
-    //             // const removeDuplicates = availableOptions?.filter(option => !selectedOptions.map(item=>item?.value.toString()).includes(option?.value?.toString()));
-    //             setSelectedOptions([...selectedOptions, ...availableOptions]);
-    //             setAvailableOptions([]);
-    //             setLeftSelectedValues([]);
-    //             setRightSelectedValues([]);
-    //         }
-    //     } else {
-    //         ToastAlert('Data Not Available!', 'warning');
-    //     }
-    // }
 
     //FUNCTION TO MOVE SELECTED VALUES LEFT
     const moveLeft = () => {
@@ -81,17 +65,6 @@ const ParamDetails = (props) => {
         }
     };
 
-    //FUNCTION TO MOVE ALL VALUES LEFT
-    // const moveAllLeft = () => {
-    //     if (selectedOptions?.length > 0) {
-    //         setAvailableOptions([...availableOptions, ...selectedOptions]);
-    //         setSelectedOptions([]);
-    //         setLeftSelectedValues([]);
-    //         setRightSelectedValues([]);
-    //     } else {
-    //         ToastAlert('Data Not Available!', 'warning');
-    //     }
-    // }
 
     return (
         <div>
@@ -112,20 +85,12 @@ const ParamDetails = (props) => {
                         <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={availableOptions?.length > 0 ? false : true} onClick={moveRight}>
                             <svg dangerouslySetInnerHTML={{ __html: rightCaret }} height={16} width={16} />
                         </button>
-                        {/* 
-                    <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={availableOptions?.length > 0 ? false : true} onClick={moveAllRight}>
-                        <svg dangerouslySetInnerHTML={{ __html: forwordArrow }} height={15} width={15} />
-                    </button> */}
                     </div>
 
                     <div className='d-flex justify-content-center'>
                         <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={selectedOptions?.length > 0 ? false : true} onClick={moveLeft}>
                             <svg dangerouslySetInnerHTML={{ __html: leftCaret }} height={16} width={16} />
                         </button>
-
-                        {/* <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={selectedOptions?.length > 0 ? false : true} onClick={moveAllLeft}>
-                        <svg dangerouslySetInnerHTML={{ __html: backwordArrow }} height={15} width={15} />
-                    </button> */}
                     </div>
                 </div>
 

@@ -36,7 +36,7 @@ const TabMaster = () => {
     "tabNameFontWeight": "", "tabDetailBgColor": "", "tabTopPadding": "", "buttonMarginHeading": "",
     "tabNameFontSize": "", "tabNameTxtDecorat": "", "tabDetailTitleColor": "",
     //parameter detail
-    "parameterOption": "1", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "paraRemark": "", "selectedPara": "",
+    "parameterOption": "1", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "paraRemark": "", 'allParameters': "",
     //jndi
     "jndiSavingData": "", "stmtTimeOut": "",
     //footer
@@ -55,6 +55,10 @@ const TabMaster = () => {
     "isLegendCollapes": "Yes", "isMarqueeReq": "No", "isLegendBorderReq": "Yes",
   })
 
+  //multi params
+  const [availableOptions, setAvailableOptions] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState();
+
   const [errors, setErrors] = useState({ tabForErr: "", tabNameDisplayErr: "", tabNameInternalErr: "", tabNameFontWeightErr: "", tabNameFontSizeErr: "", tabNameTxtDecoratErr: "", showTabNameInDetailErr: "", displayOrderErr: "", widgetWidthErr: "", widgetHeightErr: "" });
 
   useEffect(() => {
@@ -68,6 +72,23 @@ const TabMaster = () => {
       getAllTabsData(values?.tabFor)
     }
   }, [values?.tabFor])
+
+  useEffect(() => {
+    if (values?.allParameters !== "") {
+      const selectedIds = values?.allParameters?.split(",")?.map(id => id?.trim());
+      // const fdt = parameterDrpData?.filter(dt => selectedIds?.includes(dt?.value?.toString()));
+      const fdt = selectedIds?.map(id => parameterDrpData?.find(dt => dt.value?.toString() === id))?.filter(Boolean);
+      const availableOptions = parameterDrpData?.filter(dt => !selectedIds?.includes(dt?.value?.toString()));
+
+      setSelectedOptions(fdt);
+      setAvailableOptions(availableOptions);
+    } else {
+      setSelectedOptions([]);
+      setAvailableOptions(parameterDrpData);
+    }
+  }, [values?.allParameters, parameterDrpData]);
+
+
 
   //parameter search
   useEffect(() => {
@@ -185,7 +206,7 @@ const TabMaster = () => {
         paraComboFontColor: jsonData?.tabParameterComboFontColor,//
         paraLabelFontColor: jsonData?.tabParameterLabelFontColor,//
         paraRemark: jsonData?.parameterRemarks,//
-        selectedPara: jsonData?.allParameters,//
+        allParameters: jsonData?.allParameters,
         // jndi
         jndiSavingData: jsonData?.JNDIid,//
         stmtTimeOut: jsonData?.statementTimeOut,//
@@ -196,7 +217,7 @@ const TabMaster = () => {
         webRefName: jsonData?.footerserviceReferenceNo,//
         webServiceName: jsonData?.footerwebserviceUrl,//
         // helpDocs
-        helpDocs: JSON.parse(jsonData?.docJsonString) || [],
+        helpDocs: jsonData?.docJsonString ? JSON.parse(jsonData?.docJsonString) : [],
         // widget
         widgetMappingDetail: jsonData?.lstDashboardWidgetMapping || [],
       });
@@ -225,7 +246,7 @@ const TabMaster = () => {
 
       tabNameFontWeight, tabDetailBgColor, tabTopPadding, buttonMarginHeading, tabNameFontSize, tabNameTxtDecorat, tabDetailTitleColor,
 
-      parameterOption, loadOption, paraComboBgColor, paraComboFontColor, paraLabelFontColor, paraRemark, selectedPara,
+      parameterOption, loadOption, paraComboBgColor, paraComboFontColor, paraLabelFontColor, paraRemark,
 
       footerAlignment, footerQuery, footerText, webRefName, webServiceName,
       // helpDocs
@@ -240,6 +261,8 @@ const TabMaster = () => {
       showTabNameInDetail, widgetMaxMin, isLegendCollapes,
       isMarqueeReq, isLegendBorderReq, } = radioValues;
 
+    const selectedIdParams = selectedOptions?.length > 0 ? selectedOptions?.map(option => option?.value).join(",") : '';
+
     const val = {
       dashboardFor: tabFor,
       masterName: "DashboardMst",
@@ -253,7 +276,8 @@ const TabMaster = () => {
         //tab
         tabnameFontWeight: tabNameFontWeight, tabBackgroundColor: tabDetailBgColor, tabTopPadding: tabTopPadding, marginBottom: buttonMarginHeading, tabnameFontSize: tabNameFontSize, tabnameDecoration: tabNameTxtDecorat, tabTitleFontColor: tabDetailTitleColor,
         //params
-        parameterOptions: parameterOption, tabLoadOption: loadOption, tabParameterComboBGColor: paraComboBgColor, tabParameterComboFontColor: paraComboFontColor, tabParameterLabelFontColor: paraLabelFontColor, parameterRemarks: paraRemark, allParameters: selectedPara,
+        parameterOptions: parameterOption, tabLoadOption: loadOption, tabParameterComboBGColor: paraComboBgColor, tabParameterComboFontColor: paraComboFontColor, tabParameterLabelFontColor: paraLabelFontColor, parameterRemarks: paraRemark,
+        allParameters: selectedIdParams,
         //jndi
         statementTimeOut: stmtTimeOut, JNDIid: jndiSavingData,
         //footer and list
@@ -276,8 +300,10 @@ const TabMaster = () => {
         getAllTabsData(values?.tabFor)
         setActionMode('home');
         reset();
+        setConfirmSave(false);
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false);
       }
     });
   };
@@ -288,7 +314,7 @@ const TabMaster = () => {
 
       tabNameFontWeight, tabDetailBgColor, tabTopPadding, buttonMarginHeading, tabNameFontSize, tabNameTxtDecorat, tabDetailTitleColor,
 
-      parameterOption, loadOption, paraComboBgColor, paraComboFontColor, paraLabelFontColor, paraRemark, selectedPara,
+      parameterOption, loadOption, paraComboBgColor, paraComboFontColor, paraLabelFontColor, paraRemark,
 
       footerAlignment, footerQuery, footerText, webRefName, webServiceName,
       // helpDocs
@@ -302,6 +328,7 @@ const TabMaster = () => {
       isTabUsedForDrill, isTabNameInReportReq, isCssTabIconReq,
       showTabNameInDetail, widgetMaxMin, isLegendCollapes,
       isMarqueeReq, isLegendBorderReq, } = radioValues;
+    const selectedIdParams = selectedOptions?.length > 0 ? selectedOptions?.map(option => option?.value).join(",") : '';
 
     const val = {
       id: id,
@@ -317,7 +344,7 @@ const TabMaster = () => {
         //tab
         tabnameFontWeight: tabNameFontWeight, tabBackgroundColor: tabDetailBgColor, tabTopPadding: tabTopPadding, marginBottom: buttonMarginHeading, tabnameFontSize: tabNameFontSize, tabnameDecoration: tabNameTxtDecorat, tabTitleFontColor: tabDetailTitleColor,
         //params
-        parameterOptions: parameterOption, tabLoadOption: loadOption, tabParameterComboBGColor: paraComboBgColor, tabParameterComboFontColor: paraComboFontColor, tabParameterLabelFontColor: paraLabelFontColor, parameterRemarks: paraRemark, allParameters: selectedPara,
+        parameterOptions: parameterOption, tabLoadOption: loadOption, tabParameterComboBGColor: paraComboBgColor, tabParameterComboFontColor: paraComboFontColor, tabParameterLabelFontColor: paraLabelFontColor, parameterRemarks: paraRemark, allParameters: selectedIdParams,
         //jndi
         statementTimeOut: stmtTimeOut, JNDIid: jndiSavingData,
         //footer and list
@@ -335,14 +362,17 @@ const TabMaster = () => {
     };
 
 
-    fetchPostData("/hisutils/parameterUpdate", val).then((data) => {
+    fetchPostData("/hisutils/TabUpdate", val).then((data) => {
       if (data) {
         ToastAlert("Data Updated Successfully", "success");
         getAllTabsData(values?.tabFor)
         reset();
         setActionMode('home');
+        setConfirmSave(false);
+        setSelectedOption([])
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false);
       }
     });
   };
@@ -502,8 +532,8 @@ const TabMaster = () => {
     },
   ]
 
-  // console.log(singleData, 'single')
-  // console.log(values, 'values')
+  console.log(singleData, 'single')
+  console.log(values, 'values')
 
   return (
     <>
@@ -530,10 +560,10 @@ const TabMaster = () => {
               <TabDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} errors={errors} />
             }
             {tabName?.value === 3 &&
-              <WidgetMapping handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} widgetDrpData={widgetDrpData} setValues={setValues} rows={rows} setRows={setRows} errors={errors} setErrors={setErrors}/>
+              <WidgetMapping handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} widgetDrpData={widgetDrpData} setValues={setValues} rows={rows} setRows={setRows} errors={errors} setErrors={setErrors} />
             }
             {tabName?.value === 4 &&
-              <ParamsDetail handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} parameterDrpData={parameterDrpData} pageName={'tab'} />
+              <ParamsDetail handleValueChange={handleValueChange} values={values} parameterDrpData={parameterDrpData} pageName={'tab'} availableOptions={availableOptions} setAvailableOptions={setAvailableOptions} selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
             }
             {tabName?.value === 5 &&
               <JndiDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />

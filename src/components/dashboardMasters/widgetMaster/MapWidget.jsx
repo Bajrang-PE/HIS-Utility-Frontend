@@ -4,7 +4,7 @@ import Select from 'react-select';
 import InputField from '../../commons/InputField';
 
 const MapWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, parentWidget, setValues } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, parentWidget, setValues,errors } = props;
 
     return (
         <div>
@@ -14,16 +14,18 @@ const MapWidget = (props) => {
                 {/* //left columns */}
                 <div className='col-sm-6'>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Map Name : </label>
+                        <label className="col-sm-5 col-form-label pe-0 required-label">Map Name : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
-                                className="backcolorinput "
+                                className="backcolorinput"
                                 placeholder="Enter value..."
                                 name='mapName'
                                 id="mapName"
                                 options={[{ value: 'india', label: "India" }]}
                                 onChange={handleValueChange}
                                 value={values?.mapName}
+                                errorMessage={errors?.mapNameErr}
+
                             />
                         </div>
                     </div>

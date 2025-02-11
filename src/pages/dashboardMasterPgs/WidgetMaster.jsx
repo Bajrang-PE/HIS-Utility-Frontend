@@ -21,14 +21,13 @@ import ParamsDetail from '../../components/dashboardMasters/tabMaster/ParamsDeta
 import InputSelect from '../../components/commons/InputSelect'
 import { ToastAlert } from '../../utils/commonFunction'
 import { fetchPostData, fetchUpdateData } from '../../utils/ApiHooks'
-import IconPicker from '../../components/commons/IconPicker'
 
 const WidgetMaster = () => {
 
-  const { setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, parameterData, getAllParameterData, widgetDrpData, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, actionMode, setActionMode, } = useContext(HISContext);
+  const { setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, parameterData, getAllParameterData, widgetDrpData, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, actionMode, setActionMode, parameterDrpData, showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
 
   const [values, setValues] = useState({
-    "id": "", "widgetFor": "", "widgetType": "", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "webQuery": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "", "treeChildQuery": "", "treeChildProcedure": "", "popUpDetails": [], "queryLabel": '', "htmlText": '', 'iconName': "",
+    "id": "", "widgetFor": "", "widgetType": "columnBased", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "webQuery": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "", "treeChildQuery": "", "treeChildProcedure": "", "popUpDetails": [], "queryLabel": '', "htmlText": '', 'iconName': "",
     //graphs fields
     "defaultPluginName": "highchart", "defaultGraphType": "BAR_GRAPH", "graphTypes": [], "clmNameForLineGraph": "", "colorsForBars": "", "graphHeight": "", "graphBottomMargin": "", "graphBgStartColor": "", "graphBgEndColor": "", "graphFontColor": "", "graphTypeBgColor": "", "graphTypeFontColor": "", "labelRotation": "", "alphaGraph3D": "", "betaGraph3D": "", "xAxisLabel": "", "yAxisLabel": "", "xAxisFontSize": "", "yAxisFontSize": "", "annotationFontSize": "", "maxValueOfAxis": "", "parentWidgetGraph": "", "isActionBtnReqGraph": "Yes", "minValueOfAxis": '',
     //kpi details
@@ -41,7 +40,9 @@ const WidgetMaster = () => {
     //iframe
     "urlForIframe": "",
     // other link
-    "lstOtherLink": []
+    "lstOtherLink": [],
+    "sqChildJsonString": [],
+    "selFilterIds": ""
 
   })
 
@@ -74,12 +75,46 @@ const WidgetMaster = () => {
   const [widgetFilterData, setWidgetFilterData] = useState(allWidgetData);
   const [singleData, setSingleData] = useState([]);
 
+  //multi params
+  const [availableOptions, setAvailableOptions] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState();
+
+  const [newRow, setNewRow] = useState({ modeForSQCHILDColumnNo: "", SQCHILDWidgetId: "", drillSQCHILDWidgetName: "" });
+  const [otherLinkData, setOtherLinkData] = useState([{ otherLinkName: "", otherLinkURL: "" }]);
+  const [rows, setRows] = useState([{ queryLabel: "", mainQuery: "", isMultiRowDataTable: "", tableDataDisplay: "horizontal", totalRecordCountQuery: "" }]);
+  const [procedureRows, setProcedureRows] = useState([{ queryLabel: "", serviceReferenceNumber: "", webserviceName: "", isMultiRowDataTable: "", tableDataDisplay: "horizontal" }]);
+
+  const [errors, setErrors] = useState({
+    widgetForErr: "", widgetNameDisplayErr: "", widgetNameInternalErr: "", defaultGraphTypeErr: "", graphTypesErr: "", clmNameForLineGraphErr: "", defaultPluginNameErr: "", noOfNewsVisibleErr: "",
+    alphaGraph3DErr: "", betaGraph3DErr: "", xAxisLabelErr: "", yAxisLabelErr: "", kpiTypeErr: "", kpiIconTypeErr: "", kpiDefaultBgColorErr: "", noOfNewsVisibleErr: "", mapNameErr: "",
+
+    modeForSQCHILDColumnNoErr: "", SQCHILDWidgetIdErr: "", otherLinkNameErr: "", otherLinkURLErr: "", mainQueryErr: "", serviceReferenceNumberErr: "", webserviceNameErr: "", procedureNameErr: "",
+
+    widgetViewedErr: "", isWidgetNameVisibleErr: "", isThree3DErr: "", isDataLabelsErr: "", isShowLegendErr: "", isDisplayGraphPluginErr: "", isFullLabelReqErr: "", isGraphScrollBarReqErr: "",
+  });
+
+
+  useEffect(() => {
+    if (values?.selFilterIds !== "") {
+      const selectedIds = values?.selFilterIds?.split(",")?.map(id => id?.trim());
+      // const fdt = parameterDrpData?.filter(dt => selectedIds?.includes(dt?.value?.toString()));
+      const fdt = selectedIds?.map(id => parameterDrpData?.find(dt => dt.value?.toString() === id))?.filter(Boolean);
+      const availableOptions = parameterDrpData?.filter(dt => !selectedIds?.includes(dt?.value?.toString()));
+
+      setSelectedOptions(fdt);
+      setAvailableOptions(availableOptions);
+    } else {
+      setSelectedOptions([]);
+      setAvailableOptions(parameterDrpData);
+    }
+  }, [values?.selFilterIds, parameterDrpData]);
+
+
 
   useEffect(() => {
     if (values?.widgetFor) {
       getAllWidgetData(values?.widgetFor);
       getAllParameterData(values?.widgetFor);
-
     }
   }, [values?.widgetFor])
 
@@ -99,8 +134,12 @@ const WidgetMaster = () => {
 
   const handleValueChange = (e) => {
     const { name, value } = e.target;
+    const error = name + 'Err'
     if (name) {
       setValues({ ...values, [name]: value })
+    }
+    if (error && name) {
+      setErrors({ ...errors, [error]: '' })
     }
   }
 
@@ -200,39 +239,40 @@ const WidgetMaster = () => {
   const reset = () => {
     // const isReset = window.confirm('Do you want to reset whole form!');
     // if (isReset) {
-      setValues({
-        "id": "", "widgetFor": "", "widgetType": "", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "", "treeChildQuery": "", "treeChildProcedure": "", "popUpDetails": [], "webQuery": "", "queryLabel": '', "htmlText": '', 'iconName': "",
-        //graphs fields
-        "defaultPluginName": "highchart", "defaultGraphType": "BAR_GRAPH", "graphTypes": [], "clmNameForLineGraph": "", "colorsForBars": "", "graphHeight": "", "graphBottomMargin": "", "graphBgStartColor": "", "graphBgEndColor": "", "graphFontColor": "", "graphTypeBgColor": "", "graphTypeFontColor": "", "labelRotation": "", "alphaGraph3D": "", "betaGraph3D": "", "xAxisLabel": "", "yAxisLabel": "", "xAxisFontSize": "", "yAxisFontSize": "", "annotationFontSize": "", "maxValueOfAxis": "", "parentWidgetGraph": "", "isActionBtnReqGraph": "Yes", "minValueOfAxis": "",
-        //kpi details
-        "kpiType": "", "kpiBorderWidth": "", "kpiBorderColor": "", "kpiIconType": "FONT_ICON", "kpiTabIconImage": "", "kpiDefaultBgColor": "", "kpiDefaultFontColor": "", "kpiDefaultHoverBg": "", "kpiIconColor": "", "kpiBoxClickOptions": "0", "kpiTabOpenOnClick": "", "kpiWidgetOpenOnClick": "", "kpiDashboardOpenOnClick": "",
-        "kpiTabLinkName": "", "kpiWidgetLinkName": "", "kpiLinkColor": "", "kpiLinkFontColor": "",
-        //map fields
-        "mapName": "", "parentWidgetMap": "", "mapIncreasingIntensity": "",
-        //newsTicker Fields
-        "noOfNewsVisible": "", "newsSpeed": "normal", "newsInterval": "5000",
-        //iframe
-        "urlForIframe": "",
-        "lstOtherLink": []
-      });
-      setRadioValues({
-        widgetViewed: 'Tabular', isWidgetNameVisible: 'Yes', selectedModeQuery: 'Query', widgetPurpose: 'Download',
-        widgetHeadingAlign: 'left', isRecordLimitReq: 'Yes', isWidgetBorderReq: 'Yes',
+    setValues({
+      "id": "", "widgetFor": "", "widgetType": "columnBased", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "", "treeChildQuery": "", "treeChildProcedure": "", "popUpDetails": [], "webQuery": "", "queryLabel": '', "htmlText": '', 'iconName': "",
+      //graphs fields
+      "defaultPluginName": "highchart", "defaultGraphType": "BAR_GRAPH", "graphTypes": [], "clmNameForLineGraph": "", "colorsForBars": "", "graphHeight": "", "graphBottomMargin": "", "graphBgStartColor": "", "graphBgEndColor": "", "graphFontColor": "", "graphTypeBgColor": "", "graphTypeFontColor": "", "labelRotation": "", "alphaGraph3D": "", "betaGraph3D": "", "xAxisLabel": "", "yAxisLabel": "", "xAxisFontSize": "", "yAxisFontSize": "", "annotationFontSize": "", "maxValueOfAxis": "", "parentWidgetGraph": "", "isActionBtnReqGraph": "Yes", "minValueOfAxis": "",
+      //kpi details
+      "kpiType": "", "kpiBorderWidth": "", "kpiBorderColor": "", "kpiIconType": "FONT_ICON", "kpiTabIconImage": "", "kpiDefaultBgColor": "", "kpiDefaultFontColor": "", "kpiDefaultHoverBg": "", "kpiIconColor": "", "kpiBoxClickOptions": "0", "kpiTabOpenOnClick": "", "kpiWidgetOpenOnClick": "", "kpiDashboardOpenOnClick": "",
+      "kpiTabLinkName": "", "kpiWidgetLinkName": "", "kpiLinkColor": "", "kpiLinkFontColor": "",
+      //map fields
+      "mapName": "", "parentWidgetMap": "", "mapIncreasingIntensity": "",
+      //newsTicker Fields
+      "noOfNewsVisible": "", "newsSpeed": "normal", "newsInterval": "5000",
+      //iframe
+      "urlForIframe": "",
+      "lstOtherLink": [],
+      "sqChildJsonString": []
+    });
+    setRadioValues({
+      widgetViewed: 'Tabular', isWidgetNameVisible: 'Yes', selectedModeQuery: 'Query', widgetPurpose: 'Download',
+      widgetHeadingAlign: 'left', isRecordLimitReq: 'Yes', isWidgetBorderReq: 'Yes',
 
-        isTableHeadingReq: 'Yes',
-        tableHeadingAlign: "0", isFirstRowHeading: 'Yes', isDataTblReq: 'Yes', isIndexNumReq: 'Yes',
-        isPaginationReq: 'Yes', isSearchReq: 'Yes', isHeadingFixed: 'Yes', isLastRowTotal: 'Yes', isCardViewMobile: 'Yes', isShowPrntHeadChild: 'Yes', isShowPrntParamsChild: 'Yes', printPdfIn: 'landscape', pdfTheme: 'grid', isPdfHeadReqAllPgs: 'Yes', showFilterDtlsInPdf: 'Yes', isReportByJsPdfPlug: 'Yes', isReportPrintDtReq: 'Yes', isGlobalHeaderReq: 'Yes', isTableBorderReq: 'Yes', isPositiveWidget: 'Yes', isDirectDownloadBtn: 'Yes', isPopupBasedReq: 'No', isTreeChildReq: 'No', treeChildDataBy: "Query", dataDisplay: "horizontal", isDataTblReqTree: 'Yes', isPaginationReqTree: 'Yes', isSearchReqTree: 'Yes',
-        //graphs fields
-        isDisplayGraphPlugin: "Yes", isColorByPoint: "Yes", isShowLegendOnExport: "Yes", isFullLabelReq: "Yes", isGraphScrollBarReq: "Yes", isShowLegend: "Yes", isDataLabels: "Yes", isThree3D: "Yes", isDirectDownloadBtnGraph: 'Yes', isFirstClmGraphHeading: 'Yes', isShowPrntHeadChildGraph: 'Yes', isHideParent: 'Yes',
-        //kpi
-        isWidgetShadowReq: "Yes", isDownloadDataFromKpi: "Yes",
-        //map
-        isChildBasedPrimaryKey: "Yes", isHideParentMap: "Yes",
-        //iframe
-        isSsoUrl: "Yes"
-      });
-      setTabIndex(1);
-      setTabName({ value: 1, label: "About Widget" })
+      isTableHeadingReq: 'Yes',
+      tableHeadingAlign: "0", isFirstRowHeading: 'Yes', isDataTblReq: 'Yes', isIndexNumReq: 'Yes',
+      isPaginationReq: 'Yes', isSearchReq: 'Yes', isHeadingFixed: 'Yes', isLastRowTotal: 'Yes', isCardViewMobile: 'Yes', isShowPrntHeadChild: 'Yes', isShowPrntParamsChild: 'Yes', printPdfIn: 'landscape', pdfTheme: 'grid', isPdfHeadReqAllPgs: 'Yes', showFilterDtlsInPdf: 'Yes', isReportByJsPdfPlug: 'Yes', isReportPrintDtReq: 'Yes', isGlobalHeaderReq: 'Yes', isTableBorderReq: 'Yes', isPositiveWidget: 'Yes', isDirectDownloadBtn: 'Yes', isPopupBasedReq: 'No', isTreeChildReq: 'No', treeChildDataBy: "Query", dataDisplay: "horizontal", isDataTblReqTree: 'Yes', isPaginationReqTree: 'Yes', isSearchReqTree: 'Yes',
+      //graphs fields
+      isDisplayGraphPlugin: "Yes", isColorByPoint: "Yes", isShowLegendOnExport: "Yes", isFullLabelReq: "Yes", isGraphScrollBarReq: "Yes", isShowLegend: "Yes", isDataLabels: "Yes", isThree3D: "Yes", isDirectDownloadBtnGraph: 'Yes', isFirstClmGraphHeading: 'Yes', isShowPrntHeadChildGraph: 'Yes', isHideParent: 'Yes',
+      //kpi
+      isWidgetShadowReq: "Yes", isDownloadDataFromKpi: "Yes",
+      //map
+      isChildBasedPrimaryKey: "Yes", isHideParentMap: "Yes",
+      //iframe
+      isSsoUrl: "Yes"
+    });
+    setTabIndex(1);
+    setTabName({ value: 1, label: "About Widget" })
     // }
   }
 
@@ -367,7 +407,10 @@ const WidgetMaster = () => {
         newsInterval: singleData[0]?.newsTimeInterval,//
         //iframe
         urlForIframe: singleData[0]?.iframeURL,//
-        lstOtherLink: singleData[0]?.lstOtherLink//
+        lstOtherLink: singleData[0]?.lstOtherLink ? singleData[0]?.lstOtherLink : [],//
+        // single query parent
+        sqChildJsonString: singleData[0]?.sqChildJsonString ? JSON?.parse(singleData[0]?.sqChildJsonString) : [],
+        selFilterIds: singleData[0]?.selFilterIds
       });
       setRadioValues({
         ...radioValues,
@@ -490,7 +533,7 @@ const WidgetMaster = () => {
       // newsTicker fields
       noOfNewsVisible, newsSpeed, newsInterval,
       // iframe
-      urlForIframe, lstOtherLink } = values;
+      urlForIframe, lstOtherLink, sqChildJsonString } = values;
 
     const {
       widgetViewed, isWidgetNameVisible, selectedModeQuery, widgetPurpose, widgetHeadingAlign, isRecordLimitReq, isWidgetBorderReq,
@@ -508,6 +551,8 @@ const WidgetMaster = () => {
       // Iframe fields
       isSsoUrl
     } = radioValues;
+
+    const selectedIdParams = selectedOptions?.length > 0 ? selectedOptions?.map(option => option?.value).join(",") : '';
 
     const val = {
       dashboardFor: widgetFor,
@@ -528,6 +573,8 @@ const WidgetMaster = () => {
         limitHTMLFromDb: limit,
         widgetHeadingColor: widgetHadingClr,
         widgetTopMargin: widgetTopMargin,
+        sqChildJsonString: JSON?.stringify(sqChildJsonString),
+        selFilterIds: selectedIdParams,
         //table
         headingBackgroundColour: headingBgColor,
         headingFontColour: headingFontColor,
@@ -686,8 +733,11 @@ const WidgetMaster = () => {
         ToastAlert("Data Saved Successfully", "success");
         getAllWidgetData(values?.widgetFor)
         reset();
+        setConfirmSave(false);
+        setActionMode('home');
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false);
       }
     });
   };
@@ -707,7 +757,7 @@ const WidgetMaster = () => {
       // newsTicker fields
       noOfNewsVisible, newsSpeed, newsInterval,
       // iframe
-      urlForIframe, lstOtherLink } = values;
+      urlForIframe, lstOtherLink, sqChildJsonString } = values;
 
     const {
       widgetViewed, isWidgetNameVisible, selectedModeQuery, widgetPurpose, widgetHeadingAlign, isRecordLimitReq, isWidgetBorderReq,
@@ -725,6 +775,8 @@ const WidgetMaster = () => {
       // Iframe fields
       isSsoUrl
     } = radioValues;
+    const selectedIdParams = selectedOptions?.length > 0 ? selectedOptions?.map(option => option?.value).join(",") : '';
+
 
     const val = {
       dashboardFor: widgetFor,
@@ -747,6 +799,8 @@ const WidgetMaster = () => {
         limitHTMLFromDb: limit,
         widgetHeadingColor: widgetHadingClr,
         widgetTopMargin: widgetTopMargin,
+        sqChildJsonString: JSON?.stringify(sqChildJsonString),
+        selFilterIds: selectedIdParams,
         //table
         headingBackgroundColour: headingBgColor,
         headingFontColour: headingFontColor,
@@ -906,8 +960,11 @@ const WidgetMaster = () => {
         ToastAlert("Data Updated Successfully", "success");
         getAllWidgetData(values?.widgetFor)
         reset();
+        setConfirmSave(false);
+        setSelectedOption([])
       } else {
         ToastAlert("Internal Error!", "error");
+        setConfirmSave(false);
       }
     });
   };
@@ -932,6 +989,158 @@ const WidgetMaster = () => {
       ToastAlert('Please select a record', 'warning');
     }
   }
+  const handleSaveUpdate = () => {
+    let isValid = true;
+    if (!values?.widgetFor?.trim()) {
+      setErrors(prev => ({ ...prev, 'widgetForErr': "Widget for is required" }));
+      isValid = false;
+    }
+    if (!values?.widgetNameDisplay?.trim()) {
+      setErrors(prev => ({ ...prev, 'widgetNameDisplayErr': "display name is required" }));
+      isValid = false;
+    }
+    if (!values?.widgetNameInternal?.trim()) {
+      setErrors(prev => ({ ...prev, 'widgetNameInternalErr': "internal name is required" }));
+      isValid = false;
+    }
+
+    if (radioValues?.widgetViewed === "Graph" && !values?.defaultGraphType?.trim()) {
+      setErrors(prev => ({ ...prev, 'defaultGraphTypeErr': "font weight is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && values?.graphTypes?.length === 0) {
+      setErrors(prev => ({ ...prev, 'graphTypesErr': "font size is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !values?.clmNameForLineGraph?.trim()) {
+      setErrors(prev => ({ ...prev, 'clmNameForLineGraphErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !values?.defaultPluginName?.trim()) {
+      setErrors(prev => ({ ...prev, 'defaultPluginNameErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "News_Ticker"&&!values?.noOfNewsVisible?.trim()) {
+      setErrors(prev => ({ ...prev, 'noOfNewsVisibleErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !values?.alphaGraph3D?.trim()) {
+      setErrors(prev => ({ ...prev, 'alphaGraph3DErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !values?.betaGraph3D?.trim()) {
+      setErrors(prev => ({ ...prev, 'betaGraph3DErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !values?.xAxisLabel?.trim()) {
+      setErrors(prev => ({ ...prev, 'xAxisLabelErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !values?.yAxisLabel?.trim()) {
+      setErrors(prev => ({ ...prev, 'yAxisLabelErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "KPI" && !values?.kpiType?.trim()) {
+      setErrors(prev => ({ ...prev, 'kpiTypeErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "KPI" && !values?.kpiIconType?.trim()) {
+      setErrors(prev => ({ ...prev, 'kpiIconTypeErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "KPI" && !values?.kpiDefaultBgColor?.trim()) {
+      setErrors(prev => ({ ...prev, 'kpiDefaultBgColorErr': "decoration is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Criteria_Map" && !values?.mapName?.trim()) {
+      setErrors(prev => ({ ...prev, 'mapNameErr': "decoration is required" }));
+      isValid = false;
+    }
+
+
+    if (!radioValues?.widgetViewed?.trim()) {
+      setErrors(prev => ({ ...prev, 'widgetViewedErr': "widget view is required" }));
+      isValid = false;
+    }
+    if (!radioValues?.isWidgetNameVisible?.trim()) {
+      setErrors(prev => ({ ...prev, 'isWidgetNameVisibleErr': "This check is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isThree3D?.trim()) {
+      setErrors(prev => ({ ...prev, 'isThree3DErr': "This check is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isDataLabels?.trim()) {
+      setErrors(prev => ({ ...prev, 'isDataLabelsErr': "This check is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isShowLegend?.trim()) {
+      setErrors(prev => ({ ...prev, 'isShowLegendErr': "This check is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isDisplayGraphPlugin?.trim()) {
+      setErrors(prev => ({ ...prev, 'isDisplayGraphPluginErr': "This check is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isGraphScrollBarReq?.trim()) {
+      setErrors(prev => ({ ...prev, 'isGraphScrollBarReqErr': "This check is required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Graph" && !radioValues?.isFullLabelReq?.trim()) {
+      setErrors(prev => ({ ...prev, 'isFullLabelReqErr': "This check is required" }));
+      isValid = false;
+    }
+
+
+    if (values?.widgetType === "singleQueryParent" && values?.sqChildJsonString?.length === 0 && (!newRow?.modeForSQCHILDColumnNo?.trim() || !newRow?.SQCHILDWidgetId?.trim())) {
+      if (!newRow?.SQCHILDWidgetId?.trim()) {
+        setErrors(prev => ({ ...prev, 'SQCHILDWidgetIdErr': "required" }));
+        isValid = false;
+      } else {
+        setErrors(prev => ({ ...prev, 'modeForSQCHILDColumnNoErr': "required" }));
+        isValid = false;
+      }
+    }
+    if (radioValues?.widgetViewed === "Other_Link" && otherLinkData?.length > 0 && !otherLinkData[otherLinkData?.length - 1]?.otherLinkName) {
+      setErrors(prev => ({ ...prev, 'otherLinkNameErr': "required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed === "Other_Link" && otherLinkData?.length > 0 && !otherLinkData[otherLinkData?.length - 1]?.otherLinkURL) {
+      setErrors(prev => ({ ...prev, 'otherLinkURLErr': "required" }));
+      isValid = false;
+    }
+
+    if (radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe" && radioValues?.selectedModeQuery === "Query" && rows?.length > 0 && !rows[rows?.length - 1]?.mainQuery) {
+      setErrors(prev => ({ ...prev, 'mainQueryErr': "required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe" && radioValues?.selectedModeQuery === "WebSevice" && procedureRows?.length > 0 && !procedureRows[procedureRows?.length - 1]?.serviceReferenceNumber) {
+      setErrors(prev => ({ ...prev, 'serviceReferenceNumberErr': "required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe" && radioValues?.selectedModeQuery === "WebSevice" && procedureRows?.length > 0 && !procedureRows[procedureRows?.length - 1]?.webserviceName) {
+      setErrors(prev => ({ ...prev, 'webserviceNameErr': "required" }));
+      isValid = false;
+    }
+    if (radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe" && radioValues?.selectedModeQuery === "Procedure" && !values?.procedureName?.trim()) {
+      setErrors(prev => ({ ...prev, 'procedureNameErr': "required" }));
+      isValid = false;
+    }
+
+    if (isValid) {
+      setShowConfirmSave(true);
+    }
+  }
+console.log(errors,'err')
+  useEffect(() => {
+    if (confirmSave) {
+      if (actionMode === 'edit') {
+        updateWidgetData();
+      } else {
+        saveWidgetData();
+      }
+    }
+  }, [confirmSave])
 
   const widgetColumn = [
     {
@@ -1021,8 +1230,8 @@ const WidgetMaster = () => {
     },
   ]
 
-  // console.log(values, 'values')
-  // console.log(radioValues, 'rdovalues')
+  console.log(availableOptions, 'availableOptions')
+  console.log(selectedOptions, 'selectedOption')
   // console.log(singleData)
   // console.log(allWidgetData?.filter(dt=>dt?.rptId == 11600023))
 
@@ -1033,7 +1242,7 @@ const WidgetMaster = () => {
         {values?.widgetFor &&
           <div className='row w-100 m-0'>
             <div className='col-sm-6 p-0 global-button-group'>
-              <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={true} onSave={actionMode === 'edit' ? updateWidgetData : saveWidgetData} onOpen={onOpenDataTable} onReset={reset} onParams={onOpenParams} onWeb={onOpenWebService} />
+              <GlobalButtonGroup isSave={true} isOpen={true} isReset={true} isParams={true} isWeb={true} onSave={handleSaveUpdate} onOpen={onOpenDataTable} onReset={reset} onParams={onOpenParams} onWeb={onOpenWebService} />
             </div>
             <div className='col-sm-6 p-0 global-tabs'>
               <TabNav isTabNav={true} tabNavData={tabNavMenus} setTabIndex={setTabIndex} tabName={tabName} setTabName={setTabName} />
@@ -1045,46 +1254,46 @@ const WidgetMaster = () => {
             <div className='p-1'>
 
               {tabName?.value === 1 &&
-                <AboutWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} dashboardForDt={dashboardForDt} setValues={setValues} />
+                <AboutWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} dashboardForDt={dashboardForDt} setValues={setValues} widgetDrpData={widgetDrpData} errors={errors} setErrors={setErrors} {...{ otherLinkData, setOtherLinkData, newRow, setNewRow }} />
               }
 
               {tabName?.value === 2 &&
-                <QueryDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} singleData={singleData} />
+                <QueryDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} singleData={singleData} errors={errors} setErrors={setErrors} {...{ rows, setRows, procedureRows, setProcedureRows }} />
               }
 
               {tabName?.value === 3 &&
                 <>
                   {radioValues?.widgetViewed === "Tabular" &&
-                    <TableDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} parentWidget={widgetDrpData} setValues={setValues} />
+                    <TableDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} parentWidget={widgetDrpData} setValues={setValues} errors={errors} />
                   }
 
                   {radioValues?.widgetViewed === "Graph" &&
-                    <GraphWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} parentWidget={widgetDrpData} />
+                    <GraphWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} parentWidget={widgetDrpData} errors={errors} setErrors={setErrors} />
                   }
 
                   {radioValues?.widgetViewed === "KPI" &&
-                    <KpiWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} />
+                    <KpiWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} errors={errors} />
                   }
 
                   {radioValues?.widgetViewed === "Criteria_Map" &&
-                    <MapWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} parentWidget={widgetDrpData} />
+                    <MapWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} parentWidget={widgetDrpData} errors={errors} />
                   }
 
                   {radioValues?.widgetViewed === "News_Ticker" &&
-                    <NewsTickWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} />
+                    <NewsTickWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} errors={errors} />
                   }
                 </>
 
               }
 
               {(tabName?.value === 4 && (radioValues?.widgetViewed === "Criteria_Map" || radioValues?.widgetViewed === "Graph" || radioValues?.widgetViewed === "Tabular")) &&
-                <ParamsDetail handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} pageName={'widget'} />}
+                <ParamsDetail handleValueChange={handleValueChange} values={values} pageName={'widget'} parameterDrpData={parameterDrpData} availableOptions={availableOptions} setAvailableOptions={setAvailableOptions} selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} errors={errors} />}
 
               {tabName?.value === 5 &&
-                <JndiDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />}
+                <JndiDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} errors={errors} />}
 
               {tabName?.value === 6 &&
-                <FooterDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} />}
+                <FooterDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} errors={errors} />}
 
               {showWidgetTable &&
                 <GlobalDataTable title={"Widget List"} column={widgetColumn} data={widgetFilterData} onModify={handleUpdateData} onDelete={handleDeleteParams} onClose={onTableClose} setSearchInput={setWidgetSearchInput} isShowBtn={true} />

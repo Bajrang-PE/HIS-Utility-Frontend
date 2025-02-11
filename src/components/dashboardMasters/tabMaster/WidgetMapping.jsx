@@ -149,7 +149,7 @@ const WidgetMapping = (props) => {
                                 </td>
 
                                 <td className='px-0'>
-                                    {rows.length > 1 && (
+                                    {/* {rows.length > 1 && ( */}
                                         <div>
                                             <button
                                                 className="btn btn-outline-secondary btn-sm ms-1"
@@ -159,7 +159,7 @@ const WidgetMapping = (props) => {
                                                 <FontAwesomeIcon icon={faMinus} className="dropdown-gear-icon" size='sm' />
                                             </button>
                                         </div>
-                                    )}
+                                    {/* )} */}
                                 </td>
                             </tr>
                         ))}

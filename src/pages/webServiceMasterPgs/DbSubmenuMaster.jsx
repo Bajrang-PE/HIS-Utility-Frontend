@@ -164,10 +164,9 @@ const DbSubmenuMaster = () => {
 
   const handleDeleteSubmenu = () => {
     if (selectedOption?.length > 0) {
-      const isReset = window.confirm('Do you want to reset whole form!');
+      const isReset = window.confirm('Do you want to delete this record ?');
       if (isReset) {
-        const val = { "id": selectedOption[0]?.id, "dashboardFor": "GLOBAL", "masterName": "ServiceUserMst" };
-        fetchPostData("/hisutils/ServiceUserDelete", val).then((data) => {
+        fetchPostData(`/hisutils/DashboardsubMenudelete/${selectedOption[0]?.subMenuId}`).then((data) => {
           if (data) {
             ToastAlert('Deleted Successfully!', 'success');
             getDashboardSubmenuData();
@@ -233,7 +232,6 @@ const DbSubmenuMaster = () => {
     setSearchInput('');
     setSelectedOption([]);
   }
-  console.log(singleData, 'single')
   return (
     <div>
       <NavbarHeader />

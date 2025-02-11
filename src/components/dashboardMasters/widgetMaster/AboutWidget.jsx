@@ -6,16 +6,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faEdit, faMinus, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const AboutWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, dashboardForDt, setValues } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, dashboardForDt, setValues, widgetDrpData, errors, otherLinkData, setOtherLinkData, newRow, setNewRow, setErrors } = props;
 
-    const [rows, setRows] = useState([{ columnNo: "", widget: "" }]);
-    const [otherLinkData, setOtherLinkData] = useState([{ otherLinkName: "", otherLinkURL: "" }]);
+    const [rows, setRows] = useState([]);
+    const [isEditing, setIsEditing] = useState(null);
 
 
-    const handleInputChange = (index, field, value) => {
-        const updatedRows = [...rows];
-        updatedRows[index][field] = value;
-        setRows(updatedRows);
+    const handleInputChange = (field, e) => {
+        const selectedOption = widgetDrpData.find(option => option.value === e.target.value);
+        const selectedLabel = selectedOption ? selectedOption.label : "";
+        if (e.target.name === 'SQCHILDWidgetId') {
+            setNewRow({ ...newRow, [field]: e.target.value, ['drillSQCHILDWidgetName']: selectedLabel })
+        } else {
+            setNewRow({ ...newRow, [field]: e.target.value });
+        }
     };
 
     useEffect(() => {
@@ -24,6 +28,12 @@ const AboutWidget = (props) => {
         }
     }, [values?.lstOtherLink, radioValues?.selectedModeQuery])
 
+    useEffect(() => {
+        if (values?.sqChildJsonString?.length > 0) {
+            setRows(values?.sqChildJsonString)
+        }
+    }, [values?.sqChildJsonString])
+
     // Handle input change
     const handleInputLinkChange = (index, field, value) => {
         const updatedRows = [...otherLinkData];
@@ -31,9 +41,18 @@ const AboutWidget = (props) => {
         setOtherLinkData(updatedRows);
         setValues({ ...values, ['lstOtherLink']: updatedRows })
     };
+
     const handleAddLinkRow = () => {
-        setOtherLinkData([...otherLinkData, { otherLinkName: "", otherLinkURL: "" }]);
+        if (otherLinkData?.length > 0 && !otherLinkData[otherLinkData?.length - 1]?.otherLinkName) {
+            setErrors(prev => ({ ...prev, 'otherLinkNameErr': "required" }));
+        } else if (otherLinkData?.length > 0 && !otherLinkData[otherLinkData?.length - 1]?.otherLinkURL) {
+            setErrors(prev => ({ ...prev, 'otherLinkURLErr': "required" }));
+        } else {
+            setOtherLinkData([...otherLinkData, { otherLinkName: "", otherLinkURL: "" }]);
+            setErrors(prev => ({ ...prev, 'otherLinkURLErr': "", 'otherLinkNameErr': "" }));
+        }
     };
+
     const handleRemoveLinkRow = (index) => {
         const updatedRows = otherLinkData.filter((_, i) => i !== index);
         setOtherLinkData(updatedRows);
@@ -41,13 +60,39 @@ const AboutWidget = (props) => {
 
     // Add a new row
     const handleAddRow = () => {
-        setRows([...rows, { serviceName: "", numberOfUse: "" }]);
+        if (!newRow?.modeForSQCHILDColumnNo?.trim() || !newRow?.SQCHILDWidgetId?.trim()) {
+            if (!newRow?.SQCHILDWidgetId?.trim()) {
+                setErrors(prev => ({ ...prev, 'SQCHILDWidgetIdErr': "required" }));
+            } else {
+                setErrors(prev => ({ ...prev, 'modeForSQCHILDColumnNoErr': "required" }));
+            }
+        } else {
+            if (isEditing !== null) {
+                const updatedRows = [...rows];
+                updatedRows[isEditing] = newRow;
+                setRows(updatedRows);
+                setValues({ ...values, ['sqChildJsonString']: updatedRows })
+                setIsEditing(null);
+            } else {
+                let oldDt = values?.sqChildJsonString?.length > 0 ? values?.sqChildJsonString : [];
+                setRows([...rows, newRow]);
+                oldDt?.push(newRow)
+                setValues({ ...values, ['sqChildJsonString']: oldDt })
+            }
+            setNewRow({ modeForSQCHILDColumnNo: "", SQCHILDWidgetId: "", drillSQCHILDWidgetName: "" });
+            setErrors(prev => ({ ...prev, 'modeForSQCHILDColumnNoErr': "", 'SQCHILDWidgetIdErr': "" }));
+        }
     };
 
-    // Remove a row
+    const handleEditRow = (index) => {
+        setIsEditing(index);
+        setNewRow(rows[index]);
+    };
+
     const handleRemoveRow = (index) => {
         const updatedRows = rows.filter((_, i) => i !== index);
         setRows(updatedRows);
+        setValues({ ...values, ['sqChildJsonString']: updatedRows })
     };
 
     return (
@@ -68,6 +113,7 @@ const AboutWidget = (props) => {
                                 className="backcolorinput"
                                 value={values?.widgetFor}
                                 onChange={handleValueChange}
+                                errorMessage={errors?.widgetForErr}
                             />
                         </div>
                     </div>
@@ -81,7 +127,7 @@ const AboutWidget = (props) => {
                                 className="backcolorinput"
                                 id="widgetType"
                                 name="widgetType"
-                                placeholder="Select value..."
+                                // placeholder="Select value..."
                                 options={widgetTypeOptions}
                                 value={values?.widgetType}
                                 onChange={handleValueChange}
@@ -91,49 +137,6 @@ const AboutWidget = (props) => {
                 </div>
             </div>
 
-            {/* SECTION DEVIDER for child details single query selected*/}
-            {/* <div className="">
-                <b>Child details:-</b><br />
-                <div className="row mx-0 mb-1 header-devider p-0">
-                    <div className="col-4 text-center">
-                        <label className="form-label p-0 m-0">Column No.</label>
-                    </div>
-                    <div className="col-4 text-center ">
-                        <label className="form-label m-0">Widget</label>
-                    </div>
-                    <div className='col-4'>
-
-                    </div>
-                </div>
-                <div className="row mb-1">
-                    <div className="col-4">
-                        <InputField
-                            type="text"
-                            className="backcolorinput"
-                            placeholder="Option Value"
-                        //   value={row.value}
-                        //   onChange={(e) => handleInputChange(index, "value", e.target.value)}
-                        />
-                    </div>
-                    <div className="col-4">
-                        <InputSelect
-                            type="text"
-                            className="backcolorinput"
-                            placeholder="Option Text"
-                        //   value={row.text}
-                        //   onChange={(e) => handleInputChange(index, "text", e.target.value)}
-                        />
-                    </div>
-                    <div className="col-4 text-center">
-                        <button
-                            className="btn btn-secondary btn-sm me-1"
-                        // onClick={() => handleRemoveRow(index)}
-                        >
-                            Add
-                        </button>
-                    </div>
-                </div>
-            </div> */}
             {values?.widgetType === "singleQueryParent" &&
                 <div className="table-responsive row p-1">
                     <table className="table table-borderless text-center mb-0">
@@ -150,21 +153,24 @@ const AboutWidget = (props) => {
                                     <InputField
                                         type="text"
                                         className="backcolorinput"
-                                        name='serviceRefName'
-                                        id='serviceRefName'
-                                    // value={serverDetails?.serviceRefName}
-                                    // onChange={handleServerChange}
+                                        name='modeForSQCHILDColumnNo'
+                                        id='modeForSQCHILDColumnNo'
+                                        value={newRow?.modeForSQCHILDColumnNo}
+                                        onChange={(e) => handleInputChange("modeForSQCHILDColumnNo", e)}
+                                        errorMessage={errors?.modeForSQCHILDColumnNoErr}
                                     />
                                 </td>
                                 <td>
                                     <InputSelect
                                         // type="text"
                                         className="backcolorinput"
-                                        name='serverUrl'
-                                        id='serverUrl'
-                                        options={[]}
-                                    // value={serverDetails?.serverUrl}
-                                    // onChange={handleServerChange}
+                                        name='SQCHILDWidgetId'
+                                        id='SQCHILDWidgetId'
+                                        options={widgetDrpData}
+                                        value={newRow?.SQCHILDWidgetId}
+                                        onChange={(e) => handleInputChange("SQCHILDWidgetId", e)}
+                                        placeholder={'Select Widget'}
+                                        errorMessage={errors?.SQCHILDWidgetIdErr}
                                     />
                                 </td>
                                 <td className='px-0 action-buttons'>
@@ -173,13 +179,13 @@ const AboutWidget = (props) => {
                             </tr>
                             {rows.map((row, index) => (
                                 <tr className='table-row-form text-start' key={index}>
-                                    <td>{"localhost"}</td>
-                                    <td>{"http://localhost:8080"}</td>
+                                    <td>{row?.modeForSQCHILDColumnNo}</td>
+                                    <td>{row?.drillSQCHILDWidgetName}</td>
                                     <td className=''>
                                         <div className='text-center'>
                                             <button
                                                 className="btn btn-secondary btn-sm me-1 py-0 px-1"
-                                                onClick={() => alert("Edit feature coming soon!")}
+                                                onClick={() => handleEditRow(index)}
                                             >Edit
                                                 {/* <FontAwesomeIcon icon={faEdit} className="dropdown-gear-icon" size='xs' /> */}
                                             </button>
@@ -305,6 +311,11 @@ const AboutWidget = (props) => {
                                     Iframe
                                 </label>
                             </div>
+                            {errors?.widgetViewedErr &&
+                                <div className="required-input">
+                                    {errors?.widgetViewedErr}
+                                </div>
+                            }
 
                         </div>
                     </div>
@@ -344,6 +355,11 @@ const AboutWidget = (props) => {
                                     No
                                 </label>
                             </div>
+                            {errors?.isWidgetNameVisibleErr &&
+                                <div className="required-input">
+                                    {errors?.isWidgetNameVisibleErr}
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -364,6 +380,7 @@ const AboutWidget = (props) => {
                                 id="widgetNameDisplay"
                                 onChange={handleValueChange}
                                 value={values?.widgetNameDisplay}
+                                errorMessage={errors?.widgetNameDisplayErr}
                             />
                         </div>
                     </div>
@@ -381,6 +398,7 @@ const AboutWidget = (props) => {
                                 id="widgetNameInternal"
                                 onChange={handleValueChange}
                                 value={values?.widgetNameInternal}
+                                errorMessage={errors?.widgetNameInternalErr}
                             />
                         </div>
                     </div>
@@ -711,6 +729,7 @@ const AboutWidget = (props) => {
                                             id={`otherLinkName-${index}`}
                                             value={row?.otherLinkName}
                                             onChange={(e) => handleInputLinkChange(index, 'otherLinkName', e.target.value)}
+                                            errorMessage={!row?.otherLinkName && errors?.otherLinkNameErr}
                                         />
                                     </td>
 
@@ -723,6 +742,7 @@ const AboutWidget = (props) => {
                                             id={`otherLinkURL-${index}`}
                                             value={row?.otherLinkURL}
                                             onChange={(e) => handleInputLinkChange(index, 'otherLinkURL', e.target.value)}
+                                            errorMessage={!row?.otherLinkURL && errors?.otherLinkURLErr}
                                         />
                                     </td>
 

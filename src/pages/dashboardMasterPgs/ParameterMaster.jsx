@@ -211,6 +211,7 @@ const ParameterMaster = () => {
         reset();
         setActionMode('home');
         setConfirmSave(false);
+        setSelectedOption([])
       } else {
         ToastAlert("Internal Error!", "error");
         setConfirmSave(false);

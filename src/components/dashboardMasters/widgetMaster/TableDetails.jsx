@@ -749,7 +749,7 @@ const TableDetails = (props) => {
                 {/* //left columns */}
                 <div className='col-sm-6'>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">
+                        <label className="col-sm-5 col-form-label pe-0">
                             Print PDF In :
                         </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -784,7 +784,7 @@ const TableDetails = (props) => {
                         </div>
                     </div>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">
+                        <label className="col-sm-5 col-form-label pe-0">
                             PDF Theme :
                         </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -1289,9 +1289,10 @@ const TableDetails = (props) => {
                                             className="backcolorinput"
                                             id="popupWidgetId"
                                             name="popupWidgetId"
-                                            options={[{ value: 1, label: "widgetData" }, { value: 2, label: "widgetData2" }]}
+                                            options={parentWidget}
                                             onChange={(e) => handleInputChange("popupWidgetId", e)}
                                             value={newRow.popupWidgetId}
+                                            placeholder={'Select Widget'}
                                         >
                                         </InputSelect>
                                     </td>

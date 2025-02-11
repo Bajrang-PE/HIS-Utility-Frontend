@@ -6,28 +6,25 @@ import InputSelect from '../../commons/InputSelect';
 import { parameterOptions } from '../../../localData/DropDownData';
 
 const ParamsDetail = (props) => {
-    const { availableOptions, setAvailableOptions, mapedDt, isMulti, selectedOptions, setSelectedOptions, handleValueChange, handleRadioChange, radioValues, values, parameterDrpData,pageName } = props;
+    const { availableOptions, setAvailableOptions, selectedOptions, setSelectedOptions, handleValueChange, values, pageName } = props;
 
-    // const [selectedOptions, setSelectedOptions] = useState();
     const [leftSelectedValues, setLeftSelectedValues] = useState([]);
     const [rightSelectedValues, setRightSelectedValues] = useState([]);
 
     const leftSelectEle = document.getElementById('leftRightSelect');
     const rightSelectEle = document.getElementById('leftRightSelect1');
 
-    useEffect(() => {
-        // setSelectedOptions(mapedDt)
-    }, [mapedDt])
-
 
     const handleLeftSelect = (e) => {
         const value = Array.from(e.target.selectedOptions, option => option.value);
         setLeftSelectedValues(value);
+        setRightSelectedValues([]);
     };
 
     const handleRightSelect = (e) => {
         const value = Array.from(e.target.selectedOptions, option => option.value);
         setRightSelectedValues(value);
+        setLeftSelectedValues([]);
     };
 
     //FUNCTION TO MOVE SELECTED VALUES RIGHT
@@ -39,10 +36,8 @@ const ParamsDetail = (props) => {
 
             if (chkDuplicate?.length > 0) {
                 ToastAlert('Value Already Exist!', 'warning');
-            } else if ((selectedOptions?.length >= 1 && !isMulti) || (leftSelectedValues?.length > 1 && !isMulti)) {
-                ToastAlert('Can not assign multiple roles!', 'warning');
             } else {
-                // setSelectedOptions([...selectedOptions, ...selected]);
+                setSelectedOptions([...selectedOptions, ...selected]);
                 setAvailableOptions(availableOptions.filter(option => !leftSelectedValues.includes(option.value.toString())));
                 setLeftSelectedValues([]);
                 leftSelectEle.value = null;
@@ -58,7 +53,7 @@ const ParamsDetail = (props) => {
         if (rightSelectedValues?.length > 0) {
             const selected = selectedOptions.filter(option => rightSelectedValues.includes(option.value.toString()));
             setAvailableOptions([...availableOptions, ...selected]);
-            // setSelectedOptions(selectedOptions.filter(option => !rightSelectedValues.includes(option.value.toString())));
+            setSelectedOptions(selectedOptions.filter(option => !rightSelectedValues.includes(option.value.toString())));
             setRightSelectedValues([]);
             rightSelectEle.value = null;
         } else {
@@ -73,8 +68,8 @@ const ParamsDetail = (props) => {
             <div className='d-flex justify-content-center mt-1 mb-2 role-theme'>
                 <div className='' style={{ width: "30%" }}>
                     <b><h6 className='mb-2 text-center'>Parameter Name</h6></b>
-                    <select className="form-select form-select-sm backcolorinput" id='leftRightSelect' multiple size="6" aria-label="size 4 select example" onChange={handleLeftSelect}>
-                        {parameterDrpData?.map((opt, index) => (
+                    <select className="form-select form-select-sm backcolorinput" id='leftRightSelect' size="6" aria-label="size 4 select example" onChange={handleLeftSelect}>
+                        {availableOptions?.map((opt, index) => (
                             <option value={opt.value} key={index}>{opt.label}</option>
                         ))}
                     </select>
@@ -98,7 +93,7 @@ const ParamsDetail = (props) => {
 
                 <div className='' style={{ width: "30%" }}>
                     <b><h6 className='mb-2 text-center'>Selected Parameter Name</h6></b>
-                    <select className="form-select form-select-sm backcolorinput" id='leftRightSelect1' multiple size="6" aria-label="size 4 select example" onChange={handleRightSelect}>
+                    <select className="form-select form-select-sm backcolorinput" id='leftRightSelect1' size="6" aria-label="size 4 select example" onChange={handleRightSelect}>
                         {selectedOptions?.map((opt, index) => (
                             <option value={opt.value} key={index}>{opt.label}</option>
                         ))}
@@ -110,20 +105,22 @@ const ParamsDetail = (props) => {
             <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">Parameter Options : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputSelect
-                                className="backcolorinput "
-                                // placeholder="Enter value..."
-                                name='parameterOption'
-                                id="parameterOption"
-                                options={parameterOptions}
-                                onChange={handleValueChange}
-                                value={values?.parameterOption}
-                            />
+                    {selectedOptions?.length > 0 &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">Parameter Options : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <InputSelect
+                                    className="backcolorinput "
+                                    // placeholder="Enter value..."
+                                    name='parameterOption'
+                                    id="parameterOption"
+                                    options={parameterOptions}
+                                    onChange={handleValueChange}
+                                    value={values?.parameterOption}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Parameter Combo Background Color : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -155,20 +152,22 @@ const ParamsDetail = (props) => {
                 </div>
                 {/* right columns */}
                 <div className='col-sm-6'>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">{pageName === "tab"? 'Tab Load Options':'Widget Load Options'} : </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <InputSelect
-                                className="backcolorinput "
-                                // placeholder="Enter value..."
-                                name='loadOption'
-                                id="loadOption"
-                                options={[{ value: "ONWINDOWLOAD", label: "On Window Load" }, { value: "ONGOBUTTONCLICK", label: "On Go Button Click" }]}
-                                onChange={handleValueChange}
-                                value={values?.loadOption}
-                            />
+                    {selectedOptions?.length > 0 &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0">{pageName === "tab" ? 'Tab Load Options' : 'Widget Load Options'} : </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <InputSelect
+                                    className="backcolorinput "
+                                    // placeholder="Enter value..."
+                                    name='loadOption'
+                                    id="loadOption"
+                                    options={[{ value: "ONWINDOWLOAD", label: "On Window Load" }, { value: "ONGOBUTTONCLICK", label: "On Go Button Click" }]}
+                                    onChange={handleValueChange}
+                                    value={values?.loadOption}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    }
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Parameter Combo Font Color : </label>
                         <div className="col-sm-7 ps-0 align-content-center">

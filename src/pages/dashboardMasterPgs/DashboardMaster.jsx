@@ -23,6 +23,12 @@ const DashboardMaster = () => {
   const [searchInput, setSearchInput] = useState('');
   const [singleData, setSingleData] = useState([]);
   const [filterData, setFilterData] = useState(dashboardData)
+  //multi params
+  const [availableOptions, setAvailableOptions] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState();
+
+  const [availableOptionsTab, setAvailableOptionsTab] = useState([]);
+  const [selectedOptionsTab, setSelectedOptionsTab] = useState();
 
   const [values, setValues] = useState({
     "dashboardFor": "", "dashNameDisplay": "", "dashNameInternal": "", "menuContainerBgColor": "", "dashTitlefontColor": "", "iconColor": "", "menuContainerBgImage": "", "cachingStatus": '', "dataLoad": "ALL", "id": "",
@@ -32,7 +38,8 @@ const DashboardMaster = () => {
     //header
     "headerHtml": "", "headerCss": "", "rptHeaderbyQuery": "",
     //parameter
-    "parameterOption": ""
+    "parameterOption": "",
+    'dashboardIds': "", 'allSelectedParaList': ""
   })
 
   const [radioValues, setRadioValues] = useState({
@@ -80,6 +87,36 @@ const DashboardMaster = () => {
       getAllTabsData(values?.dashboardFor)
     }
   }, [values?.dashboardFor])
+
+  useEffect(() => {
+    if (values?.allSelectedParaList !== "") {
+      const selectedIds = values?.allSelectedParaList?.split(",")?.map(id => id?.trim());
+      // const fdt = parameterDrpData?.filter(dt => selectedIds?.includes(dt?.value?.toString()));
+      const fdt = selectedIds?.map(id => parameterDrpData?.find(dt => dt.value?.toString() === id))?.filter(Boolean);
+      const availableOptions = parameterDrpData?.filter(dt => !selectedIds?.includes(dt?.value?.toString()));
+
+      setSelectedOptions(fdt);
+      setAvailableOptions(availableOptions);
+    } else {
+      setSelectedOptions([]);
+      setAvailableOptions(parameterDrpData);
+    }
+  }, [values?.allSelectedParaList, parameterDrpData]);
+
+  useEffect(() => {
+    if (values?.dashboardIds !== "") {
+      const selectedIds = values?.dashboardIds?.split(",")?.map(id => id?.trim());
+      // const fdt = tabDrpData?.filter(dt => selectedIds?.includes(dt?.value?.toString()));
+      const fdt = selectedIds?.map(id => tabDrpData?.find(dt => dt.value?.toString() === id))?.filter(Boolean);
+      const availableOptions = tabDrpData?.filter(dt => !selectedIds?.includes(dt?.value?.toString()));
+
+      setSelectedOptionsTab(fdt);
+      setAvailableOptionsTab(availableOptions);
+    } else {
+      setSelectedOptionsTab([]);
+      setAvailableOptionsTab(tabDrpData);
+    }
+  }, [values?.dashboardIds, tabDrpData]);
 
   const handleRadioChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -132,9 +169,9 @@ const DashboardMaster = () => {
         headerCss: jsonData?.headerCSS,//
         rptHeaderbyQuery: jsonData?.reportHeaderByQuery,//
         //parameter  
-        parameterOption: jsonData?.parameterOptions  //
-        // "dashboardIds": "107,3,4",
-        // "allSelectedParaList": "159,148",
+        parameterOption: jsonData?.parameterOptions,  //
+        dashboardIds: jsonData?.dashboardIds,
+        allSelectedParaList: jsonData?.allSelectedParaList,
       });
 
       setRadioValues({
@@ -176,6 +213,9 @@ const DashboardMaster = () => {
       //header  
       isHeaderReq, showHeader, showHeaderInGlobalDash, rptHeaderTypePdfExl, isActive, } = radioValues;
 
+    const selectedIdParams = selectedOptions?.length > 0 ? selectedOptions?.map(option => option?.value).join(",") : '';
+    const selectedIdTabs = selectedOptionsTab?.length > 0 ? selectedOptionsTab?.map(option => option?.value).join(",") : '';
+
     const val = {
       dashboardFor: dashboardFor,
       masterName: "DashboardGroupingMst",
@@ -210,8 +250,8 @@ const DashboardMaster = () => {
         reportHeaderByQuery: rptHeaderbyQuery,
         parameterOptions: parameterOption,
 
-        dashboardIds: "",
-        allSelectedParaList: "",
+        dashboardIds: selectedIdTabs,
+        allSelectedParaList: selectedIdParams,
 
         printButton: isPrintBtnReq,
         dashboardTheme: dashboardTheme,
@@ -258,6 +298,8 @@ const DashboardMaster = () => {
       isTopBarVisible, isFixedLayout, isSidebarCollapse,
       //header  
       isHeaderReq, showHeader, showHeaderInGlobalDash, rptHeaderTypePdfExl, isActive, } = radioValues;
+    const selectedIdParams = selectedOptions?.length > 0 ? selectedOptions?.map(option => option?.value).join(",") : '';
+    const selectedIdTabs = selectedOptionsTab?.length > 0 ? selectedOptionsTab?.map(option => option?.value).join(",") : '';
 
     const val = {
       id: id,
@@ -294,8 +336,8 @@ const DashboardMaster = () => {
         reportHeaderByQuery: rptHeaderbyQuery,
         parameterOptions: parameterOption,
 
-        dashboardIds: "",
-        allSelectedParaList: "",
+        dashboardIds: selectedIdTabs,
+        allSelectedParaList: selectedIdParams,
 
         printButton: isPrintBtnReq,
         dashboardTheme: dashboardTheme,
@@ -484,7 +526,7 @@ const DashboardMaster = () => {
     }
   ]
 
-  console.log(errors, 'single')
+  console.log(singleData, 'single')
 
   return (
     <div>
@@ -506,11 +548,11 @@ const DashboardMaster = () => {
             {tabName?.value === 1 &&
               <AboutDashboard handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} dashboardForDt={dashboardForDt} errors={errors} />}
             {tabName?.value === 2 &&
-              <TabDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} tabDrpData={tabDrpData} />}
+              <TabDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} availableOptions={availableOptionsTab} setAvailableOptions={setAvailableOptionsTab} selectedOptions={selectedOptionsTab} setSelectedOptions={setSelectedOptionsTab} />}
             {tabName?.value === 3 &&
               <HeaderDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} errors={errors} />}
             {tabName?.value === 4 &&
-              <ParamsDetails handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} parameterDrpData={parameterDrpData} />}
+              <ParamsDetails handleValueChange={handleValueChange} values={values} parameterDrpData={parameterDrpData} availableOptions={availableOptions} setAvailableOptions={setAvailableOptions} selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />}
 
             <b><h6 className='header-devider mt-4'></h6></b>
             {values?.dashboardFor &&

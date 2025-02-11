@@ -5,7 +5,7 @@ import Select from 'react-select'
 import { graphOptions, isActionButtonReqOptions } from '../../../localData/DropDownData'
 
 const GraphWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues, parentWidget } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues, parentWidget, errors, setErrors } = props;
 
     return (
         <div>
@@ -47,6 +47,11 @@ const GraphWidget = (props) => {
                                     No
                                 </label>
                             </div>
+                            {errors?.isDisplayGraphPluginErr &&
+                                <div className="required-input">
+                                    {errors?.isDisplayGraphPluginErr}
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className="form-group row">
@@ -60,6 +65,7 @@ const GraphWidget = (props) => {
                                 options={graphOptions}
                                 onChange={handleValueChange}
                                 value={values?.defaultGraphType}
+                                errorMessage={errors?.defaultGraphTypeErr}
                             />
                         </div>
                     </div>
@@ -74,9 +80,10 @@ const GraphWidget = (props) => {
                                 // placeholder="Enter value..."
                                 name='defaultPluginName'
                                 id="defaultPluginName"
-                                options={[{value:"highchart",label:"High Charts"},{value:"googlechart",label:"Google Charts"}]}
+                                options={[{ value: "highchart", label: "High Charts" }, { value: "googlechart", label: "Google Charts" }]}
                                 onChange={handleValueChange}
                                 value={values?.defaultPluginName}
+                                errorMessage={errors?.defaultPluginNameErr}
                             />
                         </div>
                     </div>
@@ -135,8 +142,17 @@ const GraphWidget = (props) => {
                                 placeholder="Select value..."
                                 className="backcolorinput react-select-multi"
                                 value={values?.graphTypes}
-                                onChange={(e) => setValues({ ...values, ['graphTypes']: e })}
+                                onChange={(e) => {
+                                    setValues({ ...values, ['graphTypes']: e });
+                                    setErrors(prev => ({ ...prev, 'graphTypesErr': "" }));
+                                }}
                             />
+                            {errors?.graphTypesErr &&
+                                <div className="required-input">
+                                    {errors?.graphTypesErr}
+                                </div>
+                            }
+
                         </div>
                     </div>
                     <div className="form-group row">
@@ -242,6 +258,11 @@ const GraphWidget = (props) => {
                                     No
                                 </label>
                             </div>
+                            {errors?.isGraphScrollBarReqErr &&
+                                <div className="required-input">
+                                    {errors?.isGraphScrollBarReqErr}
+                                </div>
+                            }
                         </div>
                     </div>
 
@@ -259,6 +280,7 @@ const GraphWidget = (props) => {
                                 id="clmNameForLineGraph"
                                 onChange={handleValueChange}
                                 value={values?.clmNameForLineGraph}
+                                errorMessage={errors?.clmNameForLineGraphErr}
                             />
                         </div>
                     </div>
@@ -358,6 +380,11 @@ const GraphWidget = (props) => {
                                     No
                                 </label>
                             </div>
+                            {errors?.isFullLabelReqErr &&
+                                <div className="required-input">
+                                    {errors?.isFullLabelReqErr}
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className="form-group row">
@@ -429,6 +456,11 @@ const GraphWidget = (props) => {
                                     No
                                 </label>
                             </div>
+                            {errors?.isShowLegendErr &&
+                                <div className="required-input">
+                                    {errors?.isShowLegendErr}
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className="form-group row">
@@ -464,6 +496,11 @@ const GraphWidget = (props) => {
                                     No
                                 </label>
                             </div>
+                            {errors?.isThree3DErr &&
+                                <div className="required-input">
+                                    {errors?.isThree3DErr}
+                                </div>
+                            }
                         </div>
                     </div>
 
@@ -504,6 +541,11 @@ const GraphWidget = (props) => {
                                     No
                                 </label>
                             </div>
+                            {errors?.isDataLabelsErr &&
+                                <div className="required-input">
+                                    {errors?.isDataLabelsErr}
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -525,6 +567,7 @@ const GraphWidget = (props) => {
                                     id="alphaGraph3D"
                                     onChange={handleValueChange}
                                     value={values?.alphaGraph3D}
+                                    errorMessage={errors?.alphaGraph3DErr}
                                 />
                             </div>
                         </div>
@@ -540,6 +583,7 @@ const GraphWidget = (props) => {
                                 id="xAxisLabel"
                                 onChange={handleValueChange}
                                 value={values?.xAxisLabel}
+                                errorMessage={errors?.xAxisLabelErr}
                             />
                         </div>
                     </div>
@@ -671,6 +715,7 @@ const GraphWidget = (props) => {
                                     id="betaGraph3D"
                                     onChange={handleValueChange}
                                     value={values?.betaGraph3D}
+                                    errorMessage={errors?.betaGraph3DErr}
                                 />
                             </div>
                         </div>
@@ -686,6 +731,7 @@ const GraphWidget = (props) => {
                                 id="yAxisLabel"
                                 onChange={handleValueChange}
                                 value={values?.yAxisLabel}
+                                errorMessage={errors?.yAxisLabelErr}
                             />
                         </div>
                     </div>
@@ -704,7 +750,7 @@ const GraphWidget = (props) => {
                         </div>
                     </div>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">Maximum value of axis : </label>
+                        <label className="col-sm-5 col-form-label pe-0">Maximum value of axis : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputField
                                 type='text'
@@ -718,7 +764,7 @@ const GraphWidget = (props) => {
                         </div>
                     </div>
                     <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">Minimum value of axis : </label>
+                        <label className="col-sm-5 col-form-label pe-0">Minimum value of axis : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputField
                                 type='text'
@@ -780,42 +826,43 @@ const GraphWidget = (props) => {
                             />
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0 required-label">
-                            Is Hide Parent :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isHideParent"
-                                    id="isHideParentYes"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isHideParent === 'Yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isHideParent"
-                                    id="isHideParentNo"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isHideParent === 'No'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
+                    {values?.parentWidgetGraph &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0 required-label">
+                                Is Hide Parent :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isHideParent"
+                                        id="isHideParentYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isHideParent === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isHideParent"
+                                        id="isHideParentNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isHideParent === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
+                    }
                 </div>
             </div>
 

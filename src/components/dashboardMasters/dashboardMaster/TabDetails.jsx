@@ -1,11 +1,114 @@
-import React from 'react'
+import React, { useState } from 'react'
 import InputSelect from '../../commons/InputSelect'
 import InputField from '../../commons/InputField'
 import { leftCaret, rightCaret } from '../../../utils/commonSVG'
 import { iconType, tabDisplayOptions, tabShapeOptions, widgetRefreshTimeOptions } from '../../../localData/DropDownData'
+import { ToastAlert } from '../../../utils/commonFunction'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAngleDoubleDown, faAngleDoubleUp, faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 
 const TabDetails = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues, tabDrpData } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, availableOptions, setAvailableOptions, selectedOptions, setSelectedOptions, } = props;
+
+    const [leftSelectedValues, setLeftSelectedValues] = useState([]);
+    const [rightSelectedValues, setRightSelectedValues] = useState([]);
+
+    const leftSelectEle = document.getElementById('leftRightSelect');
+    const rightSelectEle = document.getElementById('leftRightSelect1');
+
+    const [selectedIndex, setSelectedIndex] = useState(null);
+
+
+    const handleLeftSelect = (e) => {
+        const value = Array.from(e.target.selectedOptions, option => option.value);
+        setLeftSelectedValues(value);
+        setRightSelectedValues([]);
+    };
+
+    const handleRightSelect = (e) => {
+        const value = Array.from(e.target.selectedOptions, option => option.value);
+        setRightSelectedValues(value);
+        setLeftSelectedValues([]);
+        setSelectedIndex(e.target.selectedIndex);
+    };
+
+    //FUNCTION TO MOVE SELECTED VALUES RIGHT
+    const moveRight = () => {
+        if (leftSelectedValues?.length > 0) {
+
+            const selected = availableOptions.filter(option => leftSelectedValues.includes(option.value?.toString()));
+            const chkDuplicate = selectedOptions?.filter(option => leftSelectedValues?.includes(option.value?.toString()));
+
+            if (chkDuplicate?.length > 0) {
+                ToastAlert('Value Already Exist!', 'warning');
+            } else {
+                setSelectedOptions([...selectedOptions, ...selected]);
+                setAvailableOptions(availableOptions.filter(option => !leftSelectedValues.includes(option.value.toString())));
+                setLeftSelectedValues([]);
+                leftSelectEle.value = null;
+            }
+        } else {
+            ToastAlert('Please select a value!', 'warning');
+        }
+    };
+
+
+    //FUNCTION TO MOVE SELECTED VALUES LEFT
+    const moveLeft = () => {
+        if (rightSelectedValues?.length > 0) {
+            const selected = selectedOptions.filter(option => rightSelectedValues.includes(option.value.toString()));
+            setAvailableOptions([...availableOptions, ...selected]);
+            setSelectedOptions(selectedOptions.filter(option => !rightSelectedValues.includes(option.value.toString())));
+            setRightSelectedValues([]);
+            rightSelectEle.value = null;
+            setSelectedIndex(null)
+        } else {
+            ToastAlert('Please select a value!', 'warning');
+        }
+    };
+
+    const moveSingleUp = () => {
+        if (selectedIndex > 0) {
+            const updatedOptions = [...selectedOptions];
+            [updatedOptions[selectedIndex - 1], updatedOptions[selectedIndex]] =
+                [updatedOptions[selectedIndex], updatedOptions[selectedIndex - 1]];
+            setSelectedOptions(updatedOptions);
+            setSelectedIndex(selectedIndex - 1);
+        }
+    };
+
+    // Move selected item down
+    const moveSingleDown = () => {
+        if (selectedIndex !== null && selectedIndex < selectedOptions.length - 1) {
+            const updatedOptions = [...selectedOptions];
+            [updatedOptions[selectedIndex], updatedOptions[selectedIndex + 1]] =
+                [updatedOptions[selectedIndex + 1], updatedOptions[selectedIndex]];
+            setSelectedOptions(updatedOptions);
+            setSelectedIndex(selectedIndex + 1);
+        }
+    };
+
+    // Move selected item to top
+    const moveTop = () => {
+        if (selectedIndex > 0) {
+            const updatedOptions = [...selectedOptions];
+            const [selectedItem] = updatedOptions.splice(selectedIndex, 1);
+            updatedOptions.unshift(selectedItem);
+            setSelectedOptions(updatedOptions);
+            setSelectedIndex(0);
+        }
+    };
+
+    // Move selected item to bottom
+    const moveBottom = () => {
+        if (selectedIndex !== null && selectedIndex < selectedOptions.length - 1) {
+            const updatedOptions = [...selectedOptions];
+            const [selectedItem] = updatedOptions.splice(selectedIndex, 1);
+            updatedOptions.push(selectedItem);
+            setSelectedOptions(updatedOptions);
+            setSelectedIndex(updatedOptions.length - 1);
+        }
+    };
 
     return (
         <div>
@@ -273,7 +376,7 @@ const TabDetails = (props) => {
                                     id="tabMenuWidthBigIcon"
                                     name="tabMenuWidthBigIcon"
                                     // placeholder="Select value..."
-                                    options={[{value:'2',label:"2"},{value:'3',label:"3"},{value:'4',label:"4"},{value:'5',label:"5"},{value:'6',label:"6"}]}
+                                    options={[{ value: '2', label: "2" }, { value: '3', label: "3" }, { value: '4', label: "4" }, { value: '5', label: "5" }, { value: '6', label: "6" }]}
                                     className="backcolorinput"
                                     value={values?.tabMenuWidthBigIcon}
                                     onChange={handleValueChange}
@@ -320,8 +423,8 @@ const TabDetails = (props) => {
             <div className='d-flex justify-content-center mt-1 mb-2 role-theme'>
                 <div className='' style={{ width: "30%" }}>
                     <b><h6 className='mb-2 text-center'>All Tabs</h6></b>
-                    <select className="form-select form-select-sm backcolorinput" id='leftRightSelect' multiple size="6" aria-label="size 4 select example">
-                        {tabDrpData?.map((opt, index) => (
+                    <select className="form-select form-select-sm backcolorinput" id='leftRightSelect' size="6" aria-label="size 4 select example" onChange={handleLeftSelect}>
+                        {availableOptions?.map((opt, index) => (
                             <option value={opt.value} key={index}>{opt.label}</option>
                         ))}
                     </select>
@@ -330,14 +433,14 @@ const TabDetails = (props) => {
                 <div className='align-self-center' style={{ marginLeft: "2%", marginRight: "2%" }}>
 
                     <div className='d-flex justify-content-center'>
-                        <button type='button' className='btn btn-outline-secondary btn-sm m-1'>
+                        <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={availableOptions?.length > 0 ? false : true} onClick={moveRight}>
                             <svg dangerouslySetInnerHTML={{ __html: rightCaret }} height={16} width={16} />
                         </button>
 
                     </div>
 
                     <div className='d-flex justify-content-center'>
-                        <button type='button' className='btn btn-outline-secondary btn-sm m-1'>
+                        <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={selectedOptions?.length > 0 ? false : true} onClick={moveLeft}>
                             <svg dangerouslySetInnerHTML={{ __html: leftCaret }} height={16} width={16} />
                         </button>
                     </div>
@@ -345,11 +448,34 @@ const TabDetails = (props) => {
 
                 <div className='' style={{ width: "30%" }}>
                     <b><h6 className='mb-2 text-center'>Selected Dashboard Tabs</h6></b>
-                    <select className="form-select form-select-sm backcolorinput" id='leftRightSelect1' multiple size="6" aria-label="size 4 select example">
-                        {/* {selectedOptions?.map((opt, index) => (
-                            <option value={opt.value} key={index}>{opt.label}</option>
-                        ))} */}
+                    <select className="form-select form-select-sm backcolorinput" id='leftRightSelect1' size="6" aria-label="size 4 select example" onChange={handleRightSelect} sele>
+                        {selectedOptions?.map((opt, index) => (
+                            <option value={opt.value} key={index} selected={selectedIndex === index}>{opt.label}</option>
+                        ))}
                     </select>
+                </div>
+
+                <div className='align-self-center' style={{ marginLeft: "2%", marginRight: "2%",marginTop:"auto" }}>
+                    <div className='d-flex justify-content-center'>
+                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={moveTop} disabled={selectedIndex === 0 || selectedIndex === null} style={{ padding: "2px 8px" }}>
+                            <FontAwesomeIcon icon={faAngleDoubleUp} className="dropdown-gear-icon" />
+                        </button>
+                    </div>
+                    <div className='d-flex justify-content-center'>
+                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={moveSingleUp} disabled={selectedIndex === 0 || selectedIndex === null} style={{ padding: "2px 8px" }}>
+                            <FontAwesomeIcon icon={faAngleUp} className="dropdown-gear-icon" />
+                        </button>
+                    </div>
+                    <div className='d-flex justify-content-center'>
+                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={moveSingleDown} disabled={selectedIndex === null || selectedIndex === selectedOptions.length - 1} style={{ padding: "2px 8px" }}>
+                            <FontAwesomeIcon icon={faAngleDown} className="dropdown-gear-icon" />
+                        </button>
+                    </div>
+                    <div className='d-flex justify-content-center'>
+                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={moveBottom} disabled={selectedIndex === null || selectedIndex === selectedOptions.length - 1} style={{ padding: "2px 8px" }}>
+                            <FontAwesomeIcon icon={faAngleDoubleDown} className="dropdown-gear-icon" />
+                        </button>
+                    </div>
                 </div>
             </div>
 

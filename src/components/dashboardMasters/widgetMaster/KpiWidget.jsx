@@ -7,7 +7,7 @@ import IconPicker from '../../commons/IconPicker';
 
 
 const KpiWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues, errors } = props;
     const [tabIcon, setTabIcon] = useState('');
     const SelectedIconComponent = tabIcon ? FaIcons[tabIcon] : '';
 
@@ -41,6 +41,7 @@ const KpiWidget = (props) => {
                                 options={kpiTypes}
                                 onChange={handleValueChange}
                                 value={values?.kpiType}
+                                errorMessage={errors?.kpiTypeErr}
                             />
                         </div>
                     </div>
@@ -55,6 +56,8 @@ const KpiWidget = (props) => {
                                 options={iconType}
                                 onChange={handleValueChange}
                                 value={values?.kpiIconType}
+                                errorMessage={errors?.kpiIconTypeErr}
+
                             />
                         </div>
                     </div>
@@ -101,17 +104,7 @@ const KpiWidget = (props) => {
                                     />
                                 }
                                 {values?.kpiIconType === 'FONT_ICON' &&
-                                    <IconPicker setTabIcon={setTabIcon} tabIcon={tabIcon} setValues={setValues} values={values}/>
-                                    // <InputSelect
-                                    //     className="backcolorinput "
-                                    //     placeholder="Select Icon"
-                                    //     name='kpiTabIconImage'
-                                    //     id="kpiTabIconImage"
-                                    //     options={iconOptions}
-                                    //     onChange={handleChange}
-                                    //     value={selectedIcon}
-                                    //     style={{ width: "100%", padding: "5px" }}
-                                    // />
+                                    <IconPicker setTabIcon={setTabIcon} tabIcon={tabIcon} setValues={setValues} values={values} />
                                 }
                             </div>
                         </div>
@@ -135,6 +128,8 @@ const KpiWidget = (props) => {
                                 id="kpiDefaultBgColor"
                                 onChange={handleValueChange}
                                 value={values?.kpiDefaultBgColor}
+                                errorMessage={errors?.kpiDefaultBgColorErr}
+
                             />
                         </div>
                     </div>

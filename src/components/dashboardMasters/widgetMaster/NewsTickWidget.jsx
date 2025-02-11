@@ -4,7 +4,7 @@ import InputSelect from '../../commons/InputSelect'
 import { newsTimeIntervals } from '../../../localData/DropDownData';
 
 const NewsTickWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues,errors } = props;
 
     return (
         <div>
@@ -24,6 +24,7 @@ const NewsTickWidget = (props) => {
                                 id="noOfNewsVisible"
                                 onChange={handleValueChange}
                                 value={values?.noOfNewsVisible}
+                                errorMessage={errors?.noOfNewsVisibleErr}
                             />
                         </div>
                     </div>
