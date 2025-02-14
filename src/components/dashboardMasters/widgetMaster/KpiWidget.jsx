@@ -7,7 +7,7 @@ import IconPicker from '../../commons/IconPicker';
 
 
 const KpiWidget = (props) => {
-    const { handleValueChange, handleRadioChange, radioValues, values, setValues, errors } = props;
+    const { handleValueChange, handleRadioChange, radioValues, values, setValues, errors, tabDrpData, widgetDrpData } = props;
     const [tabIcon, setTabIcon] = useState('');
     const SelectedIconComponent = tabIcon ? FaIcons[tabIcon] : '';
 
@@ -282,7 +282,7 @@ const KpiWidget = (props) => {
                                         placeholder="No Tabs"
                                         name='kpiTabOpenOnClick'
                                         id="kpiTabOpenOnClick"
-                                        options={[]}
+                                        options={tabDrpData}
                                         onChange={handleValueChange}
                                         value={values?.kpiTabOpenOnClick}
                                     />}
@@ -292,7 +292,7 @@ const KpiWidget = (props) => {
                                         placeholder="No Widget"
                                         name='kpiWidgetOpenOnClick'
                                         id="kpiWidgetOpenOnClick"
-                                        options={[]}
+                                        options={widgetDrpData}
                                         onChange={handleValueChange}
                                         value={values?.kpiWidgetOpenOnClick}
                                     />}

@@ -201,10 +201,9 @@ const TabMaster = () => {
       setSingleData(selectedRow);
       setActionMode('edit');
       setShowDataTable(false);
-      setShowTabsTable(false);
-      setSelectedOption([]);
       setTabIndex(1);
       setTabName({ value: 1, label: "About Tab" });
+      onTableClose();
       // setIsInputChanged(true)
     } else {
       ToastAlert('Please select a record', 'warning');

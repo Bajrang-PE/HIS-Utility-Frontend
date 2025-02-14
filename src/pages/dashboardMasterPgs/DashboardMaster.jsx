@@ -577,7 +577,7 @@ const DashboardMaster = () => {
       name: 'Group ID',
       selector: row => row.id,
       sortable: true,
-      width: "8%"
+      width: "10%"
     },
     {
       name: 'Group Name',

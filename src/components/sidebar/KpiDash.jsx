@@ -1,0 +1,107 @@
+import { faDownload, faMedkit } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import * as SolidIcons from '@fortawesome/free-solid-svg-icons';
+import React, { useContext } from 'react'
+import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
+import { HISContext } from '../../contextApi/HISContext';
+import { useLocation } from 'react-router-dom';
+
+const KpiDash = ({ widgetData }) => {
+    const { setActiveTab, allTabsData } = useContext(HISContext);
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+
+    const groupId = queryParams.get("groupId");
+    const dashboardFor = queryParams.get("dashboardFor");
+
+    // console.log(allTabsData, 'allTabsData')
+
+    const getDynamicIcon = (iconName) => {
+        if (!iconName) return SolidIcons.faMedkit;
+
+        let formattedIconName = "fa" + iconName
+            .replace("fa-", "")
+            .replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
+        let iconKey = Object.keys(SolidIcons).find(key => key.toLowerCase() === formattedIconName.toLowerCase());
+        if (!iconKey) {
+            iconKey = Object.keys(SolidIcons).find(key => key.toLowerCase().includes(formattedIconName.toLowerCase().replace(/[^a-zA-Z]/g, "")));
+        }
+
+        return iconKey ? SolidIcons[iconKey] : SolidIcons.faMedkit;
+    };
+
+    const onHover = (e) => {
+        e.currentTarget.style.backgroundColor = widgetData?.widgetHoverBackground || widgetData?.widgetBackgroundColour
+    }
+    const onMouseLeave = (e) => {
+        e.currentTarget.style.backgroundColor = widgetData?.widgetBackgroundColour
+    }
+
+    const onKpiClickDetails = (id) => {
+        const tabdt = allTabsData?.filter(tab => tab?.jsonData?.dashboardId === id)
+        setActiveTab(tabdt[0])
+        // console.log(, 'ids')
+    }
+
+
+    return (
+        <div className='small-box-kpi' style={{ backgroundColor: widgetData?.widgetBackgroundColour, height: "150px" }} onMouseEnter={onHover} onMouseLeave={onMouseLeave}>
+            <button
+                aria-expanded="false"
+                data-bs-toggle="dropdown"
+                type="button"
+                className="small-box-btn-dwn dropdown-toggle"
+            // style={{ marginTop: '5px', marginRight: '10px', float: 'right', zIndex: 1040 }}
+            >
+                <FontAwesomeIcon icon={faDownload} className="me-2 dropdown-gear-icon" />
+            </button>
+
+            <ul className="dropdown-menu" style={{ position: 'absolute', left: '50px', top: '0', margin: '2px 100px 0px' }}>
+                <li>
+                    <a
+                        className="text-decoration-none"
+                        style={{ cursor: 'pointer', color: '#000000', textShadow: 'none' }}
+                    // id={`KPI_PDF_${widgetData.rptId}`} 
+                    // onClick={() => downloadWidgetDataWithoutHTML(widgetData.rptId, 'PDF')}
+                    >
+                        <i className="fa fa-file-pdf-o"></i> &nbsp; Download PDF
+                    </a>
+                </li>
+                <li>
+                    <a
+                        className="text-decoration-none"
+                        style={{ cursor: 'pointer', color: '#000000', textShadow: 'none' }}
+                    // id={`KPI_Excel_${widgetData.rptId}`} 
+                    // onClick={() => downloadWidgetDataWithoutHTML(widgetData.rptId, 'EXCEL')}
+                    >
+                        <i className="fa fa-file-excel-o"></i> &nbsp; Download Excel
+                    </a>
+                </li>
+            </ul>
+            <div className="kpi-details-box">
+                <p className="sweet">
+                    <b>{widgetData?.rptId}:</b>
+                </p>
+                <h4 style={{ marginTop: "5px" }}>State : Rajasthan</h4>
+                <div style={{ borderBottom: "1px solid #525252", marginTop: "5px", marginBottom: "5px" }}></div>
+                <span className="sweet"><b>Value : 4 Lakh</b></span>
+                
+                {(widgetData?.onClickOfKPITabId !== '0' && widgetData?.onClickOfKPITabId !== '') &&
+                    <div className='small-box-kpi-link-dtl' onClick={() => onKpiClickDetails(widgetData?.onClickOfKPITabId)}>
+                        <span>{widgetData?.linkTab || 'Click For Details'}</span>
+                        <b><FontAwesomeIcon icon={faSearch} /></b>
+                    </div>
+                }
+            </div>
+            <div className="small-box-icon" >
+                <FontAwesomeIcon icon={getDynamicIcon(widgetData?.iconName)} />
+                <i className='fa fa-balance-scale'></i>
+            </div>
+            <a href="#" className="small-box-footer" style={{ display: 'none' }}>
+                More info <i className="fa fa-search"></i>
+            </a>
+        </div>
+    )
+}
+
+export default KpiDash

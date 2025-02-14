@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { ToastContainer } from 'react-toastify';
 import SpinLoader from './components/commons/Spinner';
+import DashboardMst from './pages/dashboard/DashboardMst';
+import TabDash from './components/sidebar/TabDash';
 
 const DbConfigMaster = lazy(() => import('./pages/dashboardMasterPgs/DbConfigMaster'));
 const ParameterMaster = lazy(() => import('./pages/dashboardMasterPgs/ParameterMaster'));
@@ -36,6 +38,8 @@ function App() {
           <Route exact path="/widget-master" name="login" element={<WidgetMaster />} />
           <Route exact path="/tab-master" name="Tab Master" element={<TabMaster />} />
           <Route exact path="/dashboard-master" name="Dashboard Master" element={<DashboardMaster />} />
+          <Route exact path="/dashboard" name="Dashboard Master" element={<DashboardMst />} />
+          {/* <Route exact path="/widget" name="Dashboard Master" element={<TabDash />} /> */}
         </Routes>
       </Suspense>
       <ToastContainer />

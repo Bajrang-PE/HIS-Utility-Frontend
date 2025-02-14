@@ -24,7 +24,7 @@ import { fetchPostData, fetchUpdateData } from '../../utils/ApiHooks'
 
 const WidgetMaster = () => {
 
-  const { setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, parameterData, getAllParameterData, widgetDrpData, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, actionMode, setActionMode, parameterDrpData, setLoading, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
+  const { setShowDataTable, allWidgetData, getAllWidgetData, dashboardForDt, getDashboardForDrpData, parameterData, getAllParameterData, widgetDrpData, getAllServiceData, dataServiceData, selectedOption, setSelectedOption, actionMode, setActionMode, parameterDrpData, setLoading, setShowConfirmSave, confirmSave, setConfirmSave, getAllTabsData, tabDrpData } = useContext(HISContext);
 
   const [values, setValues] = useState({
     "id": "", "widgetFor": "", "widgetType": "columnBased", "widgetNameDisplay": "", "widgetNameInternal": "", "widgetRefreshTime": "", "widgetRefreshDelayTime": "", "cachingStatus": "", "limit": "", "widgetHadingClr": "", "widgetTopMargin": "", "headingBgColor": "", "headingFontColor": "", "headingDisplayStyle": "", "recordsPerPage": "", "pagePerBlock": "", "DataScrollHeight": "", "parentWidget": "", "columnNoToDisplay": "", "leftClmNoToFixed": "", "rightClmNoToFixed": "", "linkedWidget": [], "actionBtnReq": "", "pdfTableFontSize": "", "pdfTableHeadBarClr": "", "pdfTableHeadTxtFontClr": "", "groupClmNoComma": "", "query": "", "webQuery": "", "procedureName": "", "recordsPerPageTreeCh": "", "parameterOption": "", "loadOption": "ONWINDOWLOAD", "paraComboBgColor": "", "paraComboFontColor": "", "paraLabelFontColor": "", "jndiSavingData": "", "stmtTimeOut": "", "lastUpdatedQuery": "", "FooterText": "", "customMsgForNoData": "", "treeChildQuery": "", "treeChildProcedure": "", "popUpDetails": [], "queryLabel": '', "htmlText": '', 'iconName': "",
@@ -78,7 +78,7 @@ const WidgetMaster = () => {
 
   //multi params
   const [availableOptions, setAvailableOptions] = useState([]);
-  const [selectedOptions, setSelectedOptions] = useState();
+  const [selectedOptions, setSelectedOptions] = useState([]);
 
   const [newRow, setNewRow] = useState({ modeForSQCHILDColumnNo: "", SQCHILDWidgetId: "", drillSQCHILDWidgetName: "" });
   const [otherLinkData, setOtherLinkData] = useState([{ otherLinkName: "", otherLinkURL: "" }]);
@@ -101,13 +101,15 @@ const WidgetMaster = () => {
       const fdt = selectedIds?.map(id => parameterDrpData?.find(dt => dt.value?.toString() === id))?.filter(Boolean);
       const availableOptions = parameterDrpData?.filter(dt => !selectedIds?.includes(dt?.value?.toString()));
 
-      setSelectedOptions(fdt);
-      setAvailableOptions(availableOptions);
+      setSelectedOptions(fdt?.length > 0 ? fdt : []);
+      setAvailableOptions(availableOptions?.length > 0 ? availableOptions : []);
     } else {
       setSelectedOptions([]);
       setAvailableOptions(parameterDrpData);
     }
   }, [values?.selFilterIds, parameterDrpData]);
+
+  console.log(singleData, 'val')
 
   useEffect(() => {
     if (selectedOptions?.length > 0) {
@@ -123,12 +125,18 @@ const WidgetMaster = () => {
   useEffect(() => {
     const localValues = localStorage.getItem('values');
     const localRadio = localStorage.getItem('radio');
+    const mode = localStorage.getItem('mode');
     // console.log(localValues, 'bgb')
     if (localValues && localValues !== '') {
-      setValues(JSON.parse(localValues));
+      const val = JSON.parse(localValues);
+      setValues(val);
+      setActionMode(mode);
+      setRows(val?.query);
+
     }
     if (localRadio && localRadio !== '') {
       setRadioValues(JSON.parse(localRadio));
+      setActionMode(mode)
     }
 
   }, []);
@@ -137,6 +145,7 @@ const WidgetMaster = () => {
     if (values?.widgetFor) {
       getAllWidgetData(values?.widgetFor);
       getAllParameterData(values?.widgetFor);
+      getAllTabsData(values?.widgetFor)
     }
   }, [values?.widgetFor])
 
@@ -231,6 +240,7 @@ const WidgetMaster = () => {
     }
     localStorage.setItem('values', JSON.stringify(values));
     localStorage.setItem('radio', JSON.stringify(radioValues));
+    localStorage.setItem('mode', actionMode);
   }
 
   const previousTab = () => {
@@ -260,6 +270,7 @@ const WidgetMaster = () => {
     setShowWebServiceTable(false);
     setSearchInput('');
     setSelectedOption([]);
+    setWidgetSearchInput('')
   }
 
   const reset = () => {
@@ -310,6 +321,7 @@ const WidgetMaster = () => {
     localStorage.removeItem('values');
     localStorage.removeItem('radio');
     setLoading(false)
+    onTableClose()
     // setIsInputChanged(false)
   }
 
@@ -318,10 +330,11 @@ const WidgetMaster = () => {
       const selectedRow = allWidgetData?.filter(dt => dt?.rptId === selectedOption[0]?.rptId)
       setSingleData(selectedRow);
       setActionMode('edit');
-      setShowParamsTable(false);
+      // setShowParamsTable(false);
       setShowDataTable(false);
-      setShowWebServiceTable(false);
-      setSelectedOption([]);
+      // setShowWebServiceTable(false);
+      // setSelectedOption([]);
+      onTableClose()
       // setIsInputChanged(true)
     } else {
       ToastAlert('Please select a record', 'warning');
@@ -344,7 +357,7 @@ const WidgetMaster = () => {
       setValues({
         ...values,
         id: singleData[0]?.rptId,
-        widgetFor: singleData[0]?.dashboardFor,//
+        widgetFor: singleData[0]?.dashboardFor || 'CENTRAL DASHBOARD',//
         widgetType: singleData[0]?.widgetType,//
         widgetNameDisplay: singleData[0]?.rptDisplayName,//
         widgetNameInternal: singleData[0]?.rptName,//
@@ -1176,17 +1189,17 @@ const WidgetMaster = () => {
 
     //  Query, WebService, Procedure Validations
     if (radioValues?.widgetViewed !== "Other_Link" && radioValues?.widgetViewed !== "Iframe") {
-      if (radioValues?.selectedModeQuery === "Query" && rows?.length > 0 && !rows[rows?.length - 1]?.mainQuery) {
-        newErrors.mainQueryErr = "Main query is required";
+      if (radioValues?.selectedModeQuery === "Query" && rows?.length > 0 && !rows[rows?.length - 1]?.mainQuery?.trim()) {
+        newErrors.mainQueryErr = "required";
         isValid = false;
       }
       if (radioValues?.selectedModeQuery === "WebSevice") {
         if (procedureRows?.length > 0 && !procedureRows[procedureRows?.length - 1]?.serviceReferenceNumber) {
-          newErrors.serviceReferenceNumberErr = "Service reference number is required";
+          newErrors.serviceReferenceNumberErr = "required";
           isValid = false;
         }
         if (procedureRows?.length > 0 && !procedureRows[procedureRows?.length - 1]?.webserviceName) {
-          newErrors.webserviceNameErr = "Web service name is required";
+          newErrors.webserviceNameErr = "required";
           isValid = false;
         }
       }
@@ -1312,9 +1325,10 @@ const WidgetMaster = () => {
     },
   ]
 
-  // console.log(values, 'values')
-  // console.log(selectedOptions, 'selectedOption')
-  // console.log(singleData)
+  // console.log(rows, 'rows')
+  // console.log(errors, 'errors')
+  // console.log(values)
+  // console.log(radioValues, 'rd')
   // console.log(allWidgetData?.filter(dt=>dt?.rptId == 11600023))
 
   return (
@@ -1354,7 +1368,7 @@ const WidgetMaster = () => {
                   }
 
                   {radioValues?.widgetViewed === "KPI" &&
-                    <KpiWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} errors={errors} />
+                    <KpiWidget handleValueChange={handleValueChange} handleRadioChange={handleRadioChange} radioValues={radioValues} values={values} setValues={setValues} errors={errors} widgetDrpData={widgetDrpData} tabDrpData={tabDrpData} />
                   }
 
                   {radioValues?.widgetViewed === "Criteria_Map" &&

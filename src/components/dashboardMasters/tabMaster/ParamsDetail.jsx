@@ -61,7 +61,7 @@ const ParamsDetail = (props) => {
         }
     };
 
-
+console.log(selectedOptions,'selectedOptions')
     return (
         <>
             <b><h6 className='header-devider m-0'>Parameter Details</h6></b>

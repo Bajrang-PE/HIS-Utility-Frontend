@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import NavbarHeader from '../../components/headers/NavbarHeader'
 import InputField from '../../components/commons/InputField'
-import '../cssPages/DbConfigMaster.css'
 import InputSelect from '../../components/commons/InputSelect'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faDatabase, faEdit, faFile, faRefresh, faTrash } from '@fortawesome/free-solid-svg-icons'
