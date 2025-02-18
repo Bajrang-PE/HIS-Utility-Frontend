@@ -250,35 +250,35 @@ const ParameterMaster = () => {
       setErrors(prev => ({ ...prev, 'mandatoryErr': "mandatory is required" }));
       isValid = false;
     }
-    if (values?.modeForQuery === "query" && values?.parameterType !== '2' && values?.parameterType !== '3' && !values?.query?.trim()) {
+    if (values?.modeForQuery === "query" && values?.parameterType !== '2' && values?.parameterType !== '4' && !values?.query?.trim()) {
       setErrors(prev => ({ ...prev, 'queryErr': "query is required" }));
       isValid = false;
     }
-    if (values?.parameterType === '3' && !values?.parameterQueryForDate?.trim()) {
+    if (values?.parameterType === '4' && !values?.parameterQueryForDate?.trim()) {
       setErrors(prev => ({ ...prev, 'parameterQueryForDateErr': "query is required" }));
       isValid = false;
     }
-    if (values?.parameterType !== '2' && values?.parameterType !== '3' && !values?.defaultOptValue?.trim()) {
+    if (values?.parameterType !== '2' && values?.parameterType !== '4' && !values?.defaultOptValue?.trim()) {
       setErrors(prev => ({ ...prev, 'defaultOptValueErr': "default Value is required" }));
       isValid = false;
     }
-    if (values?.parameterType !== '2' && values?.parameterType !== '3' && !values?.defaultOptText?.trim()) {
+    if (values?.parameterType !== '2' && values?.parameterType !== '4' && !values?.defaultOptText?.trim()) {
       setErrors(prev => ({ ...prev, 'defaultOptTextErr': "default text is required" }));
       isValid = false;
     }
-    if (values?.parameterType !== '2' && values?.parameterType !== '3' && !values?.defOptFilterVal?.trim()) {
+    if (values?.parameterType !== '2' && values?.parameterType !== '4' && !values?.defOptFilterVal?.trim()) {
       setErrors(prev => ({ ...prev, 'defOptFilterValErr': "filter value is required" }));
       isValid = false;
     }
-    if (values?.parameterType !== '2' && values?.parameterType !== '3' && !values?.defOptFilterTxt?.trim()) {
+    if (values?.parameterType !== '2' && values?.parameterType !== '4' && !values?.defOptFilterTxt?.trim()) {
       setErrors(prev => ({ ...prev, 'defOptFilterTxtErr': "filter text is required" }));
       isValid = false;
     }
-    if (values?.parameterType !== '2' && values?.parameterType !== '3' && values?.modeForQuery === "multiRowOption" && rows?.length > 0 && !rows[rows?.length - 1]?.optionValue) {
+    if (values?.parameterType !== '2' && values?.parameterType !== '4' && values?.modeForQuery === "multiRowOption" && rows?.length > 0 && !rows[rows?.length - 1]?.optionValue) {
       setErrors(prev => ({ ...prev, 'listOptValErr': "list option value is required" }));
       isValid = false;
     }
-    if (values?.parameterType !== '2' && values?.parameterType !== '3' && values?.modeForQuery === "multiRowOption" && rows?.length > 0 && !rows[rows?.length - 1]?.optionText) {
+    if (values?.parameterType !== '2' && values?.parameterType !== '4' && values?.modeForQuery === "multiRowOption" && rows?.length > 0 && !rows[rows?.length - 1]?.optionText) {
       setErrors(prev => ({ ...prev, 'listOptTxtErr': "list option text is required" }));
       isValid = false;
     }
@@ -710,7 +710,7 @@ const ParameterMaster = () => {
                 </div>
               </div>
               {/* right columns */}
-              {(values?.parameterType === '2' || values?.parameterType === '3') &&
+              {(values?.parameterType === '2' || values?.parameterType === '4') &&
                 <div className='col-sm-6'>
                   <div className="form-group row" style={{ paddingBottom: "1px" }}>
                     <label className="col-sm-5 col-form-label fix-label pe-0">Default Value (If Left Empty) : </label>
@@ -800,7 +800,7 @@ const ParameterMaster = () => {
             }
 
             {/* SECTION DEVIDER parent and mode query*/}
-            {(values?.parameterType !== '2' && values?.parameterType !== '3') &&
+            {(values?.parameterType !== '2' && values?.parameterType !== '4') &&
               <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
@@ -847,7 +847,7 @@ const ParameterMaster = () => {
               <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
-                  {values?.parameterType === "3" &&
+                  {values?.parameterType === "4" &&
                     <div className="form-group row">
                       <label className="col-sm-5 col-form-label fix-label pe-0 required-label">Query For Default Date : </label>
                       <div className="col-sm-7 ps-0 align-content-center">
@@ -868,7 +868,7 @@ const ParameterMaster = () => {
                       </div>
                     </div>
                   }
-                  {(values?.modeForQuery === "query" && values?.parameterType !== "3") &&
+                  {(values?.modeForQuery === "query" && values?.parameterType !== "4") &&
                     <div className="form-group row">
                       <label className="col-sm-5 col-form-label fix-label pe-0 required-label">Query : </label>
                       <div className="col-sm-7 ps-0 align-content-center">
@@ -897,7 +897,7 @@ const ParameterMaster = () => {
             }
 
             {/* SECTION DEVIDER for date limits*/}
-            {values?.parameterType === '3' &&
+            {values?.parameterType === '4' &&
               <div iv className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>
@@ -966,7 +966,7 @@ const ParameterMaster = () => {
             }
 
             {/* MAIN DEVIDER for list options */}
-            {(values?.modeForQuery === "multiRowOption" && values?.parameterType !== '3' && values?.parameterType !== '2') &&
+            {(values?.modeForQuery === "multiRowOption" && values?.parameterType !== '4' && values?.parameterType !== '2') &&
               <>
                 <b><h6 className='header-devider mt-2'> List Options</h6></b>
                 <div className="mx-4">
@@ -1034,7 +1034,7 @@ const ParameterMaster = () => {
               </>
             }
             {/* SECTION DEVIDER for default values */}
-            {(values?.parameterType !== '2' && values?.parameterType !== '3') &&
+            {(values?.parameterType !== '2' && values?.parameterType !== '4') &&
               <div className="">
                 {/* HEADING TEXT */}
                 <div className="row">
@@ -1123,7 +1123,7 @@ const ParameterMaster = () => {
             }
 
             {/* SECTION DEVIDER is multiple req*/}
-            {(values?.parameterType !== '2' && values?.parameterType !== '3') &&
+            {(values?.parameterType !== '2' && values?.parameterType !== '4') &&
               <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>
                 {/* //left columns */}
                 <div className='col-sm-6'>

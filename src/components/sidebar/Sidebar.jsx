@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Menu, MenuItem, SubMenu, Sidebar } from "react-pro-sidebar";
 import { FaBars, FaThLarge, FaStickyNote, FaBook } from "react-icons/fa";
 
-const DashSidebar = ({ data, setActiveTab, activeTab }) => {
+const DashSidebar = ({ data, setActiveTab, activeTab, dashboardName }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [openSubMenu, setOpenSubMenu] = useState(null);
 
@@ -21,12 +21,12 @@ const DashSidebar = ({ data, setActiveTab, activeTab }) => {
     const getChildTabs = (parentId) => {
         return data?.filter(tab => tab.jsonData.parentTabId === String(parentId));
     };
-console.log(activeTab,'activeTab',openSubMenu)
+
     return (
-        <Sidebar width="280px" style={{ minHeight: "100vh", color: "#ECF0F1" }} collapsed={collapsed} toggled backgroundColor="#071b2f">
+        <Sidebar width="270px" style={{ minHeight: "100vh", color: "#ECF0F1" }} collapsed={collapsed} toggled backgroundColor="#071b2f">
             <Menu iconShape="square">
                 <MenuItem className="menu-item-container">
-                    {!collapsed && <span><b>Dashboard</b></span>}
+                    {!collapsed && <span><b>{dashboardName || "Dashboard"}</b></span>}
                     <FaBars onClick={toggleSidebar} className="menu-icon-right" />
                 </MenuItem>
 
@@ -51,7 +51,7 @@ console.log(activeTab,'activeTab',openSubMenu)
                                     className={`menu-tab-item ${activeTab?.jsonData?.dashboardId === child?.jsonData?.dashboardId ? 'activeSideTab' : ''}`}
                                     icon={<FaThLarge />}
                                 >
-                                    {!collapsed && <> {child?.jsonData?.dashboardName}</>}
+                                     {child?.jsonData?.dashboardName}
                                 </MenuItem>
                             ))}
                         </SubMenu>
@@ -59,21 +59,13 @@ console.log(activeTab,'activeTab',openSubMenu)
                         <MenuItem
                             key={tab.id}
                             icon={<FaThLarge />}
-                            onClick={() => { setActiveTab(tab); handleSubMenuClick('');}}
+                            onClick={() => { setActiveTab(tab); handleSubMenuClick(''); }}
                             className={`menu-tab-item ${activeTab?.jsonData?.dashboardId === tab?.jsonData?.dashboardId ? 'activeSideTab' : ''}`}
                         >
                             {!collapsed && <>  {tab?.jsonData?.dashboardName}</>}
                         </MenuItem>
                     );
                 })}
-
-                <MenuItem
-                    icon={<FaStickyNote />}
-                    // onClick={() => { setActiveComponent("Components"); }}
-                    // className={`${activeComponent === 'Components' ? 'activeSideTab' : ''}`}
-                >
-                    Components
-                </MenuItem>
             </Menu>
         </Sidebar>
     );

@@ -7,9 +7,9 @@ export const itemForDashboard = [
 export const parameterType = [
     { value: '1', label: "Combo" },
     { value: '2', label: "TextBox" },
-    { value: '3', label: "Date Pick" },
-    { value: '4', label: "CheckBox" },
-    { value: '5', label: "Radio Button" }
+    { value: '4', label: "Date Pick" },
+    { value: '6', label: "CheckBox" },
+    { value: '7', label: "Radio Button" }
 ]
 
 export const parameterWidth = [

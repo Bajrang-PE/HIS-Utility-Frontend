@@ -4,8 +4,8 @@ import axios from 'axios';
 // import Cookies from 'js-cookie';
 
 // const BaseUrl = 'http://10.226.50.25:8003';
-// const BaseUrl = 'http://10.226.25.164:8024';  //pritee
-const BaseUrl = 'http://10.226.17.6:8024';  //BG
+const BaseUrl = 'http://10.226.25.164:8024';  //pritee
+// const BaseUrl = 'http://10.226.17.6:8024';  //BG
 // const BaseUrl1 = 'http://10.226.29.211:8025/';  //Disha
 
 

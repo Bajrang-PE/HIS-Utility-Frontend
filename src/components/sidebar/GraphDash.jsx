@@ -74,7 +74,7 @@ const GraphDash = ({ widgetData }) => {
     },
   ];
 
-  console.log(chartType, "tt",widgetData.rptName);
+  // console.log(chartType, "tt",widgetData.rptName);
 
   // Highcharts options
   const options = {

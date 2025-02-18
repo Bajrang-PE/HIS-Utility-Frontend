@@ -12,6 +12,7 @@ import { HISContext } from '../../contextApi/HISContext'
 import { ToastAlert } from '../../utils/commonFunction'
 import GlobalDataTable from '../../components/commons/GlobalDataTable'
 import { fetchPostData } from '../../utils/ApiHooks'
+import { Link } from 'react-router-dom'
 
 const DashboardMaster = () => {
 
@@ -582,16 +583,24 @@ const DashboardMaster = () => {
     {
       name: 'Group Name',
       selector: row => row?.jsonData?.groupName || "---",
+      cell: row => <a
+        href={`/dashboard?groupId=${row.id}&dashboardFor=${row?.dashboardFor}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className='text-decoration-none'
+      >
+        {row?.jsonData?.groupName}
+      </a>,
       sortable: true,
     },
     {
       name: 'URL',
-      selector: row => row?.jsonData?.groupUrl || "---",
+      selector: row => `/dashboard?groupId=${row.id}&dashboardFor=${row?.dashboardFor}` || "---",
       sortable: true,
     }
   ]
 
-  console.log(singleData, 'single')
+  console.log(filterData, 'single')
 
   return (
     <div>

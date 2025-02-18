@@ -16,7 +16,7 @@ import NewsTickWidget from '../../components/dashboardMasters/widgetMaster/NewsT
 import GlobalDataTable from '../../components/commons/GlobalDataTable'
 import { HISContext } from '../../contextApi/HISContext'
 import DataServiceTable from '../../components/webServiceMasters/dataService/DataServiceTable'
-import { parameterType } from '../../localData/DropDownData'
+import { graphOptions, parameterType } from '../../localData/DropDownData'
 import ParamsDetail from '../../components/dashboardMasters/tabMaster/ParamsDetail'
 import InputSelect from '../../components/commons/InputSelect'
 import { ToastAlert } from '../../utils/commonFunction'
@@ -281,8 +281,7 @@ const WidgetMaster = () => {
       //graphs fields
       "defaultPluginName": "highchart", "defaultGraphType": "BAR_GRAPH", "graphTypes": [], "clmNameForLineGraph": "", "colorsForBars": "", "graphHeight": "", "graphBottomMargin": "", "graphBgStartColor": "", "graphBgEndColor": "", "graphFontColor": "", "graphTypeBgColor": "", "graphTypeFontColor": "", "labelRotation": "", "alphaGraph3D": "", "betaGraph3D": "", "xAxisLabel": "", "yAxisLabel": "", "xAxisFontSize": "", "yAxisFontSize": "", "annotationFontSize": "", "maxValueOfAxis": "", "parentWidgetGraph": "", "isActionBtnReqGraph": "Yes", "minValueOfAxis": "",
       //kpi details
-      "kpiType": "", "kpiBorderWidth": "", "kpiBorderColor": "", "kpiIconType": "FONT_ICON", "kpiTabIconImage": "", "kpiDefaultBgColor": "", "kpiDefaultFontColor": "", "kpiDefaultHoverBg": "", "kpiIconColor": "", "kpiBoxClickOptions": "0", "kpiTabOpenOnClick": "", "kpiWidgetOpenOnClick": "", "kpiDashboardOpenOnClick": "",
-      "kpiTabLinkName": "", "kpiWidgetLinkName": "", "kpiLinkColor": "", "kpiLinkFontColor": "",
+      "kpiType": "", "kpiBorderWidth": "", "kpiBorderColor": "", "kpiIconType": "FONT_ICON", "kpiTabIconImage": "", "kpiDefaultBgColor": "", "kpiDefaultFontColor": "", "kpiDefaultHoverBg": "", "kpiIconColor": "", "kpiBoxClickOptions": "0", "kpiTabOpenOnClick": "", "kpiWidgetOpenOnClick": "", "kpiDashboardOpenOnClick": "", "kpiTabLinkName": "", "kpiWidgetLinkName": "", "kpiLinkColor": "", "kpiLinkFontColor": "",
       //map fields
       "mapName": "", "parentWidgetMap": "", "mapIncreasingIntensity": "",
       //newsTicker Fields
@@ -408,7 +407,7 @@ const WidgetMaster = () => {
         //graph
         defaultPluginName: singleData[0]?.graphPluginName,//
         defaultGraphType: singleData[0]?.defaultgraphType,//
-        graphTypes: singleData[0]?.graphChangeOptions,//
+        graphTypes: singleData[0]?.graphChangeOptions?.length > 0 && singleData[0]?.graphChangeOptions?.map(tp => graphOptions?.find(type => type?.value === tp)).filter(type => type !== undefined),//
         clmNameForLineGraph: singleData[0]?.lineGraphColumnName,//
         colorsForBars: singleData[0]?.colorForBars,//
         graphHeight: singleData[0]?.graphHeight,//
@@ -1327,7 +1326,7 @@ const WidgetMaster = () => {
 
   // console.log(rows, 'rows')
   // console.log(errors, 'errors')
-  // console.log(values)
+  console.log(values?.graphTypes, 'bgbgbgbg')
   // console.log(radioValues, 'rd')
   // console.log(allWidgetData?.filter(dt=>dt?.rptId == 11600023))
 

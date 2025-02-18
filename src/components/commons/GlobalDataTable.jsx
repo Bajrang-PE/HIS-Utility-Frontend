@@ -71,7 +71,7 @@ const GlobalDataTable = (props) => {
                         columns={column}
                         data={data}
                         pagination
-                        pointerOnHover
+                        // pointerOnHover
                         customStyles={tableCustomStyles}
                     />
                 </Modal.Body>

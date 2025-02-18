@@ -1,16 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react'
 import WidgetDash from './WidgetDash';
 import { HISContext } from '../../contextApi/HISContext';
+import Parameters from './Parameters';
 
 const TabDash = (props) => {
-    const { tabData } = props;
+    const { tabData, dashboardFor } = props;
     const { allWidgetData, getAllWidgetData, } = useContext(HISContext);
     const [presentWidgets, setPresentWidgets] = useState([]);
     const [tabWidgets, setTabWidgets] = useState([])
 
     useEffect(() => {
-        getAllWidgetData('CENTRAL DASHBOARD')
-    }, [])
+        if (dashboardFor) {
+            getAllWidgetData(dashboardFor)
+        }
+    }, [dashboardFor])
 
     useEffect(() => {
         if (tabData?.jsonData?.lstDashboardWidgetMapping?.length > 0) {
@@ -32,10 +35,14 @@ const TabDash = (props) => {
         return null;
     };
 
-    // console.log(presentWidgets, 'ss')
 
     return (
-        
+        <>
+            {tabData?.jsonData?.allParameters &&
+                <div className='parameter-box'>
+                    <Parameters params={tabData?.jsonData?.allParameters} dashFor={tabData?.dashboardFor} />
+                </div>
+            }
             <div className='row'>
                 {tabWidgets.map((widget, index) => {
                     const widgetDetail = getSingleWidget(widget.rptId);
@@ -44,8 +51,8 @@ const TabDash = (props) => {
                             {widgetDetail ? (
                                 <>
                                     {/* <p>Widget Name: {widgetDetail.rptName}</p> */}
-                                    <div className={`col-sm-${widget?.widgetWidth}`} style={{padding:"5px 3px"}}>
-                                        <WidgetDash widgetDetail={widgetDetail}/>
+                                    <div className={`col-sm-${widget?.widgetWidth}`} style={{ padding: "5px 3px" }}>
+                                        <WidgetDash widgetDetail={widgetDetail} />
                                     </div>
                                 </>
                             ) : (
@@ -55,7 +62,7 @@ const TabDash = (props) => {
                     );
                 })}
             </div>
-        
+        </>
     )
 }
 
