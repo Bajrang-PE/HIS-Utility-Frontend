@@ -2,6 +2,7 @@ import React from 'react'
 import InputSelect from '../../commons/InputSelect'
 import Select from 'react-select';
 import InputField from '../../commons/InputField';
+import { mapNameOptions } from '../../../localData/DropDownData';
 
 const MapWidget = (props) => {
     const { handleValueChange, handleRadioChange, radioValues, values, parentWidget, setValues,errors } = props;
@@ -18,12 +19,12 @@ const MapWidget = (props) => {
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputSelect
                                 className="backcolorinput"
-                                placeholder="Enter value..."
+                                // placeholder="Enter value..."
                                 name='mapName'
                                 id="mapName"
-                                options={[{ value: 'india', label: "India" }]}
+                                options={mapNameOptions}
                                 onChange={handleValueChange}
-                                value={values?.mapName}
+                                value={values?.mapNameOptions}
                                 errorMessage={errors?.mapNameErr}
 
                             />

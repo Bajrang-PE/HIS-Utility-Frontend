@@ -16,6 +16,12 @@
     color: #FFEB3B !important; 
 }
 
+.topbar-brand{
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: #FFEB3B !important;
+}
+
 /* Style for the dropdown anchor link */
 .dropdownAnchor {
     font-size: 1rem;
@@ -89,16 +95,58 @@
     }
 }
 
-/* Navbar Toggler Icon */
-/* .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml;charset=UTF8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255,255,255,0.7)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+
+.scrollable-navbar-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    /* overflow: hidden; */
+    width: 100%;
 }
 
-.navbar-toggler {
+.scrollable-navbar {
+    display: flex;
+    flex-wrap: nowrap;
+    /* overflow-x: auto; */
+    scrollbar-width: none; /* Hide scrollbar */
+    -ms-overflow-style: none; /* Hide scrollbar for IE */
+    white-space: nowrap;
+}
+
+.scrollable-navbar::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari */
+}
+
+.scroll-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
     border: none;
-    outline: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    z-index: 10;
 }
 
-.navbar-toggler:hover .navbar-toggler-icon {
-    filter: brightness(1.2);
-} */
+.scroll-button.left {
+    left: 0;
+}
+
+.scroll-button.right {
+    right: 0;
+}
+
+/* Hide scroll buttons on mobile */
+@media (max-width: 768px) {
+    .scroll-button {
+        display: none !important;
+    }
+}
+
+/* Dropdown styling */
+.navbar-nav .dropdown-menu {
+    position: absolute !important;
+    z-index: 1000;
+    min-width: 200px;
+}

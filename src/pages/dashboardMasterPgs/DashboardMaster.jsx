@@ -67,7 +67,6 @@ const DashboardMaster = () => {
   useEffect(() => {
     const localValues = localStorage.getItem('values');
     const localRadio = localStorage.getItem('radio');
-    // console.log(localValues, 'bgb')
     if (localValues && localValues !== '') {
       setValues(JSON.parse(localValues));
     }
@@ -91,7 +90,6 @@ const DashboardMaster = () => {
         return paramId?.includes(lowercasedText) || paramName.includes(lowercasedText) || paramDisplayName.includes(lowercasedText);
       });
       setFilterData(newFilteredData);
-      console.log(newFilteredData, 'newFilteredData')
     }
   }, [searchInput, dashboardData]);
 
@@ -600,7 +598,6 @@ const DashboardMaster = () => {
     }
   ]
 
-  console.log(filterData, 'single')
 
   return (
     <div>

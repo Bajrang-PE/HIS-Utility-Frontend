@@ -4,13 +4,13 @@ import { HISContext } from "../../contextApi/HISContext";
 import TabDash from "../../components/sidebar/TabDash";
 import { useSearchParams } from "react-router-dom";
 import { fetchData } from "../../utils/ApiHooks";
+import TopBar from "../../components/sidebar/TopBar";
 
 const DashboardMst = () => {
     const { getAllTabsData, allTabsData, activeTab, setActiveTab } = useContext(HISContext);
-    const [activeComponent, setActiveComponent] = useState("Dashboard");
     const [presentTabs, setPresentTabs] = useState([]);
     const [searchParams] = useSearchParams();
-    const [dashboardData, setDashboardData] = useState()
+    const [dashboardData, setDashboardData] = useState();
 
     // Get values from query params
     const groupId = searchParams.get("groupId");
@@ -35,7 +35,6 @@ const DashboardMst = () => {
     useEffect(() => {
         if (allTabsData?.length > 0 && dashboardData) {
             const dashboardIdsArray = dashboardData?.jsonData?.dashboardIds ? dashboardData?.jsonData?.dashboardIds.split(',').map(id => Number(id)) : [];
-            // const availableTabs = allTabsData.filter(tab => dashboardIdsArray.includes(tab.id));
             const availableTabs = dashboardIdsArray
                 .map(id => allTabsData.find(tab => tab.id === id))
                 .filter(tab => tab !== undefined);
@@ -45,9 +44,14 @@ const DashboardMst = () => {
 
 
     return (
-        <div style={{ display: "flex", backgroundColor: "#f4f4f4", minHeight: "100vh" }}>
-            <DashSidebar data={presentTabs} setActiveTab={setActiveTab} activeTab={activeTab} dashboardName={dashboardData?.jsonData?.groupName} />
-            <main style={{ padding: "20px", flex: 1, backgroundColor: "#fff", borderRadius: "10px", margin: "20px" }}>
+        <div style={{ display: dashboardData?.jsonData?.tabDisplayStyle === 'TOP' ? "block" : 'flex', backgroundColor: "#f4f4f4", minHeight: "100vh" }}>
+            {dashboardData?.jsonData?.tabDisplayStyle === 'TOP' ?
+                <TopBar data={presentTabs} setActiveTab={setActiveTab} activeTab={activeTab} dashboardData={dashboardData} />
+                :
+                <DashSidebar data={presentTabs} setActiveTab={setActiveTab} activeTab={activeTab} dashboardData={dashboardData} />
+            }
+
+            <main style={{ padding: "10px", flex: 1, margin: "10px" }}>
                 <TabDash tabData={activeTab} dashboardFor={dashboardFor} />
             </main>
         </div>

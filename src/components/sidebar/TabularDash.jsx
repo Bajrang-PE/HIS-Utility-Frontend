@@ -43,7 +43,6 @@ const hospitalData = {
 };
 
 const TabularDash = ({ widgetData }) => {
-  console.log(widgetData, 'widgetdata')
 
   const [currentLevel, setCurrentLevel] = useState("state");
   const [currentData, setCurrentData] = useState(initialStates);

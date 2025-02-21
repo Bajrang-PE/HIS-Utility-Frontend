@@ -34,7 +34,7 @@ const WidgetMaster = () => {
     "kpiType": "", "kpiBorderWidth": "", "kpiBorderColor": "", "kpiIconType": "FONT_ICON", "kpiTabIconImage": "", "kpiDefaultBgColor": "", "kpiDefaultFontColor": "", "kpiDefaultHoverBg": "", "kpiIconColor": "", "kpiBoxClickOptions": "0", "kpiTabOpenOnClick": "", "kpiWidgetOpenOnClick": "", "kpiDashboardOpenOnClick": "",
     "kpiTabLinkName": "", "kpiWidgetLinkName": "", "kpiLinkColor": "", "kpiLinkFontColor": "",
     //map fields
-    "mapName": "", "parentWidgetMap": "", "mapIncreasingIntensity": "",
+    "mapName": "india", "parentWidgetMap": "", "mapIncreasingIntensity": "",
     //newsTicker Fields
     "noOfNewsVisible": "", "newsSpeed": "normal", "newsInterval": "5000",
     //iframe
@@ -283,7 +283,7 @@ const WidgetMaster = () => {
       //kpi details
       "kpiType": "", "kpiBorderWidth": "", "kpiBorderColor": "", "kpiIconType": "FONT_ICON", "kpiTabIconImage": "", "kpiDefaultBgColor": "", "kpiDefaultFontColor": "", "kpiDefaultHoverBg": "", "kpiIconColor": "", "kpiBoxClickOptions": "0", "kpiTabOpenOnClick": "", "kpiWidgetOpenOnClick": "", "kpiDashboardOpenOnClick": "", "kpiTabLinkName": "", "kpiWidgetLinkName": "", "kpiLinkColor": "", "kpiLinkFontColor": "",
       //map fields
-      "mapName": "", "parentWidgetMap": "", "mapIncreasingIntensity": "",
+      "mapName": "india", "parentWidgetMap": "", "mapIncreasingIntensity": "",
       //newsTicker Fields
       "noOfNewsVisible": "", "newsSpeed": "normal", "newsInterval": "5000",
       //iframe

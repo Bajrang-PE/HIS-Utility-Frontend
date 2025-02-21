@@ -26,7 +26,6 @@ const KpiDash = ({ widgetData }) => {
         if (!iconKey) {
             iconKey = Object.keys(SolidIcons).find(key => key.toLowerCase().includes(formattedIconName.toLowerCase().replace(/[^a-zA-Z]/g, "")));
         }
-
         return iconKey ? SolidIcons[iconKey] : SolidIcons.faMedkit;
     };
 
@@ -64,7 +63,7 @@ const KpiDash = ({ widgetData }) => {
                     // id={`KPI_PDF_${widgetData.rptId}`} 
                     // onClick={() => downloadWidgetDataWithoutHTML(widgetData.rptId, 'PDF')}
                     >
-                        <i className="fa fa-file-pdf-o"></i> &nbsp; Download PDF
+                        <i className="fa fa-file-pdf"></i> &nbsp; Download PDF
                     </a>
                 </li>
                 <li>
@@ -74,18 +73,18 @@ const KpiDash = ({ widgetData }) => {
                     // id={`KPI_Excel_${widgetData.rptId}`} 
                     // onClick={() => downloadWidgetDataWithoutHTML(widgetData.rptId, 'EXCEL')}
                     >
-                        <i className="fa fa-file-excel-o"></i> &nbsp; Download Excel
+                        <i className="fa fa-file-excel"></i> &nbsp; Download Excel
                     </a>
                 </li>
             </ul>
             <div className="kpi-details-box">
                 <p className="sweet">
-                    <b>{widgetData?.rptId}:</b>
+                    <b>{widgetData?.rptId}:{widgetData?.rptName}</b>
                 </p>
                 <h4 style={{ marginTop: "5px" }}>State : Rajasthan</h4>
                 <div style={{ borderBottom: "1px solid #525252", marginTop: "5px", marginBottom: "5px" }}></div>
                 <span className="sweet"><b>Value : 4 Lakh</b></span>
-                
+
                 {(widgetData?.onClickOfKPITabId !== '0' && widgetData?.onClickOfKPITabId !== '') &&
                     <div className='small-box-kpi-link-dtl' onClick={() => onKpiClickDetails(widgetData?.onClickOfKPITabId)}>
                         <span>{widgetData?.linkTab || 'Click For Details'}</span>
@@ -95,7 +94,7 @@ const KpiDash = ({ widgetData }) => {
             </div>
             <div className="small-box-icon" >
                 <FontAwesomeIcon icon={getDynamicIcon(widgetData?.iconName)} />
-                <i className='fa fa-balance-scale'></i>
+                {/* <i className='fa fa-balance-scale'></i> */}
             </div>
             <a href="#" className="small-box-footer" style={{ display: 'none' }}>
                 More info <i className="fa fa-search"></i>

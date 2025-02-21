@@ -58,7 +58,7 @@ const TabMaster = () => {
 
   //multi params
   const [availableOptions, setAvailableOptions] = useState([]);
-  const [selectedOptions, setSelectedOptions] = useState();
+  const [selectedOptions, setSelectedOptions] = useState([]);
 
   const [errors, setErrors] = useState({ tabForErr: "", tabNameDisplayErr: "", tabNameInternalErr: "", tabNameFontWeightErr: "", tabNameFontSizeErr: "", tabNameTxtDecoratErr: "", showTabNameInDetailErr: "", displayOrderErr: "", widgetWidthErr: "", widgetHeightErr: "", fileNameForManualDocumentErr: "", displayNameForManualDocumentErr: "" });
 
@@ -94,7 +94,7 @@ const TabMaster = () => {
       const fdt = selectedIds?.map(id => parameterDrpData?.find(dt => dt.value?.toString() === id))?.filter(Boolean);
       const availableOptions = parameterDrpData?.filter(dt => !selectedIds?.includes(dt?.value?.toString()));
 
-      setSelectedOptions(fdt);
+      setSelectedOptions(fdt?.length > 0 ? fdt : []);
       setAvailableOptions(availableOptions);
     } else {
       setSelectedOptions([]);
@@ -597,7 +597,7 @@ const TabMaster = () => {
   ]
 
   // console.log(singleData, 'single')
-  console.log(values, 'values')
+  console.log(selectedOptions, 'values')
 
   return (
     <>

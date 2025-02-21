@@ -2,7 +2,7 @@ import React from 'react'
 import InputSelect from '../../commons/InputSelect'
 import InputField from '../../commons/InputField'
 import Select from 'react-select'
-import { graphOptions, isActionButtonReqOptions } from '../../../localData/DropDownData'
+import { googleChartOptions, graphOptions, highchartGraphOptions, isActionButtonReqOptions } from '../../../localData/DropDownData'
 
 const GraphWidget = (props) => {
     const { handleValueChange, handleRadioChange, radioValues, values, setValues, parentWidget, errors, setErrors } = props;
@@ -62,7 +62,7 @@ const GraphWidget = (props) => {
                                 // placeholder="Enter value..."
                                 name='defaultGraphType'
                                 id="defaultGraphType"
-                                options={graphOptions}
+                                options={values?.defaultPluginName === "googlechart" ? googleChartOptions : highchartGraphOptions}
                                 onChange={handleValueChange}
                                 value={values?.defaultGraphType}
                                 errorMessage={errors?.defaultGraphTypeErr}
@@ -137,7 +137,7 @@ const GraphWidget = (props) => {
                             <Select
                                 id='graphTypes'
                                 name='graphTypes'
-                                options={graphOptions}
+                                options={values?.defaultPluginName === "googlechart" ? googleChartOptions : highchartGraphOptions}
                                 isMulti
                                 placeholder="Select value..."
                                 className="backcolorinput react-select-multi"

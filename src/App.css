@@ -436,8 +436,8 @@ label {
 
 .menu-tab-item:hover,
 .ps-menu-button:hover {
-  background-color: #1f4068 !important;
-  color: #ffffff !important;
+  /* background-color: #1f4068 !important; */
+  /* color: #ffffff !important; */
 }
 
 .submenu-tab-side div {
@@ -589,12 +589,12 @@ label {
   height: 650px;
   overflow: auto;
   padding-top: 1px;
-  border: 7px solid black; /* Set top border */
-  border-width: 7px 1px 1px 1px; /* Maintain individual border widths */
+  border: 7px solid black;
+  border-width: 7px 1px 1px 1px; 
   font-size: 12.9px;
-  border-radius: 8px; /* Optional: Smooth corners */
-  background-color: white; /* Ensures clear background */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Soft shadow */
+  border-radius: 8px; 
+  background-color: white; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 } 
 
 .tabular-box{
@@ -612,4 +612,12 @@ label {
 }
 .rdt_TableHead{
   z-index: 0 !important;
+}
+
+.help-docs {
+  display: flex;
+  justify-content: flex-end; 
+  align-items: center; 
+  width: 100%;
+  /* padding: 10px;  */
 }

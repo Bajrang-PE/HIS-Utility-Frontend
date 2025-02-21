@@ -1,69 +1,92 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react';
 import WidgetDash from './WidgetDash';
 import { HISContext } from '../../contextApi/HISContext';
 import Parameters from './Parameters';
+import PdfDownload from '../commons/PdfDownload';
 
 const TabDash = (props) => {
     const { tabData, dashboardFor } = props;
-    const { allWidgetData, getAllWidgetData, } = useContext(HISContext);
+    const { allWidgetData, getAllWidgetData, setLoading, loading, activeTab } = useContext(HISContext);
     const [presentWidgets, setPresentWidgets] = useState([]);
-    const [tabWidgets, setTabWidgets] = useState([])
+    const [tabWidgets, setTabWidgets] = useState([]);
+    const [paramsValues, setParamsValues] = useState();
 
     useEffect(() => {
         if (dashboardFor) {
-            getAllWidgetData(dashboardFor)
+            getAllWidgetData(dashboardFor);
         }
-    }, [dashboardFor])
+    }, [dashboardFor]);
 
     useEffect(() => {
         if (tabData?.jsonData?.lstDashboardWidgetMapping?.length > 0) {
             const widgetIds = tabData?.jsonData?.lstDashboardWidgetMapping;
-            const availableWidgetss = widgetIds
+            const availableWidgets = widgetIds
                 .map(wid => allWidgetData.find(widget => widget?.rptId === wid?.rptId))
                 .filter(widget => widget !== undefined);
-            setPresentWidgets(availableWidgetss)
+
+            setPresentWidgets(availableWidgets);
             const sortedWidgets = [...widgetIds].sort((a, b) => parseInt(a.displayOrder) - parseInt(b.displayOrder));
-            setTabWidgets(sortedWidgets)
+            setTabWidgets(sortedWidgets);
         }
-    }, [tabData])
+    }, [tabData, allWidgetData]);
 
     const getSingleWidget = (id) => {
-        if (id) {
-            const availableWidget = presentWidgets.find(widget => widget?.rptId === id);
-            return availableWidget || null;
+        if (!id) {
+            return null;
+        } else {
+            return presentWidgets.find(widget => widget?.rptId === id) || null;
         }
-        return null;
     };
+
+    useEffect(() => {
+        if (tabWidgets?.length === 0) {
+            setLoading(true);
+        } else {
+            setLoading(false);
+        }
+
+    }, [tabWidgets])
 
 
     return (
         <>
-            {tabData?.jsonData?.allParameters &&
-                <div className='parameter-box'>
-                    <Parameters params={tabData?.jsonData?.allParameters} dashFor={tabData?.dashboardFor} />
-                </div>
-            }
-            <div className='row'>
-                {tabWidgets.map((widget, index) => {
-                    const widgetDetail = getSingleWidget(widget.rptId);
-                    return (
-                        <React.Fragment key={index} >
-                            {widgetDetail ? (
-                                <>
-                                    {/* <p>Widget Name: {widgetDetail.rptName}</p> */}
-                                    <div className={`col-sm-${widget?.widgetWidth}`} style={{ padding: "5px 3px" }}>
-                                        <WidgetDash widgetDetail={widgetDetail} />
-                                    </div>
-                                </>
-                            ) : (
-                                <p>Widget details not found</p>
-                            )}
-                        </React.Fragment>
-                    );
-                })}
-            </div>
-        </>
-    )
-}
+            {/* Show Global Loader if Loading */}
+            {(loading && tabWidgets?.length > 0) ? null : (
+                <div>
+                    {/* PDF Download Section */}
+                    {activeTab?.jsonData?.docJsonString && (
+                        <div className='help-docs'>
+                            <PdfDownload docJsonString={activeTab?.jsonData?.docJsonString} />
+                        </div>
+                    )}
 
-export default TabDash
+                    {/* Parameters Section */}
+                    {activeTab?.jsonData?.allParameters && (
+                        <div className='parameter-box'>
+                            <Parameters params={activeTab?.jsonData?.allParameters} dashFor={activeTab?.dashboardFor} setParamsValues={setParamsValues}/>
+                        </div>
+                    )}
+
+                    {/* Widgets Section */}
+                    <div className='row'>
+                        {tabWidgets.map((widget, index) => {
+                            const widgetDetail = getSingleWidget(widget.rptId);
+                            return (
+                                <React.Fragment key={index}>
+                                    {widgetDetail && 
+                                        <div className={`col-sm-${widget?.widgetWidth}`} style={{ padding: "5px 3px" }}>
+                                            <WidgetDash widgetDetail={widgetDetail} />
+                                        </div>
+                                    }
+                                </React.Fragment>
+                            );
+                        })
+                        }
+                    </div>
+                </div>
+            )}
+        </>
+    );
+};
+
+export default TabDash;

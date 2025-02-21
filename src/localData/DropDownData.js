@@ -186,3 +186,72 @@ export const tabShapeOptions = [
     { value: "square", label: "square" },
     { value: "square-rounded", label: "square-rounded" }
 ];
+
+export const mapNameOptions = [
+    { value: "india", label: "India" },
+    { value: "andamanandnicobarislands", label: "Andaman and Nicobar Island" },
+    { value: "andhrapradesh", label: "Andhra Pradesh" },
+    { value: "arunachalpradesh", label: "Arunachal Pradesh" },
+    { value: "assam", label: "Assam" },
+    { value: "bihar", label: "Bihar" },
+    { value: "chandigarh", label: "Chandigarh" },
+    { value: "chhattisgarh", label: "Chhattisgarh" },
+    { value: "dadranagarhaveli", label: "Dadra Nagar Haveli" },
+    { value: "delhi", label: "Delhi" },
+    { value: "goa", label: "Goa" },
+    { value: "gujarat", label: "Gujarat" },
+    { value: "haryana", label: "Haryana" },
+    { value: "himachalpradesh", label: "Himachal Pradesh" },
+    { value: "jammuandkashmir", label: "Jammu and Kashmir" },
+    { value: "jharkhand", label: "Jharkhand" },
+    { value: "karnataka", label: "Karnataka" },
+    { value: "kerala", label: "Kerala" },
+    { value: "ladakh", label: "Ladakh" },
+    { value: "lakshadweep", label: "Lakshadweep" },
+    { value: "madhyapradesh", label: "Madhya Pradesh" },
+    { value: "maharashtra", label: "Maharashtra" },
+    { value: "manipur", label: "Manipur" },
+    { value: "meghalaya", label: "Meghalaya" },
+    { value: "mizoram", label: "Mizoram" },
+    { value: "nagaland", label: "Nagaland" },
+    { value: "odisha", label: "Odisha" },
+    { value: "puducherry", label: "Puducherry" },
+    { value: "punjab", label: "Punjab" },
+    { value: "rajasthan", label: "Rajasthan" },
+    { value: "sikkim", label: "Sikkim" },
+    { value: "tamilnadu", label: "Tamil Nadu" },
+    { value: "telangana", label: "Telangana" },
+    { value: "tripura", label: "Tripura" },
+    { value: "uttarakhand", label: "Uttarakhand" },
+    { value: "uttarpradesh", label: "Uttar Pradesh" },
+    { value: "westbengal", label: "West Bengal" }
+];
+
+export const highchartGraphOptions = [
+    { value: "BAR_GRAPH", label: "Column Bar Graph" },
+    { value: "STACKED_GRAPH", label: "Stacked Graph" },
+    { value: "STACKED_BAR_GRAPH", label: "Stacked Bar Graph" },
+    { value: "VERTICAL_BAR_GRAPH", label: "Horizontal Bar Graph" },
+    { value: "VERTICAL_STACKED_BAR_GRAPH", label: "Horizontal Stacked Bar Graph" },
+    { value: "PIE_CHART", label: "Pie Chart" },
+    { value: "DONUT_CHART", label: "Donut Chart" },
+    { value: "LINE_GRAPH", label: "Line Graph" },
+    { value: "AREA_GRAPH", label: "Area Graph" },
+    { value: "AREA_STACKED_GRAPH", label: "Stacked Area Graph" },
+    { value: "COLUMN_LINE_PIE_GRAPH", label: "Column Line Pie Graph" },
+    { value: "DUAL_AXES_LINE_COLUMN", label: "Dual Axes Graph" },
+    { value: "BAR_RACE", label: "Bar Race Graph" }
+];
+
+export const googleChartOptions = [
+    { value: "BAR_GRAPH", label: "Column Bar Graph" },
+    { value: "PIE_CHART", label: "Pie Chart" },
+    { value: "DONUT_CHART", label: "Donut Chart" },
+    { value: "LINE_GRAPH", label: "Line Graph" },
+    { value: "AREA_GRAPH", label: "Area Graph" },
+    { value: "CANDLE_STICK", label: "Candle Stick Chart" },
+    { value: "DUAL_AXES_COLUMN", label: "Dual Axes Column Graph" }
+]
+
+
+
