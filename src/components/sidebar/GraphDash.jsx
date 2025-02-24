@@ -5,28 +5,24 @@ import Exporting from "highcharts/modules/exporting";
 import ExportData from "highcharts/modules/export-data";
 
 const GraphDash = ({ widgetData }) => {
-  // Mapping widget graph types to Highcharts types
   const chartTypeMapping = {
     BAR_GRAPH: "bar",
+    STACKED_GRAPH: "column",
     STACKED_BAR_GRAPH: "column",
-    VERTICAL_STACKED_BAR_GRAPH: "column",
+    VERTICAL_BAR_GRAPH: "bar",
+    VERTICAL_STACKED_BAR_GRAPH: "bar",
     PIE_CHART: "pie",
-    LINE_GRAPH: "line", // ✔ Added Line Chart support correctly
     DONUT_CHART: "pie",
+    LINE_GRAPH: "line",
+    AREA_GRAPH: "area",
+    AREA_STACKED_GRAPH: "area",
+    COLUMN_LINE_PIE_GRAPH: "column",
+    DUAL_AXES_LINE_COLUMN: "column",
+    BAR_RACE: "bar"
   };
 
-  // Extract available graph types from `graphChangeOptions`
-  const availableGraphs = widgetData.graphChangeOptions || [
-    "BAR_GRAPH",
-    "STACKED_BAR_GRAPH",
-    "VERTICAL_STACKED_BAR_GRAPH",
-    "PIE_CHART",
-    "LINE_GRAPH", // ✔ Fixed "LINE_GRAPH" typo to match the mapping
-    "DONUT_CHART"
-  ];
+  const availableGraphs = widgetData.graphChangeOptions || [];
 
-  // Initialize chart type with `defaultgraphType`
-  // const defaultGraphType = widgetData.defaultgraphType || "BAR_GRAPH";
   const [chartType, setChartType] = useState('BAR_GRAPH');
 
   useEffect(() => {
@@ -43,8 +39,6 @@ const GraphDash = ({ widgetData }) => {
   const colorList = widgetData.colorForBars ? widgetData.colorForBars.split(",") : ["red", "blue", "green"];
   const mainQuery = widgetData.queryVO?.length > 0 ? widgetData.queryVO[0]?.mainQuery : "";
 
-
-  // Extract Data for the Graph
   const seriesData = [
     {
       name: yAxisLabel,
@@ -64,17 +58,8 @@ const GraphDash = ({ widgetData }) => {
         { name: "MN", y: 200 },
       ],
       colorByPoint: chartType !== "LINE_GRAPH",
-      // marker: {
-      //   enabled: chartType === "LINE_CHART", // ✔ Enabled markers for Line Chart
-      //   fillColor: "red",
-      //   lineColor: "black",
-      //   lineWidth: 2,
-      //   radius: 4,
-      // },
     },
   ];
-
-  // console.log(chartType, "tt",widgetData.rptName);
 
   // Highcharts options
   const options = {
@@ -90,7 +75,7 @@ const GraphDash = ({ widgetData }) => {
       },
     },
     title: {
-      text: widgetData.rptDisplayName || "Dynamic Highcharts Graph",
+      text: widgetData.rptDisplayName || "",
     },
     xAxis: {
       type: "category",
@@ -99,7 +84,7 @@ const GraphDash = ({ widgetData }) => {
     yAxis: {
       title: { text: yAxisLabel },
       min: parseInt(widgetData.minValueOfAxis, 10) || 0,
-      max: undefined, // ✔ FIXED: Removed explicit `max` to allow auto-scaling
+      max: undefined,
     },
     legend: {
       enabled: showLegend,
@@ -107,31 +92,34 @@ const GraphDash = ({ widgetData }) => {
     plotOptions: {
       series: {
         dataLabels: { enabled: dataLabelsEnabled },
-        colorByPoint: chartType === "PIE_CHART" || chartType === "BAR_GRAPH", // ✔ Apply colors only for Pie & Bar
+        colorByPoint: chartType === "PIE_CHART" || chartType === "BAR_GRAPH",
       },
       pie: {
         allowPointSelect: true,
         cursor: "pointer",
         colors: colorList,
         dataLabels: { enabled: true, format: "<b>{point.name}</b>: {point.y}" },
-        innerSize: chartType === "DONUT_CHART" ? "50%" : "0%",  // 🛑 This makes it a Donut Chart
+        innerSize: chartType === "DONUT_CHART" ? "50%" : "0%",
       },
       bar: {
-        colors: colorList, // ✔ Apply colorList to Bar Chart
+        colors: colorList,
       },
       column: {
-        colors: colorList, // ✔ Apply colorList to Stacked Column Chart
-        stacking: chartType === "STACKED_BAR_GRAPH" ? "normal" : undefined,
+        colors: colorList,
+        stacking: chartType === "STACKED_BAR_GRAPH" || chartType === "STACKED_GRAPH" ? "normal" : undefined,
       },
       line: {
         marker: {
           enabled: true,
-          fillColor: "red", // Customize marker for Line Chart
+          fillColor: "red",
           lineColor: "black",
           lineWidth: 2,
           radius: 4,
         },
       },
+      area: {
+        stacking: chartType === "AREA_STACKED_GRAPH" ? "normal" : undefined,
+      }
     },
     tooltip: {
       shared: true,
@@ -146,7 +134,7 @@ const GraphDash = ({ widgetData }) => {
   return (
     <div className="high-chart-main">
       <div className="px-2 py-2">
-        <h4 style={{ fontWeight: "500", fontSize: "20px" }}>Query :</h4>
+        <h4 style={{ fontWeight: "500", fontSize: "20px" }}>Query :{widgetData?.rptId}</h4>
         <span>{mainQuery}</span>
       </div>
       <div className="high-chart-box">
@@ -164,6 +152,21 @@ const GraphDash = ({ widgetData }) => {
           </option>
         ))}
       </select>
+      {widgetData?.isDisplayPluginCombo === "" &&
+
+        <select
+          value={chartType}
+          onChange={(e) => setChartType(e.target.value)}
+          style={{ marginBottom: "10px" }}
+          className="form-select form-select-sm w-50 mt-1 ms-1"
+        >
+          {availableGraphs.map((graph) => (
+            <option key={graph} value={graph}>
+              {graph.replace(/_/g, " ")}
+            </option>
+          ))}
+        </select>
+      }
     </div>
   );
 };

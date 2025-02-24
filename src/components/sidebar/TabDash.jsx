@@ -3,6 +3,7 @@ import WidgetDash from './WidgetDash';
 import { HISContext } from '../../contextApi/HISContext';
 import Parameters from './Parameters';
 import PdfDownload from '../commons/PdfDownload';
+import MapDash from './MapDash';
 
 const TabDash = (props) => {
     const { tabData, dashboardFor } = props;
@@ -47,6 +48,8 @@ const TabDash = (props) => {
 
     }, [tabWidgets])
 
+console.log(presentWidgets,'widgetdata')
+
 
     return (
         <>
@@ -66,6 +69,7 @@ const TabDash = (props) => {
                             <Parameters params={activeTab?.jsonData?.allParameters} dashFor={activeTab?.dashboardFor} setParamsValues={setParamsValues}/>
                         </div>
                     )}
+                    {/* <MapDash /> */}
 
                     {/* Widgets Section */}
                     <div className='row'>

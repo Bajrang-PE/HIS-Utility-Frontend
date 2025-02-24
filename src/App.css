@@ -280,6 +280,9 @@ label {
   }
 }
 
+.small-box-kpi:hover .kpi-icon-img .dropdown-gear-icon {
+  transform: rotate(360deg);
+}
 
 
 .global-button-group button:hover .dropdown-gear-icon,
@@ -532,7 +535,7 @@ label {
   margin-right: 10px;
   float: right;
   position: relative;
-  /* z-index: 2; */
+  z-index: 2;
 }
 
 .small-box-icon {
@@ -590,14 +593,14 @@ label {
   overflow: auto;
   padding-top: 1px;
   border: 7px solid black;
-  border-width: 7px 1px 1px 1px; 
+  border-width: 7px 1px 1px 1px;
   font-size: 12.9px;
-  border-radius: 8px; 
-  background-color: white; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-} 
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-.tabular-box{
+.tabular-box {
   margin-top: 10px;
   height: 650px;
   overflow: auto;
@@ -606,18 +609,20 @@ label {
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.tabular-box-border{
+
+.tabular-box-border {
   border: 1px solid black;
   border-radius: 10px;
 }
-.rdt_TableHead{
+
+.rdt_TableHead {
   z-index: 0 !important;
 }
 
 .help-docs {
   display: flex;
-  justify-content: flex-end; 
-  align-items: center; 
+  justify-content: flex-end;
+  align-items: center;
   width: 100%;
   /* padding: 10px;  */
 }
