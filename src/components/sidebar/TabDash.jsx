@@ -28,6 +28,7 @@ const TabDash = (props) => {
             setPresentWidgets(availableWidgets);
             const sortedWidgets = [...widgetIds].sort((a, b) => parseInt(a.displayOrder) - parseInt(b.displayOrder));
             setTabWidgets(sortedWidgets);
+            console.log(availableWidgets,'widgetdata')
         }
     }, [tabData, allWidgetData]);
 
@@ -48,7 +49,6 @@ const TabDash = (props) => {
 
     }, [tabWidgets])
 
-console.log(presentWidgets,'widgetdata')
 
 
     return (

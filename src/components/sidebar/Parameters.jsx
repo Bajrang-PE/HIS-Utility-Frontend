@@ -1,23 +1,25 @@
 import React, { useContext, useEffect, useState } from "react";
 import { HISContext } from "../../contextApi/HISContext";
 import InputField from "../commons/InputField";
-import InputSelect from "../commons/InputSelect";
 import Select from "react-select";
 import { convertToISODate } from "../../utils/commonFunction";
 import { fetchPostData } from "../../utils/ApiHooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeSlash, faReply, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { useSearchParams } from "react-router-dom";
 
-const Parameters = ({ params, dashFor, setParamsValues }) => {
+const Parameters = ({ params, setParamsValues }) => {
     const { parameterData, getAllParameterData } = useContext(HISContext);
     const [presentParams, setPresentParams] = useState([]);
     const [selectedValues, setSelectedValues] = useState({});
     const [dropdownData, setDropdownData] = useState({});
     const [hideParams, seHideParams] = useState(false)
+    const [queryParams] = useSearchParams();
+    const dashFor = queryParams.get('dashboardFor');
 
     useEffect(() => {
         if (dashFor) {
-            getAllParameterData(dashFor);
+            if (parameterData?.length === 0) { getAllParameterData(dashFor); }
         }
     }, [dashFor]);
 
@@ -92,9 +94,6 @@ const Parameters = ({ params, dashFor, setParamsValues }) => {
     const searchParams = () => {
         setParamsValues(selectedValues)
     }
-
-    // console.log(selectedValues, 'selectedValues')
-    // console.log(presentParams, 'presentParams')
 
     const renderInputField = (param) => {
         const {
@@ -234,9 +233,9 @@ const Parameters = ({ params, dashFor, setParamsValues }) => {
                 </button>
             </div>
             {/* {!hideParams && */}
-                <div className="row">
-                    {presentParams?.length > 0 && presentParams.map((param, index) => renderInputField(param))}
-                </div>
+            <div className="row">
+                {presentParams?.length > 0 && presentParams.map((param, index) => renderInputField(param))}
+            </div>
             {/* } */}
         </div>
     );

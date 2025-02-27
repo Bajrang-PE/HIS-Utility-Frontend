@@ -7,7 +7,7 @@ import { fetchData } from "../../utils/ApiHooks";
 import TopBar from "../../components/sidebar/TopBar";
 
 const DashboardMst = () => {
-    const { getAllTabsData, allTabsData, activeTab, setActiveTab } = useContext(HISContext);
+    const { getAllTabsData, allTabsData, activeTab, setActiveTab, setLoading } = useContext(HISContext);
     const [presentTabs, setPresentTabs] = useState([]);
     const [searchParams] = useSearchParams();
     const [dashboardData, setDashboardData] = useState();
@@ -29,7 +29,7 @@ const DashboardMst = () => {
             getAllTabsData(dashboardFor)
             getDashboardData(groupId, dashboardFor)
         }
-    }, [searchParams])
+    }, [dashboardFor, groupId])
 
 
     useEffect(() => {

@@ -16,7 +16,7 @@ import NewsTickWidget from '../../components/dashboardMasters/widgetMaster/NewsT
 import GlobalDataTable from '../../components/commons/GlobalDataTable'
 import { HISContext } from '../../contextApi/HISContext'
 import DataServiceTable from '../../components/webServiceMasters/dataService/DataServiceTable'
-import { graphOptions, parameterType } from '../../localData/DropDownData'
+import { graphOptions, highchartGraphOptions, parameterType } from '../../localData/DropDownData'
 import ParamsDetail from '../../components/dashboardMasters/tabMaster/ParamsDetail'
 import InputSelect from '../../components/commons/InputSelect'
 import { ToastAlert } from '../../utils/commonFunction'
@@ -407,7 +407,7 @@ const WidgetMaster = () => {
         //graph
         defaultPluginName: singleData[0]?.graphPluginName,//
         defaultGraphType: singleData[0]?.defaultgraphType,//
-        graphTypes: singleData[0]?.graphChangeOptions?.length > 0 && singleData[0]?.graphChangeOptions?.map(tp => graphOptions?.find(type => type?.value === tp)).filter(type => type !== undefined),//
+        graphTypes: singleData[0]?.graphChangeOptions?.length > 0 && singleData[0]?.graphChangeOptions?.map(tp => highchartGraphOptions?.find(type => type?.value === tp)).filter(type => type !== undefined),//
         clmNameForLineGraph: singleData[0]?.lineGraphColumnName,//
         colorsForBars: singleData[0]?.colorForBars,//
         graphHeight: singleData[0]?.graphHeight,//

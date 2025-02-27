@@ -29,7 +29,6 @@ const PdfDownload = ({ docJsonString }) => {
   return (
     <div className="dropdown">
       {pdfFiles.length === 1 ? (
-        // If only one file, clicking the button directly downloads it
         <button
           type="button"
           className="small-box-btn-dwn"
@@ -39,7 +38,6 @@ const PdfDownload = ({ docJsonString }) => {
           HelpDocs
         </button>
       ) : (
-        // If multiple files, show a dropdown
         <>
           <button
             type="button"

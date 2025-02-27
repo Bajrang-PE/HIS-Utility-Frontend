@@ -6,10 +6,10 @@ const Tabular = ({
     data,
     pagination,
     recordsPerPage,
-    fixedHeader = true,
-    scrollHeight = "400px",
-    headingFontColor = "#ffffff",
-    headingBgColor = "#007bff",
+    fixedHeader,
+    scrollHeight,
+    headingFontColor,
+    headingBgColor,
     headingAlignment,
     recordsPerPageOptions,
     isTableHeadingRequired
@@ -20,7 +20,7 @@ const Tabular = ({
             style: {
                 backgroundColor: headingBgColor,
                 color: headingFontColor,
-                textAlign: headingAlignment, // Align header text
+                textAlign: headingAlignment,
                 fontWeight: "bold",
                 padding: "10px",
             },
@@ -39,14 +39,26 @@ const Tabular = ({
                 fixedHeaderScrollHeight={scrollHeight + 'px'}
                 paginationPerPage={recordsPerPage}
                 paginationRowsPerPageOptions={recordsPerPageOptions}
-                // paginationPerPage={'5'}
-                // paginationRowsPerPageOptions={[5,10, 15, 20, 50]}
                 highlightOnHover
                 striped
-                customStyles={customStyles}
+                customStyles={{
+                    ...customStyles,
+                    table: {
+                        style: {
+                            borderBottom: '1px solid #ccc',
+                        }
+                    }
+                }}
                 responsive
                 noTableHead={isTableHeadingRequired}
+
             />
+
+            {!pagination && (
+                <div style={{ textAlign: 'right', marginTop: '8px', fontSize: '12px' }}>
+                    {`Showing 1 to ${data.length} of ${data.length} entries`}
+                </div>
+            )}
         </div>
     )
 }

@@ -664,41 +664,43 @@ const GraphWidget = (props) => {
                             </div>
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-sm-5 col-form-label pe-0">
-                            Is First Column Graph Heading :
-                        </label>
-                        <div className="col-sm-7 ps-0 align-content-center">
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isFirstClmGraphHeading"
-                                    id="isFirstClmGraphHeadingYes"
-                                    value={'Yes'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isFirstClmGraphHeading === 'Yes'}
-                                />
-                                <label className="form-check-label" htmlFor="dbYes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isFirstClmGraphHeading"
-                                    id="isFirstClmGraphHeadingNo"
-                                    value={'No'}
-                                    onChange={handleRadioChange}
-                                    checked={radioValues?.isFirstClmGraphHeading === 'No'}
-                                />
-                                <label className="form-check-label" htmlFor="dbNo">
-                                    No
-                                </label>
+                    {values?.parentWidgetGraph &&
+                        <div className="form-group row">
+                            <label className="col-sm-5 col-form-label pe-0 required-label">
+                                Is Hide Parent :
+                            </label>
+                            <div className="col-sm-7 ps-0 align-content-center">
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isHideParent"
+                                        id="isHideParentYes"
+                                        value={'Yes'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isHideParent === 'Yes'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbYes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="isHideParent"
+                                        id="isHideParentNo"
+                                        value={'No'}
+                                        onChange={handleRadioChange}
+                                        checked={radioValues?.isHideParent === 'No'}
+                                    />
+                                    <label className="form-check-label" htmlFor="dbNo">
+                                        No
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
                 {/* right columns */}
 
@@ -735,6 +737,7 @@ const GraphWidget = (props) => {
                             />
                         </div>
                     </div>
+
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Y-axis Font Size : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
@@ -749,7 +752,8 @@ const GraphWidget = (props) => {
                             />
                         </div>
                     </div>
-                    <div className="form-group row">
+
+                    {/* <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Maximum value of axis : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputField
@@ -762,8 +766,9 @@ const GraphWidget = (props) => {
                                 value={values?.maxValueOfAxis}
                             />
                         </div>
-                    </div>
-                    <div className="form-group row">
+                    </div> */}
+
+                    {/* <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">Minimum value of axis : </label>
                         <div className="col-sm-7 ps-0 align-content-center">
                             <InputField
@@ -776,7 +781,8 @@ const GraphWidget = (props) => {
                                 value={values?.minValueOfAxis}
                             />
                         </div>
-                    </div>
+                    </div> */}
+
                     <div className="form-group row">
                         <label className="col-sm-5 col-form-label pe-0">
                             Show Parent Heading in Child :
@@ -826,43 +832,42 @@ const GraphWidget = (props) => {
                             />
                         </div>
                     </div>
-                    {values?.parentWidgetGraph &&
-                        <div className="form-group row">
-                            <label className="col-sm-5 col-form-label pe-0 required-label">
-                                Is Hide Parent :
-                            </label>
-                            <div className="col-sm-7 ps-0 align-content-center">
-                                <div className="form-check form-check-inline">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="isHideParent"
-                                        id="isHideParentYes"
-                                        value={'Yes'}
-                                        onChange={handleRadioChange}
-                                        checked={radioValues?.isHideParent === 'Yes'}
-                                    />
-                                    <label className="form-check-label" htmlFor="dbYes">
-                                        Yes
-                                    </label>
-                                </div>
-                                <div className="form-check form-check-inline">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="isHideParent"
-                                        id="isHideParentNo"
-                                        value={'No'}
-                                        onChange={handleRadioChange}
-                                        checked={radioValues?.isHideParent === 'No'}
-                                    />
-                                    <label className="form-check-label" htmlFor="dbNo">
-                                        No
-                                    </label>
-                                </div>
+
+                    <div className="form-group row">
+                        <label className="col-sm-5 col-form-label pe-0">
+                            Is First Column Graph Heading :
+                        </label>
+                        <div className="col-sm-7 ps-0 align-content-center">
+                            <div className="form-check form-check-inline">
+                                <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="isFirstClmGraphHeading"
+                                    id="isFirstClmGraphHeadingYes"
+                                    value={'Yes'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isFirstClmGraphHeading === 'Yes'}
+                                />
+                                <label className="form-check-label" htmlFor="dbYes">
+                                    Yes
+                                </label>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="isFirstClmGraphHeading"
+                                    id="isFirstClmGraphHeadingNo"
+                                    value={'No'}
+                                    onChange={handleRadioChange}
+                                    checked={radioValues?.isFirstClmGraphHeading === 'No'}
+                                />
+                                <label className="form-check-label" htmlFor="dbNo">
+                                    No
+                                </label>
                             </div>
                         </div>
-                    }
+                    </div>
                 </div>
             </div>
 

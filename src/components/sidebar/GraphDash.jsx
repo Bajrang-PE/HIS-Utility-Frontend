@@ -1,10 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useCallback, useMemo } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import Exporting from "highcharts/modules/exporting";
 import ExportData from "highcharts/modules/export-data";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCog, faFileCsv, faFilePdf, faRefresh } from "@fortawesome/free-solid-svg-icons";
+import Parameters from "./Parameters";
+import { fetchQueryData } from "../../utils/commonFunction";
+import { HISContext } from "../../contextApi/HISContext";
 
-const GraphDash = ({ widgetData }) => {
+
+const GraphDash = ({ widgetData, graphData }) => {
+
+  const { setLoading } = useContext(HISContext);
+
+  const [paramsValues, setParamsValues] = useState();
+  const [chartData, setChartData] = useState([]);
+  const [chartType, setChartType] = useState('BAR_GRAPH');
+
+  useEffect(() => {
+    Promise.all([
+      import("highcharts/modules/offline-exporting"),
+      import("highcharts/modules/exporting"),
+      import("highcharts/modules/export-data"),
+      import('highcharts/modules/no-data-to-display')
+    ])
+      .then(([OfflineExporting, exportingModule, exportDataModule, HighchartsNoData]) => {
+        [OfflineExporting, exportingModule, exportDataModule, HighchartsNoData].forEach(
+          (mod) => (mod.default || mod)(Highcharts)
+        );
+      })
+      .catch((error) => {
+        console.error("Error loading Highcharts modules:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (graphData?.length > 0) {
+      setChartData(
+        graphData.map((item) => ({
+          name: item.column_1,
+          y: item.column_2,
+        })));
+    }
+  }, [graphData])
+
   const chartTypeMapping = {
     BAR_GRAPH: "bar",
     STACKED_GRAPH: "column",
@@ -23,13 +63,38 @@ const GraphDash = ({ widgetData }) => {
 
   const availableGraphs = widgetData.graphChangeOptions || [];
 
-  const [chartType, setChartType] = useState('BAR_GRAPH');
-
   useEffect(() => {
     if (widgetData.defaultgraphType) {
       setChartType(widgetData.defaultgraphType)
     }
   }, [widgetData])
+
+  // const processedQueryData = useMemo(() => {
+  //   return widgetData?.queryVO?.length > 0 ? widgetData.queryVO : [];
+  // }, [widgetData?.queryVO]);
+
+  // const fetchData = useCallback(async () => {
+  //   if (!processedQueryData.length) return;
+  //   try {
+  //     setLoading(true);
+  //     const data = await fetchQueryData(processedQueryData);
+  //     console.log(data, 'datatatatd')
+  //     // setGraphData(data);
+  //     setGraphData(
+  //       data.map((item) => ({
+  //         name: item.column_1,
+  //         y: item.column_2,
+  //       })));
+  //   } catch (error) {
+  //     console.error("Error loading query data:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, [processedQueryData, setLoading]);
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, [fetchData]);
 
   const is3D = widgetData.is3d === "true";
   const xAxisLabel = widgetData.xAxisLabel || "X Axis";
@@ -38,28 +103,52 @@ const GraphDash = ({ widgetData }) => {
   const dataLabelsEnabled = widgetData.dataLabels === "true";
   const colorList = widgetData.colorForBars ? widgetData.colorForBars.split(",") : ["red", "blue", "green"];
   const mainQuery = widgetData.queryVO?.length > 0 ? widgetData.queryVO[0]?.mainQuery : "";
+  const alpha = widgetData.alpha || 15;
+  const beta = widgetData.beta || 15;
 
-  const seriesData = [
-    {
-      name: yAxisLabel,
-      data: [
-        { name: "AP", y: 900 },
-        { name: "AS", y: 600 },
-        { name: "BIH", y: 800 },
-        { name: "CG", y: 1000 },
-        { name: "GJ", y: 1100 },
-        { name: "HAR", y: 300 },
-        { name: "HP", y: 500 },
-        { name: "JH", y: 400 },
-        { name: "JK", y: 300 },
-        { name: "KL", y: 200 },
-        { name: "MH", y: 0 },
-        { name: "ML", y: 100 },
-        { name: "MN", y: 200 },
-      ],
-      colorByPoint: chartType !== "LINE_GRAPH",
-    },
-  ];
+  const xAxisFontSize = parseInt(widgetData?.XAxisFontSize, 10) || 10;
+  const yAxisFontSize = parseInt(widgetData?.YAxisFontSize, 10) || 10;
+  const annotationFontSize = parseInt(widgetData?.annotationFontSize, 10) || 12;
+  const isDirectDownloadRequired = widgetData?.isDirectDownloadRequired || 'No';
+
+  const minAxisValue = widgetData?.minValueOfAxis && widgetData?.minValueOfAxis !== '0' ? parseInt(widgetData.minValueOfAxis, 10) : undefined;
+  const maxAxisValue = widgetData?.maxValueOfAxis && widgetData?.maxValueOfAxis !== '0' ? parseInt(widgetData.maxValueOfAxis, 10) : undefined;
+
+  const isActionButtonReq = widgetData?.isActionButtonReq || "Yes";
+  const labelRotation = parseInt(widgetData.rotation, 10) || 0;
+  const isScrollbarRequired = widgetData.isScrollbarRequired === "Yes";
+  const paramsData = widgetData.selFilterIds || "";
+  const footerText = widgetData.footerText || "";
+
+
+  const exportingOptions = {
+    enabled: isActionButtonReq !== "No" && isActionButtonReq !== "None",
+    allowHTML: true,
+    useHTML: true,
+    fallbackToExportServer: false,
+    libURL: "https://code.highcharts.com/modules/",
+    buttons: {
+      contextButton: {
+        menuItems: (() => {
+          switch (isActionButtonReq) {
+            case "pdf":
+              return ["downloadPDF"];
+            case "csv":
+              return ["downloadCSV"];
+            case "pdfAndcsv":
+              return ["downloadPDF", "downloadCSV"];
+            case "advanced":
+              return ["viewFullscreen", "downloadXLS", "downloadPNG", "downloadJPEG"];
+            case "All":
+            case "Yes":
+              return ["downloadPDF", "downloadCSV", "viewFullscreen", "downloadXLS", "downloadPNG", "downloadJPEG"];
+            default:
+              return [];
+          }
+        })()
+      }
+    }
+  };
 
   // Highcharts options
   const options = {
@@ -69,23 +158,46 @@ const GraphDash = ({ widgetData }) => {
       backgroundColor: "#ffffff",
       options3d: {
         enabled: is3D,
-        alpha: 15,
-        beta: 15,
+        alpha: alpha,
+        beta: beta,
         depth: 50,
       },
     },
     title: {
-      text: widgetData.rptDisplayName || "",
+      text: widgetData.rptName || "",
     },
     xAxis: {
       type: "category",
-      title: { text: xAxisLabel },
+      title: {
+        text: xAxisLabel,
+        style: { fontSize: `${xAxisFontSize}px` }
+      },
+      labels: {
+        rotation: widgetData.rotation ? parseInt(widgetData.rotation, 10) : -45,
+        style: {
+          fontSize: "10px",
+        },
+        step: 1,
+      },
+      scrollbar: {
+        enabled: isScrollbarRequired,
+      },
     },
     yAxis: {
-      title: { text: yAxisLabel },
-      min: parseInt(widgetData.minValueOfAxis, 10) || 0,
-      max: undefined,
+      title: {
+        text: yAxisLabel,
+        style: { fontSize: `${yAxisFontSize}px` }
+      },
+      // min: minAxisValue,
+      // max: maxAxisValue,
     },
+    annotations: [{
+      labels: [{
+        point: { x: 0, y: 0 },
+        text: "Annotation",
+        style: { fontSize: `${annotationFontSize}px` }
+      }]
+    }],
     legend: {
       enabled: showLegend,
     },
@@ -125,14 +237,78 @@ const GraphDash = ({ widgetData }) => {
       shared: true,
       valueSuffix: " units",
     },
-    exporting: {
-      enabled: true,
+    exporting: exportingOptions,
+    // exporting: {
+    //   enabled: true
+    // },
+    // series: seriesData,
+    series: chartData.length > 0
+      ? [
+        {
+          name: yAxisLabel || "Value",
+          data: chartData,
+          colorByPoint: true,
+        },
+      ]
+      : [],
+    lang: {
+      noData: "No data available for this graph",
     },
-    series: seriesData,
+    noData: {
+      position: {
+        align: "center",
+        verticalAlign: "middle",
+        x: 0,
+        y: 0,
+      },
+      style: {
+        fontSize: "14px",
+        fontWeight: "bold",
+        color: "#ff0000",
+        textAlign: "center"
+      },
+    },
   };
 
   return (
     <div className="high-chart-main">
+      {paramsData && (
+        <div className='parameter-box'>
+          <Parameters params={paramsData} setParamsValues={setParamsValues} />
+        </div>
+      )}
+
+      {isDirectDownloadRequired === 'Yes' &&
+        <div className="row px-2 py-2 border-bottom">
+          <div class="col-md-8 col-xs-7 fw-medium fs-6 pe-0">
+            {widgetData?.rptDisplayName}
+          </div>
+          <div className="col-md-4">
+            <button
+              type="button"
+              className="small-box-btn-dwn"
+              aria-expanded="false"
+              data-bs-toggle="dropdown"
+            >
+              <FontAwesomeIcon icon={faCog} className="dropdown-gear-icon" />
+            </button>
+            <ul className="dropdown-menu p-2">
+              <li className="p-1 dropdown-item text-primary" style={{ cursor: "pointer" }}>
+                <FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon me-2" />Refresh Data
+              </li>
+            </ul>
+            <button type="button" className="small-box-btn-dwn"
+            >
+              <FontAwesomeIcon icon={faFilePdf} className="dropdown-gear-icon" />
+            </button>
+            <button type="button" className="small-box-btn-dwn"
+            >
+              <FontAwesomeIcon icon={faFileCsv} className="dropdown-gear-icon" />
+            </button>
+          </div>
+        </div>
+      }
+
       <div className="px-2 py-2">
         <h4 style={{ fontWeight: "500", fontSize: "20px" }}>Query :{widgetData?.rptId}</h4>
         <span>{mainQuery}</span>
@@ -140,20 +316,7 @@ const GraphDash = ({ widgetData }) => {
       <div className="high-chart-box">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
-      <select
-        value={chartType}
-        onChange={(e) => setChartType(e.target.value)}
-        style={{ marginBottom: "10px" }}
-        className="form-select form-select-sm w-50 mt-1 ms-1"
-      >
-        {availableGraphs.map((graph) => (
-          <option key={graph} value={graph}>
-            {graph.replace(/_/g, " ")}
-          </option>
-        ))}
-      </select>
-      {widgetData?.isDisplayPluginCombo === "" &&
-
+      {availableGraphs?.length > 0 &&
         <select
           value={chartType}
           onChange={(e) => setChartType(e.target.value)}
@@ -166,6 +329,11 @@ const GraphDash = ({ widgetData }) => {
             </option>
           ))}
         </select>
+      }
+      {footerText !== '' &&
+        <div className="px-2 py-2">
+          <span>{footerText}</span>
+        </div>
       }
     </div>
   );

@@ -1,20 +1,18 @@
 import { faDownload, faMedkit } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as SolidIcons from '@fortawesome/free-solid-svg-icons';
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
 import { HISContext } from '../../contextApi/HISContext';
 import { useLocation } from 'react-router-dom';
+import { fetchQueryData } from '../../utils/commonFunction';
 
-const KpiDash = ({ widgetData }) => {
-    const { setActiveTab, allTabsData } = useContext(HISContext);
+const KpiDash = ({ widgetData,kpiData }) => {
+    const { setActiveTab, allTabsData,setLoading } = useContext(HISContext);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
+    const [graphData, setGraphData] = useState([]);
 
-    const groupId = queryParams.get("groupId");
-    const dashboardFor = queryParams.get("dashboardFor");
-
-    // console.log(allTabsData, 'allTabsData')
 
     const getDynamicIcon = (iconName) => {
         if (!iconName) return SolidIcons.faMedkit;
@@ -41,7 +39,6 @@ const KpiDash = ({ widgetData }) => {
         setActiveTab(tabdt[0])
         // console.log(, 'ids')
     }
-
 
     return (
         <div className='small-box-kpi' style={{
@@ -110,7 +107,7 @@ const KpiDash = ({ widgetData }) => {
                     {widgetData?.iconType === 'IMAGE' ?
                         <img src="http://localhost:8080/HISUtilities/dashboard/images/Icon_images/default-icon.png" alt="Kpi Image" className='dropdown-gear-icon' />
                         :
-                        <FontAwesomeIcon icon={getDynamicIcon(widgetData?.iconName)}  color={widgetData?.widgetIconColour}/>
+                        <FontAwesomeIcon icon={getDynamicIcon(widgetData?.iconName)} color={widgetData?.widgetIconColour} />
                     }
                     {/* <i className='fa fa-balance-scale'></i> */}
                 </div>
