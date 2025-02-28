@@ -11,7 +11,7 @@ import { fetchQueryData } from '../../utils/commonFunction';
 
 const WidgetDash = (props) => {
     const { widgetDetail } = props
-    const { setLoading } = useContext(HISContext);
+    const { theme } = useContext(HISContext);
     const [graphData, setGraphData] = useState([]);
 
     const processedQueryData = useMemo(() => {
@@ -21,16 +21,13 @@ const WidgetDash = (props) => {
     const fetchData = useCallback(async () => {
         if (!processedQueryData.length) return;
         try {
-            setLoading(true);
             const data = await fetchQueryData(processedQueryData);
             // console.log(data,'datatatatd')
-            setGraphData( data);
+            setGraphData(data);
         } catch (error) {
             console.error("Error loading query data:", error);
-        } finally {
-            setLoading(false);
         }
-    }, [processedQueryData, setLoading]);
+    }, [processedQueryData]);
 
     useEffect(() => {
         fetchData();
@@ -46,7 +43,9 @@ const WidgetDash = (props) => {
                 {widgetDetail.reportViewed === 'Tabular' && <TabularDash widgetData={widgetDetail} kpiData={graphData} />}
                 {widgetDetail.reportViewed === 'Graph' && <GraphDash widgetData={widgetDetail} graphData={graphData} />}
                 {widgetDetail.reportViewed === "Criteria_Map" &&
-                    <MapDash widgetData={widgetDetail} />
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                        <MapDash widgetData={widgetDetail} />
+                    </div>
                 }
             </>
             {/* :

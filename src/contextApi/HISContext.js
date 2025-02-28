@@ -10,6 +10,7 @@ const HISContextData = ({ children }) => {
   const [selectedOption, setSelectedOption] = useState([]);
   const [actionMode, setActionMode] = useState('home');
    const [activeTab,setActiveTab] = useState();
+   const [theme, setTheme] = useState('Default');
 
   const [confirmSave, setConfirmSave] = useState(false);
   const [showConfirmSave, setShowConfirmSave] = useState(false);
@@ -150,6 +151,7 @@ const HISContextData = ({ children }) => {
       showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave,
       loading, setLoading,
       activeTab,setActiveTab,
+      theme, setTheme,
 
       // DROP DOWNS-------------------------------
       // DASHBOARD FOR

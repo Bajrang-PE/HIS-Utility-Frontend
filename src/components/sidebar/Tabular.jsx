@@ -12,7 +12,8 @@ const Tabular = ({
     headingBgColor,
     headingAlignment,
     recordsPerPageOptions,
-    isTableHeadingRequired
+    isTableHeadingRequired,
+    theme
 }) => {
 
     const customStyles = {
@@ -51,6 +52,7 @@ const Tabular = ({
                 }}
                 responsive
                 noTableHead={isTableHeadingRequired}
+                theme={theme === 'Dark' ? 'dark' : 'default'}
 
             />
 

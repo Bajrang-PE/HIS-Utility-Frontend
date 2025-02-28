@@ -9,7 +9,7 @@ import { faEyeSlash, faReply, faSearch } from "@fortawesome/free-solid-svg-icons
 import { useSearchParams } from "react-router-dom";
 
 const Parameters = ({ params, setParamsValues }) => {
-    const { parameterData, getAllParameterData } = useContext(HISContext);
+    const { parameterData, getAllParameterData, theme } = useContext(HISContext);
     const [presentParams, setPresentParams] = useState([]);
     const [selectedValues, setSelectedValues] = useState({});
     const [dropdownData, setDropdownData] = useState({});
@@ -126,7 +126,7 @@ const Parameters = ({ params, setParamsValues }) => {
                                     options={options}
                                     isMulti
                                     // placeholder="Select value..."
-                                    className="backcolorinput react-select-multi"
+                                    className={`${theme === 'Dark' ? 'backcolorinput-dark' : 'backcolorinput'} react-select-multi`}
                                     getOptionLabel={(e) => e.optionText}
                                     getOptionValue={(e) => e.optionValue}
                                     value={selectedValues[parameterName] || getDefaultValues(parameterName, lstOption)}
@@ -135,7 +135,7 @@ const Parameters = ({ params, setParamsValues }) => {
                                 <select
                                     id={parameterName}
                                     name={parameterName}
-                                    className="form-select form-select-sm backcolorinput"
+                                    className={`${theme === 'Dark' ? 'backcolorinput-dark' : 'backcolorinput'} form-select form-select-sm`}
                                     defaultValue=""
                                     value={selectedValues[parameterName] || ''}
                                     onChange={(e) => handleInputChange(parameterName, e.target.value)}
@@ -157,7 +157,7 @@ const Parameters = ({ params, setParamsValues }) => {
                     {parameterType === "2" && (
                         <InputField
                             type="text"
-                            className="backcolorinput"
+                            className={`${theme === 'Dark' ? 'backcolorinput-dark' : 'backcolorinput'}`}
                             placeholder="Enter value..."
                             name={parameterName}
                             id={parameterId}
@@ -169,7 +169,7 @@ const Parameters = ({ params, setParamsValues }) => {
                     {parameterType === "4" && (
                         <input
                             type="date"
-                            className="form-control form-control-sm backcolorinput"
+                            className={`${theme === 'Dark' ? 'backcolorinput-dark' : 'backcolorinput'} form-control form-control-sm`}
                             name={parameterName}
                             id={parameterId}
                             defaultValue={convertToISODate(defaultValueIfEmpty)}

@@ -124,6 +124,11 @@ input[type="text"]:focus {
   /* border: 1px solid !important; */
   border-color: gray !important;
 }
+.backcolorinput-dark {
+  border-radius: 10px !important;
+  border-color: rgb(245, 162, 7) !important;
+  color: #000000;
+}
 
 .backcolorinput-icons {
   background-color: #97dbed4a !important;
@@ -437,11 +442,6 @@ label {
   color: #ffffff;
 }
 
-.menu-tab-item:hover,
-.ps-menu-button:hover {
-  /* background-color: #1f4068 !important; */
-  /* color: #ffffff !important; */
-}
 
 .submenu-tab-side div {
   background-color: #071b2f;
@@ -592,8 +592,7 @@ label {
   height: 650px;
   overflow: auto;
   padding-top: 1px;
-  border: 7px solid black;
-  border-width: 7px 1px 1px 1px;
+  border-width: 7px 1px 1px 1px !important;
   font-size: 12.9px;
   border-radius: 8px;
   background-color: white;
@@ -611,7 +610,7 @@ label {
 }
 
 .tabular-box-border {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   border-radius: 10px;
 }
 
@@ -625,4 +624,11 @@ label {
   align-items: center;
   width: 100%;
   /* padding: 10px;  */
+}
+
+
+.dark-theme {
+  background: #1f1f1f !important;
+  background-color: #1f1f1f !important;
+  color: white !important;
 }

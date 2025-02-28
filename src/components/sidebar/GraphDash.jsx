@@ -12,11 +12,23 @@ import { HISContext } from "../../contextApi/HISContext";
 
 const GraphDash = ({ widgetData, graphData }) => {
 
-  const { setLoading } = useContext(HISContext);
+  const { theme } = useContext(HISContext);
 
   const [paramsValues, setParamsValues] = useState();
   const [chartData, setChartData] = useState([]);
   const [chartType, setChartType] = useState('BAR_GRAPH');
+
+
+  Highcharts.setOptions({
+    drilldown: {
+      activeDataLabelStyle: {
+        color: '#0022ff',
+        cursor: 'pointer',
+        fontWeight: 'bold',
+        textDecoration: 'none'
+      }
+    }
+  });
 
   useEffect(() => {
     Promise.all([
@@ -151,11 +163,132 @@ const GraphDash = ({ widgetData, graphData }) => {
   };
 
   // Highcharts options
+  // const options = {
+  //   chart: {
+  //     type: chartTypeMapping[chartType],
+  //     height: parseInt(widgetData.graphHeight, 10) || 350,
+  //     backgroundColor: "#ffffff",
+  //     options3d: {
+  //       enabled: is3D,
+  //       alpha: alpha,
+  //       beta: beta,
+  //       depth: 50,
+  //     },
+  //   },
+  //   title: {
+  //     text: widgetData.rptName || "",
+  //   },
+  //   xAxis: {
+  //     type: "category",
+  //     title: {
+  //       text: xAxisLabel,
+  //       style: { fontSize: `${xAxisFontSize}px` }
+  //     },
+  //     labels: {
+  //       rotation: widgetData.rotation ? parseInt(widgetData.rotation, 10) : -45,
+  //       style: {
+  //         fontSize: "10px",
+  //       },
+  //       step: 1,
+  //     },
+  //     scrollbar: {
+  //       enabled: isScrollbarRequired,
+  //     },
+  //   },
+  //   yAxis: {
+  //     title: {
+  //       text: yAxisLabel,
+  //       style: { fontSize: `${yAxisFontSize}px` }
+  //     },
+  //     // min: minAxisValue,
+  //     // max: maxAxisValue,
+  //   },
+  //   annotations: [{
+  //     labels: [{
+  //       point: { x: 0, y: 0 },
+  //       text: "Annotation",
+  //       style: { fontSize: `${annotationFontSize}px` }
+  //     }]
+  //   }],
+  //   legend: {
+  //     enabled: showLegend,
+  //   },
+  //   plotOptions: {
+  //     series: {
+  //       dataLabels: { enabled: dataLabelsEnabled },
+  //       colorByPoint: chartType === "PIE_CHART" || chartType === "BAR_GRAPH",
+  //     },
+  //     pie: {
+  //       allowPointSelect: true,
+  //       cursor: "pointer",
+  //       colors: colorList,
+  //       dataLabels: { enabled: true, format: "<b>{point.name}</b>: {point.y}" },
+  //       innerSize: chartType === "DONUT_CHART" ? "50%" : "0%",
+  //     },
+  //     bar: {
+  //       colors: colorList,
+  //     },
+  //     column: {
+  //       colors: colorList,
+  //       stacking: chartType === "STACKED_BAR_GRAPH" || chartType === "STACKED_GRAPH" ? "normal" : undefined,
+  //     },
+  //     line: {
+  //       marker: {
+  //         enabled: true,
+  //         fillColor: "red",
+  //         lineColor: "black",
+  //         lineWidth: 2,
+  //         radius: 4,
+  //       },
+  //     },
+  //     area: {
+  //       stacking: chartType === "AREA_STACKED_GRAPH" ? "normal" : undefined,
+  //     }
+  //   },
+  //   tooltip: {
+  //     shared: true,
+  //     valueSuffix: " units",
+  //   },
+  //   exporting: exportingOptions,
+  //   // exporting: {
+  //   //   enabled: true
+  //   // },
+  //   // series: seriesData,
+  //   series: chartData.length > 0
+  //     ? [
+  //       {
+  //         name: yAxisLabel || "Value",
+  //         data: chartData,
+  //         colorByPoint: true,
+  //       },
+  //     ]
+  //     : [],
+  //   lang: {
+  //     noData: "No data available for this graph",
+  //   },
+  //   noData: {
+  //     position: {
+  //       align: "center",
+  //       verticalAlign: "middle",
+  //       x: 0,
+  //       y: 0,
+  //     },
+  //     style: {
+  //       fontSize: "14px",
+  //       fontWeight: "bold",
+  //       color: "#ff0000",
+  //       textAlign: "center"
+  //     },
+  //   },
+  // };
+
+  const isDarkTheme = theme === 'Dark';
+
   const options = {
     chart: {
       type: chartTypeMapping[chartType],
       height: parseInt(widgetData.graphHeight, 10) || 350,
-      backgroundColor: "#ffffff",
+      backgroundColor: isDarkTheme ? "#1f1f1f" : "#ffffff",
       options3d: {
         enabled: is3D,
         alpha: alpha,
@@ -165,52 +298,80 @@ const GraphDash = ({ widgetData, graphData }) => {
     },
     title: {
       text: widgetData.rptName || "",
+      style: { color: isDarkTheme ? "#ffffff" : "#000000" }
     },
     xAxis: {
       type: "category",
       title: {
         text: xAxisLabel,
-        style: { fontSize: `${xAxisFontSize}px` }
+        style: {
+          fontSize: `${xAxisFontSize}px`,
+          color: isDarkTheme ? "#ffffff" : "#000000"
+        },
       },
       labels: {
         rotation: widgetData.rotation ? parseInt(widgetData.rotation, 10) : -45,
         style: {
           fontSize: "10px",
+          color: isDarkTheme ? "#ffffff" : "#000000"
         },
         step: 1,
       },
       scrollbar: {
         enabled: isScrollbarRequired,
       },
+      gridLineColor: isDarkTheme ? "#444444" : "#e6e6e6",
     },
     yAxis: {
       title: {
         text: yAxisLabel,
-        style: { fontSize: `${yAxisFontSize}px` }
+        style: {
+          fontSize: `${yAxisFontSize}px`,
+          color: isDarkTheme ? "#ffffff" : "#000000"
+        },
       },
-      // min: minAxisValue,
-      // max: maxAxisValue,
+      labels: {
+        style: {
+          color: isDarkTheme ? "#ffffff" : "#000000"
+        }
+      },
+      gridLineColor: isDarkTheme ? "#444444" : "#e6e6e6",
     },
     annotations: [{
       labels: [{
         point: { x: 0, y: 0 },
         text: "Annotation",
-        style: { fontSize: `${annotationFontSize}px` }
+        style: {
+          fontSize: `${annotationFontSize}px`,
+          color: isDarkTheme ? "#ffffff" : "#000000"
+        }
       }]
     }],
     legend: {
       enabled: showLegend,
+      itemStyle: {
+        color: isDarkTheme ? "#ffffff" : "#000000"
+      }
     },
     plotOptions: {
       series: {
-        dataLabels: { enabled: dataLabelsEnabled },
+        dataLabels: {
+          enabled: dataLabelsEnabled,
+          style: {
+            color: isDarkTheme ? "#ffffff" : "#000000"
+          }
+        },
         colorByPoint: chartType === "PIE_CHART" || chartType === "BAR_GRAPH",
       },
       pie: {
         allowPointSelect: true,
         cursor: "pointer",
         colors: colorList,
-        dataLabels: { enabled: true, format: "<b>{point.name}</b>: {point.y}" },
+        dataLabels: {
+          enabled: true,
+          format: "<b>{point.name}</b>: {point.y}",
+          style: { color: isDarkTheme ? "#ffffff" : "#000000" }
+        },
         innerSize: chartType === "DONUT_CHART" ? "50%" : "0%",
       },
       bar: {
@@ -236,12 +397,12 @@ const GraphDash = ({ widgetData, graphData }) => {
     tooltip: {
       shared: true,
       valueSuffix: " units",
+      backgroundColor: isDarkTheme ? "rgba(0, 0, 0, 0.85)" : "#ffffff",
+      style: {
+        color: isDarkTheme ? "#ffffff" : "#000000"
+      },
     },
     exporting: exportingOptions,
-    // exporting: {
-    //   enabled: true
-    // },
-    // series: seriesData,
     series: chartData.length > 0
       ? [
         {
@@ -264,14 +425,15 @@ const GraphDash = ({ widgetData, graphData }) => {
       style: {
         fontSize: "14px",
         fontWeight: "bold",
-        color: "#ff0000",
+        color: isDarkTheme ? "#ff6666" : "#ff0000",
         textAlign: "center"
       },
     },
   };
 
+
   return (
-    <div className="high-chart-main">
+    <div className={`high-chart-main ${theme === 'Dark' ? 'dark-theme' : ""}`} style={{ border: `7px solid ${theme === 'Dark' ? 'white' : 'black'}` }}>
       {paramsData && (
         <div className='parameter-box'>
           <Parameters params={paramsData} setParamsValues={setParamsValues} />
@@ -338,5 +500,6 @@ const GraphDash = ({ widgetData, graphData }) => {
     </div>
   );
 };
+
 
 export default GraphDash;

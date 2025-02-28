@@ -43,7 +43,7 @@ const hospitalData = {
 
 const TabularDash = ({ widgetData, tabData }) => {
 
-  const { setLoading } = useContext(HISContext);
+  const { theme } = useContext(HISContext);
   const [graphData, setGraphData] = useState([]);
   const [currentLevel, setCurrentLevel] = useState("state");
   const [currentData, setCurrentData] = useState(initialStates);
@@ -89,6 +89,7 @@ const TabularDash = ({ widgetData, tabData }) => {
   const scrollHeight = widgetData?.scrollYValue || "500";
   const isDirectDownloadRequired = widgetData?.isDirectDownloadRequired || 'No';
   const paramsData = widgetData.selFilterIds || "";
+  const footerText = widgetData.footerText || "";
 
   const columns = useMemo(() => {
     const srNoColumn = isIndexNoReq
@@ -130,7 +131,7 @@ const TabularDash = ({ widgetData, tabData }) => {
   }, [currentLevel, handleStateClick, handleDistrictClick]);
 
   return (
-    <div className={`tabular-box ${borderReq === 'No' ? '' : 'tabular-box-border'}`}>
+    <div className={`tabular-box ${theme === 'Dark' ? 'dark-theme' : ''} tabular-box-border ${borderReq === 'No' ? '' : 'tabular-box-border'}`} style={{ border: `1px solid ${theme === 'Dark' ? 'white' : 'black'}` }}>
       <div className="row px-2 py-2 border-bottom">
         {headingReq &&
           <div className={` ${isDirectDownloadRequired === 'Yes' ? 'col-md-7' : 'col-md-12'} fw-medium fs-6`} style={{ textAlign: headingAlign, backgroundColor: headingBgClr, color: headingFontClr }}>{widgetData?.rptDisplayName}:{widgetData?.rptId}</div>
@@ -187,7 +188,7 @@ const TabularDash = ({ widgetData, tabData }) => {
                 id="customMsgForNoData"
                 name="customMsgForNoData"
                 placeholder="Enter"
-                className="backcolorinput"
+                className={`${theme === 'Dark' ? 'backcolorinput-dark' : 'backcolorinput'}`}
               />
             </div>
           </div>
@@ -213,7 +214,14 @@ const TabularDash = ({ widgetData, tabData }) => {
         headingAlignment={headingAlign}
         recordsPerPageOptions={[recordPerPage, 10, 20, 50]}
         isTableHeadingRequired={!headingReq}
+        theme={theme}
       />
+
+      {footerText !== '' &&
+        <div className="px-2 py-2">
+          <span>{footerText}</span>
+        </div>
+      }
     </div>
   );
 };

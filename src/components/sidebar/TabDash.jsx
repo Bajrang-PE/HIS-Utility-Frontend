@@ -28,7 +28,7 @@ const TabDash = (props) => {
             setPresentWidgets(availableWidgets);
             const sortedWidgets = [...widgetIds].sort((a, b) => parseInt(a.displayOrder) - parseInt(b.displayOrder));
             setTabWidgets(sortedWidgets);
-            console.log(availableWidgets,'widgetdata')
+            console.log(availableWidgets, 'widgetdata')
         }
     }, [tabData, allWidgetData]);
 
@@ -40,16 +40,10 @@ const TabDash = (props) => {
         }
     };
 
+
     useEffect(() => {
-        if (tabWidgets?.length === 0) {
-            setLoading(true);
-        } else {
-            setLoading(false);
-        }
-
-    }, [tabWidgets])
-
-
+        setLoading(tabWidgets.length === 0);
+    }, [tabWidgets]);
 
     return (
         <>
@@ -66,7 +60,7 @@ const TabDash = (props) => {
                     {/* Parameters Section */}
                     {activeTab?.jsonData?.allParameters && (
                         <div className='parameter-box'>
-                            <Parameters params={activeTab?.jsonData?.allParameters} dashFor={activeTab?.dashboardFor} setParamsValues={setParamsValues}/>
+                            <Parameters params={activeTab?.jsonData?.allParameters} dashFor={activeTab?.dashboardFor} setParamsValues={setParamsValues} />
                         </div>
                     )}
                     {/* <MapDash /> */}
@@ -77,7 +71,7 @@ const TabDash = (props) => {
                             const widgetDetail = getSingleWidget(widget.rptId);
                             return (
                                 <React.Fragment key={index}>
-                                    {widgetDetail && 
+                                    {widgetDetail &&
                                         <div className={`col-sm-${widget?.widgetWidth}`} style={{ padding: "5px 3px" }}>
                                             <WidgetDash widgetDetail={widgetDetail} />
                                         </div>
