@@ -95,7 +95,7 @@ const FormatColumn = (props) => {
                                     <th style={{ width: "10%" }}>
                                         <button
                                             className="btn btn-outline-secondary btn-sm"
-                                            onClick={handleAddRow}
+                                            onClick={()=>handleAddRow()}
                                             style={{ padding: "0 4px" }}
                                         >
                                             <FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />
@@ -182,7 +182,7 @@ const FormatColumn = (props) => {
                             </div>
                             <div className='pre-nxt-btn '>
                                 <button className='btn btn-sm ms-2 mt-sm-0'
-                                    onClick={onSaveSession}
+                                    onClick={()=>onSaveSession()}
                                 >
                                     OK
                                 </button>

@@ -644,13 +644,13 @@ const TabMaster = () => {
             {values?.tabFor &&
               <div className='text-center mt-2 pre-nxt-btn'>
                 <button className='btn btn-sm ms-1'
-                  onClick={previousTab}
+                  onClick={()=>previousTab()}
                   disabled={tabIndex > 1 ? false : true}
                 >
                   <FontAwesomeIcon icon={faArrowLeft} className="dropdown-gear-icon me-2" />
                   Previous
                 </button>
-                <button className='btn btn-sm ms-1' onClick={saveMenuTabsData}>
+                <button className='btn btn-sm ms-1' onClick={()=>saveMenuTabsData()}>
                   {`${tabIndex < tabNavMenus?.length ? 'Save & Next' : 'Save'}`}
                   {tabIndex < tabNavMenus?.length &&
                     <FontAwesomeIcon icon={faArrowRight} className="dropdown-gear-icon ms-2" />

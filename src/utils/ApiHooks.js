@@ -54,14 +54,14 @@ export const fetchData = async (url, params) => {
     try {
         if (params) {
             const response = await axios.get(url, { params: params ? params : '' });
-            console.log(response?.data, 'get')
+            // console.log(response?.data, 'get')
             return response?.data
         } else {
             const response = await axios.get(url);
             // const decryptedData = decryptAesOrRsa(response?.data)
             // console.log(JSON.parse(decryptedData), 'getbgbg')
             // return JSON.parse(decryptedData);
-            console.log(response?.data, 'get')
+            // console.log(response?.data, 'get')
             return response?.data
         }
 
@@ -87,7 +87,7 @@ export const fetchData = async (url, params) => {
 export const fetchUpdateData = async (url, data) => {
     try {
         const response = await axios.put(url, data);
-        console.log(response?.data, 'put')
+        // console.log(response?.data, 'put')
         return response.data;
     } catch (error) {
         console.error('API Error:', error);

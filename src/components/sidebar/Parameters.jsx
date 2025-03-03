@@ -13,24 +13,24 @@ const Parameters = ({ params, setParamsValues }) => {
     const [presentParams, setPresentParams] = useState([]);
     const [selectedValues, setSelectedValues] = useState({});
     const [dropdownData, setDropdownData] = useState({});
-    const [hideParams, seHideParams] = useState(false)
+    const [hideParams, setHideParams] = useState(false)
     const [queryParams] = useSearchParams();
     const dashFor = queryParams.get('dashboardFor');
 
     useEffect(() => {
-        if (dashFor) {
-            if (parameterData?.length === 0) { getAllParameterData(dashFor); }
+        if (dashFor && parameterData?.length === 0) {
+            getAllParameterData(dashFor);
         }
     }, [dashFor]);
 
     // Function to get default selected values
-    const getDefaultValues = (parameterName, lstOption) => {
-        setSelectedValues((prev) => ({
-            ...prev,
-            [parameterName]: lstOption?.filter(option => option.optionValue.includes("#DEFAULT")),
-        }));
-        return lstOption?.filter(option => option.optionValue.includes("#DEFAULT"));
-    };
+    // const getDefaultValues = (parameterName, lstOption) => {
+    //     setSelectedValues((prev) => ({
+    //         ...prev,
+    //         [parameterName]: lstOption?.filter(option => option.optionValue.includes("#DEFAULT")),
+    //     }));
+    //     return lstOption?.filter(option => option.optionValue.includes("#DEFAULT"));
+    // };
 
     // Function to handle multi-select change
     const handleMultiSelectChange = (parameterName, selectedOptions) => {
@@ -50,11 +50,9 @@ const Parameters = ({ params, setParamsValues }) => {
 
     useEffect(() => {
         if (parameterData?.length > 0 && params) {
-            const dashboardIdsArray = params ? params.split(",").map(Number) : [];
-            const availableTabs = dashboardIdsArray
-                .map((id) => parameterData.find((tab) => tab.id === id))
-                .filter(Boolean);
-            setPresentParams(availableTabs);
+            const dashboardIdsArray = params.split(",").map(Number);
+            const matchedParams = dashboardIdsArray.map((id) => parameterData.find((p) => p.id === id)).filter(Boolean);
+            setPresentParams(matchedParams);
         }
     }, [parameterData, params]);
 
@@ -95,6 +93,22 @@ const Parameters = ({ params, setParamsValues }) => {
         setParamsValues(selectedValues)
     }
 
+    useEffect(() => {
+        if (presentParams.length > 0) {
+            const initialSelectedValues = {};
+    
+            presentParams.forEach((param) => {
+                const { parameterName, lstOption } = param?.jsonData || {};
+                const defaultOptions = lstOption?.filter(option => option.optionValue.includes("#DEFAULT"));
+                if (defaultOptions?.length > 0) {
+                    initialSelectedValues[parameterName] = defaultOptions;
+                }
+            });
+    
+            setSelectedValues(initialSelectedValues);
+        }
+    }, [presentParams]);
+
     const renderInputField = (param) => {
         const {
             parameterType, parameterDisplayName, parameterName, lstOption, isMandatory, defaultOption,
@@ -117,41 +131,39 @@ const Parameters = ({ params, setParamsValues }) => {
 
                 <div className={`col-${parameterControlWidth || 6} text-${controlAlignment?.toLowerCase() || 'left'}`}>
 
-                    {parameterType === "1" &&
-                        <>
-                            {isMultipleSelectionRequired === 'Yes' ?
-                                <Select
-                                    id={parameterId}
-                                    name={parameterName}
-                                    options={options}
-                                    isMulti
-                                    // placeholder="Select value..."
-                                    className={`${theme === 'Dark' ? 'backcolorinput-dark' : 'backcolorinput'} react-select-multi`}
-                                    getOptionLabel={(e) => e.optionText}
-                                    getOptionValue={(e) => e.optionValue}
-                                    value={selectedValues[parameterName] || getDefaultValues(parameterName, lstOption)}
-                                    onChange={(selectedOptions) => handleMultiSelectChange(parameterName, selectedOptions)}
-                                /> :
-                                <select
-                                    id={parameterName}
-                                    name={parameterName}
-                                    className={`${theme === 'Dark' ? 'backcolorinput-dark' : 'backcolorinput'} form-select form-select-sm`}
-                                    defaultValue=""
-                                    value={selectedValues[parameterName] || ''}
-                                    onChange={(e) => handleInputChange(parameterName, e.target.value)}
-                                >
-                                    <option value=''>Select Value</option>
-                                    {defaultOption?.optionText !== '' &&
-                                        <option value={defaultOption?.optionValue ? defaultOption?.optionValue : ''}>{defaultOption?.optionText ? defaultOption?.optionText : 'Select Value'}</option>
-                                    }
-                                    {options.map((option, index) => (
-                                        <option key={index} value={option.column_1}>
-                                            {option.column_2}
-                                        </option>
-                                    ))}
-                                </select>
+                    {(parameterType === "1" && isMultipleSelectionRequired === 'Yes') &&
+                        <Select
+                            id={parameterId}
+                            name={parameterName}
+                            options={options}
+                            isMulti
+                            // placeholder="Select value..."
+                            className={`${theme === 'Dark' ? 'backcolorinput-dark' : 'backcolorinput'} react-select-multi`}
+                            getOptionLabel={(e) => e.optionText}
+                            getOptionValue={(e) => e.optionValue}
+                            value={selectedValues[parameterName] || []}
+                            onChange={(selectedOptions) => handleMultiSelectChange(parameterName, selectedOptions)}
+                        />
+                    }
+
+                    {(parameterType === "1" && isMultipleSelectionRequired !== 'Yes') &&
+                        <select
+                            id={parameterName}
+                            name={parameterName}
+                            className={`${theme === 'Dark' ? 'backcolorinput-dark' : 'backcolorinput'} form-select form-select-sm`}
+                            value={selectedValues[parameterName] || ''}
+                            onChange={(e) => handleInputChange(parameterName, e.target.value)}
+                        >
+                            <option value=''>Select Value</option>
+                            {defaultOption?.optionText !== '' &&
+                                <option value={defaultOption?.optionValue ? defaultOption?.optionValue : ''}>{defaultOption?.optionText ? defaultOption?.optionText : 'Select Value'}</option>
                             }
-                        </>
+                            {options.map((option, index) => (
+                                <option key={index} value={option.column_1}>
+                                    {option.column_2}
+                                </option>
+                            ))}
+                        </select>
                     }
 
                     {parameterType === "2" && (
@@ -214,7 +226,7 @@ const Parameters = ({ params, setParamsValues }) => {
                         </div>
                     )}
                 </div>
-            </div>
+            </div >
         );
     };
 
@@ -222,21 +234,21 @@ const Parameters = ({ params, setParamsValues }) => {
     return (
         <div className="container">
             <div className='help-docs'>
-                <button type="button" className="small-box-btn-dwn m-1" onClick={searchParams}>
+                <button type="button" className="small-box-btn-dwn m-1">
                     <FontAwesomeIcon icon={faSearch} size="xs" className="dropdown-gear-icon" />
                 </button>
-                <button type="button" className="small-box-btn-dwn m-1" onClick={resetParams}>
+                <button type="button" className="small-box-btn-dwn m-1" onClick={() => resetParams()}>
                     <FontAwesomeIcon icon={faReply} size="xs" className="dropdown-gear-icon" />
                 </button>
-                <button type="button" className="small-box-btn-dwn m-1" onClick={() => seHideParams(!hideParams)}>
+                <button type="button" className="small-box-btn-dwn m-1" onClick={() => setHideParams(!hideParams)}>
                     <FontAwesomeIcon icon={faEyeSlash} size="xs" className="dropdown-gear-icon" />
                 </button>
             </div>
-            {/* {!hideParams && */}
+             {!hideParams && 
             <div className="row">
                 {presentParams?.length > 0 && presentParams.map((param, index) => renderInputField(param))}
             </div>
-            {/* } */}
+           }
         </div>
     );
 };

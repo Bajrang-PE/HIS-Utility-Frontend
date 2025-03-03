@@ -6,16 +6,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const DashSidebar = ({ data, setActiveTab, activeTab, dashboardData }) => {
+
     const [collapsed, setCollapsed] = useState(false);
     const [openSubMenu, setOpenSubMenu] = useState(null);
 
-    // Memoize root tabs to avoid recalculating on every render
-    const rootTabs = useMemo(() => data?.filter(tab => !tab.jsonData.parentTabId || tab.jsonData.parentTabId === "0"), [data]);
+    const rootTabs = data?.filter(tab => !tab.jsonData.parentTabId || tab.jsonData.parentTabId === "0");
 
     // Fetch child tabs with memoization
-    const getChildTabs = useCallback((parentId) => {
+    const getChildTabs = (parentId) => {
         return data?.filter(tab => tab.jsonData.parentTabId === String(parentId));
-    }, [data]);
+    };
 
     // Config from dashboardData
     const tabFontColourHover = dashboardData?.jsonData?.tabFontColourHover || "#ffffff";
@@ -23,8 +23,7 @@ const DashSidebar = ({ data, setActiveTab, activeTab, dashboardData }) => {
     const tabFont = dashboardData?.jsonData?.tabFont || "#ffffff";
     const isSidebarCollapse = dashboardData?.jsonData?.isSidebarCollapse || 'Yes';
 
-    // Memoized function to get dynamic icon
-    const getDynamicIcon = useCallback((iconName) => {
+    const getDynamicIcon = (iconName) => {
         if (!iconName) return SolidIcons.faBarChart;
 
         const formattedIconName = "fa" + iconName.replace(/-o$/, "")
@@ -37,23 +36,19 @@ const DashSidebar = ({ data, setActiveTab, activeTab, dashboardData }) => {
         );
 
         return iconKey ? SolidIcons[iconKey] : SolidIcons.faBarChart;
-    }, []);
+    };
 
-    // Set default active tab on load
     useEffect(() => {
         if (rootTabs.length > 0) {
             setActiveTab(rootTabs[0]);
             setOpenSubMenu(rootTabs[0].id);
         }
-    }, [rootTabs, setActiveTab]);
+    }, []);
 
-    // Toggle sidebar collapse
     const toggleSidebar = () => setCollapsed(prev => !prev);
 
-    // Combined submenu handling
     const handleSubMenuClick = (submenu) => setOpenSubMenu(openSubMenu === submenu ? null : submenu);
 
-    // Hover effects (combined to avoid duplication)
     const handleHover = (id, isHover) => {
         const element = document.getElementById(id);
         if (element) {
@@ -68,7 +63,7 @@ const DashSidebar = ({ data, setActiveTab, activeTab, dashboardData }) => {
                 <MenuItem className="menu-item-container">
                     {!collapsed && <span><b>{dashboardData?.jsonData?.groupName || "Dashboard"}</b></span>}
                     {isSidebarCollapse !== 'No' && (
-                        <FaBars onClick={toggleSidebar} className="menu-icon-right" />
+                        <FaBars onClick={() => toggleSidebar()} className="menu-icon-right" />
                     )}
                 </MenuItem>
 

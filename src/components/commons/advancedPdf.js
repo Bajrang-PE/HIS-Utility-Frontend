@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import Papa from 'papaparse';
 import { fetchLocalLogoAsBase64, fetchLogoAsBase64 } from '../../utils/commonFunction';
 
 export const generatePDF = async (widgetData, tableData, filters = []) => {
@@ -23,7 +24,6 @@ export const generatePDF = async (widgetData, tableData, filters = []) => {
 
   const pageWidth = pdf.internal.pageSize.getWidth();
   const logoBase64 = await fetchLocalLogoAsBase64("/pdfIcon.jpeg");
-  console.log(logoBase64, 'logo')
 
   // Function to draw the header
   const drawHeader = (doc, title) => {
@@ -113,3 +113,72 @@ export const generatePDF = async (widgetData, tableData, filters = []) => {
     pdf.output('dataurlnewwindow');
   }
 };
+
+
+export const generateCSV = (widgetData, tableData) => {
+  if (!Array.isArray(tableData) || tableData.length === 0) {
+    console.warn('No data available to download.');
+    return;
+  }
+
+  if (!widgetData) return;
+
+  const { rptDisplayName } = widgetData;
+  const currentDate = new Date().toLocaleDateString('en-GB') + ' ' + new Date().toLocaleTimeString('en-GB');
+
+  const heading = [
+    ['Ministry of Health Family Welfare'],
+    ['Government of India'],
+    ['DVDMS Central Dashboard'],
+    [rptDisplayName || 'Report Title'],
+    [],
+    [],
+    [`Date: ${currentDate}`],
+    []
+  ];
+
+  const tableHeaders = Object.keys(tableData[0]);
+  const tableRows = tableData.map(row => tableHeaders.map(header => row[header]));
+
+  const finalData = [
+    ...heading,
+    tableHeaders,
+    ...tableRows
+  ];
+
+  const csvContent = Papa.unparse(finalData, { skipEmptyLines: false });
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute('download', `${rptDisplayName || 'report'}.csv`);
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+
+//FUNCTION TO DOWNLOAD CSV FILE
+// export const generateCSV = () => {
+//   const filteredData = data.map((row, index) => {
+//     let filteredRow = {};
+//     column.forEach(col => {
+//       if (col.name === 'S.No') {
+//         filteredRow['S.No'] = index + 1;
+//       } else {
+//         filteredRow[col.name] = col.selector(row);
+//       }
+//     });
+//     return filteredRow;
+//   });
+
+//   const csv = Papa.unparse(filteredData);
+//   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+//   const link = document.createElement('a');
+//   link.href = URL.createObjectURL(blob);
+//   link.setAttribute('download', 'data-report.csv');
+//   document.body.appendChild(link);
+//   link.click();
+//   document.body.removeChild(link);
+// };

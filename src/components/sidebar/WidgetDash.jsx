@@ -9,56 +9,30 @@ import { HISContext } from '../../contextApi/HISContext';
 import { fetchQueryData } from '../../utils/commonFunction';
 
 
-const WidgetDash = (props) => {
-    const { widgetDetail } = props
+const WidgetDash = React.memo(({widgetDetail}) => {
+    // const { widgetDetail } = props
     const { theme } = useContext(HISContext);
     const [graphData, setGraphData] = useState([]);
 
-    const processedQueryData = useMemo(() => {
-        return widgetDetail?.queryVO?.length > 0 ? widgetDetail.queryVO : [];
-    }, [widgetDetail?.queryVO]);
-
-    const fetchData = useCallback(async () => {
-        if (!processedQueryData.length) return;
-        try {
-            const data = await fetchQueryData(processedQueryData);
-            // console.log(data,'datatatatd')
-            setGraphData(data);
-        } catch (error) {
-            console.error("Error loading query data:", error);
-        }
-    }, [processedQueryData]);
-
-    useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+    // useEffect(() => {
+    //     console.log(widgetDetail, 'bajrang')
+    // }, [widgetDetail]) 
 
 
     return (
+
         <>
-            {/* {widgetDetail?.widgetShowOrDownload === 'HTML' ? */}
-            <>
-                {/* <p>Widget Name: {widgetDetail.rptId} ---- {widgetDetail?.rptDisplayName}</p> */}
-                {widgetDetail.reportViewed === 'KPI' && <KpiDash widgetData={widgetDetail} tabData={graphData} />}
-                {widgetDetail.reportViewed === 'Tabular' && <TabularDash widgetData={widgetDetail} kpiData={graphData} />}
-                {widgetDetail.reportViewed === 'Graph' && <GraphDash widgetData={widgetDetail} graphData={graphData} />}
-                {widgetDetail.reportViewed === "Criteria_Map" &&
-                    <div style={{ position: 'relative', zIndex: 1 }}>
-                        <MapDash widgetData={widgetDetail} />
-                    </div>
-                }
-            </>
-            {/* :
-                <>
-                    <button type="button" className="small-box-btn-dwn"
-                    >
-                        <FontAwesomeIcon icon={faFilePdf} className="dropdown-gear-icon" />
-                    </button>
-                </>
-            }  */}
+            {widgetDetail.reportViewed === 'KPI' && <KpiDash widgetData={widgetDetail}  />}
+            {widgetDetail.reportViewed === 'Tabular' && <TabularDash widgetData={widgetDetail}  />}
+            {widgetDetail.reportViewed === 'Graph' && <GraphDash widgetData={widgetDetail}  />}
+            {widgetDetail.reportViewed === "Criteria_Map" &&
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                    <MapDash widgetData={widgetDetail} />
+                </div>
+            }
         </>
 
     )
-}
+})
 
 export default WidgetDash

@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import Tabular from "./Tabular";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowCircleLeft, faBarChart, faCog, faFileCsv, faFilePdf, faRefresh, faSortAmountDesc } from "@fortawesome/free-solid-svg-icons";
+import { faArrowCircleLeft, faBarChart, faCog, faFileCsv, faFileExcel, faFilePdf, faRefresh, faSortAmountDesc } from "@fortawesome/free-solid-svg-icons";
 import { fetchQueryData } from "../../utils/commonFunction";
 import { HISContext } from "../../contextApi/HISContext";
 import InputField from "../commons/InputField";
-import { generatePDF } from "../commons/advancedPdf";
+import { generateCSV, generatePDF } from "../commons/advancedPdf";
 import Parameters from "./Parameters";
 
 const initialStates = [
@@ -41,14 +41,34 @@ const hospitalData = {
   202: [{ id: 2002, name: "Varanasi Hospital" }],
 };
 
-const TabularDash = ({ widgetData, tabData }) => {
+const TabularDash = ({ widgetData }) => {
 
-  const { theme } = useContext(HISContext);
-  const [graphData, setGraphData] = useState([]);
+  const { theme, mainDashData } = useContext(HISContext);
+  const [tableData, setTableData] = useState([]);
   const [currentLevel, setCurrentLevel] = useState("state");
   const [currentData, setCurrentData] = useState(initialStates);
   const [previousData, setPreviousData] = useState([]);
   const [paramsValues, setParamsValues] = useState();
+  const [searchInput, setSearchInput] = useState('');
+  const [filterData, setFilterData] = useState(initialStates)
+
+
+  //parameter search
+  useEffect(() => {
+    if (!searchInput) {
+      setFilterData(currentData);
+    } else {
+      const lowercasedText = searchInput.toLowerCase();
+      const newFilteredData = currentData.filter(row => {
+        const paramId = row?.id?.toString() || "";
+        const paramName = row?.name?.toLowerCase() || "";
+
+        return paramName.includes(lowercasedText);
+      });
+      setFilterData(newFilteredData);
+    }
+  }, [searchInput, currentData]);
+
 
   const handleStateClick = useCallback((stateId) => {
     if (districtData[stateId]) {
@@ -75,6 +95,32 @@ const TabularDash = ({ widgetData, tabData }) => {
     }
   }, [previousData]);
 
+  const fetchData = async (query) => {
+    if (!query) return;
+    try {
+      // setLoading(true);
+      const data = await fetchQueryData(query);
+      // console.log(data, 'bajrang')
+      setTableData(
+        data.map((item) => ({
+          name: item.column_1,
+          y: item.column_2,
+        })));
+    } catch (error) {
+      console.error("Error loading query data:", error);
+    } finally {
+      // setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (widgetData?.queryVO?.length > 0) {
+      // alert('bgbg')
+      fetchData(widgetData?.queryVO);
+    }
+  }, []);
+
+  console.log(widgetData, 'bajrang')
 
   const headingAlign = widgetData?.tableHeadingAlignment === '1' ? 'center' : 'left';
   const borderReq = widgetData?.isTableBorderRequired || '';
@@ -90,6 +136,7 @@ const TabularDash = ({ widgetData, tabData }) => {
   const isDirectDownloadRequired = widgetData?.isDirectDownloadRequired || 'No';
   const paramsData = widgetData.selFilterIds || "";
   const footerText = widgetData.footerText || "";
+  const widgetTopMargin = widgetData.widgetTopMargin || "";
 
   const columns = useMemo(() => {
     const srNoColumn = isIndexNoReq
@@ -132,7 +179,8 @@ const TabularDash = ({ widgetData, tabData }) => {
 
   return (
     <div className={`tabular-box ${theme === 'Dark' ? 'dark-theme' : ''} tabular-box-border ${borderReq === 'No' ? '' : 'tabular-box-border'}`} style={{ border: `1px solid ${theme === 'Dark' ? 'white' : 'black'}` }}>
-      <div className="row px-2 py-2 border-bottom">
+
+      <div className="row px-2 py-2 border-bottom" >
         {headingReq &&
           <div className={` ${isDirectDownloadRequired === 'Yes' ? 'col-md-7' : 'col-md-12'} fw-medium fs-6`} style={{ textAlign: headingAlign, backgroundColor: headingBgClr, color: headingFontClr }}>{widgetData?.rptDisplayName}:{widgetData?.rptId}</div>
         }
@@ -150,11 +198,11 @@ const TabularDash = ({ widgetData, tabData }) => {
               <li className="p-1 dropdown-item text-primary" style={{ cursor: "pointer" }}>
                 <FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon me-2" />Refresh Data
               </li>
-              <li className="p-1 dropdown-item text-primary" style={{ cursor: "pointer" }}>
+              <li className="p-1 dropdown-item text-primary" style={{ cursor: "pointer" }} onClick={() => generatePDF(widgetData, currentData)} title="pdf">
                 <FontAwesomeIcon icon={faFilePdf} className="dropdown-gear-icon me-2" />Download PDF
               </li>
-              <li className="p-1 dropdown-item text-primary" style={{ cursor: "pointer" }}>
-                <FontAwesomeIcon icon={faFileCsv} className="dropdown-gear-icon me-2" />Download CSV
+              <li className="p-1 dropdown-item text-primary" style={{ cursor: "pointer" }} onClick={() => generateCSV(widgetData, currentData)}>
+                <FontAwesomeIcon icon={faFileExcel} className="dropdown-gear-icon me-2" />Download CSV
               </li>
               <li className="p-1 dropdown-item text-primary" style={{ cursor: "pointer" }}>
                 <FontAwesomeIcon icon={faBarChart} className="dropdown-gear-icon me-2" />Outliers
@@ -164,11 +212,11 @@ const TabularDash = ({ widgetData, tabData }) => {
             <button className="small-box-btn-dwn" onClick={() => generatePDF(widgetData, currentData)} title="PDF">
               <FontAwesomeIcon icon={faFilePdf} />
             </button>
-            <button className="small-box-btn-dwn">
-              <FontAwesomeIcon icon={faFileCsv} />
+            <button className="small-box-btn-dwn" onClick={() => generateCSV(widgetData, currentData)}>
+              <FontAwesomeIcon icon={faFileExcel} />
             </button>
             {currentLevel !== "state" && (
-              <button className="small-box-btn-dwn" onClick={handleBack}>
+              <button className="small-box-btn-dwn" onClick={() => handleBack()}>
                 <FontAwesomeIcon icon={faArrowCircleLeft} />
               </button>
             )}
@@ -176,7 +224,7 @@ const TabularDash = ({ widgetData, tabData }) => {
         }
 
       </div>
-      <div className="px-2 py-2">
+      <div className="px-2 py-2" style={{marginTop:`${widgetTopMargin}px`}}>
         <h4 style={{ fontWeight: "500", fontSize: "20px" }}>Query :</h4>
         <span>{widgetData?.procedureMode}</span>
         {isDataSearchReq &&
@@ -189,6 +237,7 @@ const TabularDash = ({ widgetData, tabData }) => {
                 name="customMsgForNoData"
                 placeholder="Enter"
                 className={`${theme === 'Dark' ? 'backcolorinput-dark' : 'backcolorinput'}`}
+                onChange={(e) => { setSearchInput(e?.target?.value); }}
               />
             </div>
           </div>
@@ -204,7 +253,7 @@ const TabularDash = ({ widgetData, tabData }) => {
 
       <Tabular
         columns={columns}
-        data={currentData}
+        data={filterData}
         pagination={isPaginationReq}
         recordsPerPage={recordPerPage}
         fixedHeader={isHeadingFixed}

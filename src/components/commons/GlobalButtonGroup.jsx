@@ -10,17 +10,17 @@ const GlobalButtonGroup = (props) => {
     return (
         <div className='text-start py-1 global-button-group  border-0'>
             {isSave &&
-                <button className='btn btn-sm' onClick={onSave}><FontAwesomeIcon icon={faFile}
+                <button className='btn btn-sm' onClick={()=>onSave()}><FontAwesomeIcon icon={faFile}
                     className="dropdown-gear-icon me-1" />Save</button>}
             {isOpen &&
-                <button className='btn btn-sm ms-1' onClick={onOpen}><FontAwesomeIcon icon={faFolderOpen} className="dropdown-gear-icon me-1" />Open</button>
+                <button className='btn btn-sm ms-1' onClick={()=>onOpen()}><FontAwesomeIcon icon={faFolderOpen} className="dropdown-gear-icon me-1" />Open</button>
             }
             {isReset &&
-                <button className='btn btn-sm ms-1' onClick={onReset}><FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon me-1" />Reset</button>}
+                <button className='btn btn-sm ms-1' onClick={()=>onReset()}><FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon me-1" />Reset</button>}
             {isParams &&
-                <button className='btn btn-sm ms-1' onClick={onParams}><FontAwesomeIcon icon={faEye} className="dropdown-gear-icon me-1" />Parameters</button>}
+                <button className='btn btn-sm ms-1' onClick={()=>onParams()}><FontAwesomeIcon icon={faEye} className="dropdown-gear-icon me-1" />Parameters</button>}
             {isWeb &&
-                <button className='btn btn-sm ms-1' onClick={onWeb}><FontAwesomeIcon icon={faEarth} className="dropdown-gear-icon me-1" />Web Services</button>}
+                <button className='btn btn-sm ms-1' onClick={()=>onWeb()}><FontAwesomeIcon icon={faEarth} className="dropdown-gear-icon me-1" />Web Services</button>}
         </div>
     )
 }

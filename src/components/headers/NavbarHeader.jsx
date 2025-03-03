@@ -56,7 +56,7 @@ const NavbarHeader = () => {
                             <ul className="dropdown-menu drpb-menu" aria-labelledby="dropdownMenu1">
                                 {dashboardMasterDt.map((item, index) => (
                                     <li key={index} className="dropdown-list">
-                                        <Link className="dropdown-item" to={item?.link} onClick={reset}>
+                                        <Link className="dropdown-item" to={item?.link} onClick={()=>reset()}>
                                             <FontAwesomeIcon icon={faGear} className="me-2 dropdown-gear-icon" />
                                             {item?.label}
                                         </Link>
@@ -78,7 +78,7 @@ const NavbarHeader = () => {
                             <ul className="dropdown-menu drpb-menu" aria-labelledby="dropdownMenu2" style={{ right: 0, left: "auto" }}>
                                 {webServiceMaster.map((item, index) => (
                                     <li key={index} className="dropdown-list">
-                                        <Link className="dropdown-item" to={item?.link} onClick={reset}>
+                                        <Link className="dropdown-item" to={item?.link} onClick={()=>reset()}>
                                             <FontAwesomeIcon icon={faGear} className="me-2 dropdown-gear-icon" />
                                             {item?.label}
                                         </Link>

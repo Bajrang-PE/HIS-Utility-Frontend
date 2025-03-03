@@ -123,7 +123,7 @@ const HelpDocs = (props) => {
                 <button
                   className="btn btn-sm me-1 py-0 px-0"
                   style={{ background: "#34495e", color: "white" }}
-                  onClick={handleAddRow}
+                  onClick={()=>handleAddRow()}
                 >
                   <FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size="sm" />{" "}
                   {isEditing !== null ? "Save" : "Add"}

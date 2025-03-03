@@ -7,11 +7,34 @@ import { HISContext } from '../../contextApi/HISContext';
 import { useLocation } from 'react-router-dom';
 import { fetchQueryData } from '../../utils/commonFunction';
 
-const KpiDash = ({ widgetData,kpiData }) => {
-    const { setActiveTab, allTabsData,setLoading } = useContext(HISContext);
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const [graphData, setGraphData] = useState([]);
+const KpiDash = ({ widgetData }) => {
+    const { setActiveTab, allTabsData, setLoading } = useContext(HISContext);
+    const [kpiData, setKpiData] = useState([]);
+
+    const fetchData = async (query) => {
+        if (!query) return;
+        try {
+            // setLoading(true);
+            const data = await fetchQueryData(query);
+            console.log(data, 'bajrang')
+            setKpiData(
+                data.map((item) => ({
+                    name: item.column_1,
+                    y: item.column_2,
+                })));
+        } catch (error) {
+            console.error("Error loading query data:", error);
+        } finally {
+            // setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        if (widgetData?.queryVO?.length > 0) {
+            // alert('bgbg')
+            fetchData(widgetData?.queryVO);
+        }
+    }, []);
 
 
     const getDynamicIcon = (iconName) => {
@@ -105,7 +128,7 @@ const KpiDash = ({ widgetData,kpiData }) => {
             {widgetData?.iconType !== 'NOICON' &&
                 <div className="small-box-icon kpi-icon-img">
                     {widgetData?.iconType === 'IMAGE' ?
-                        <img src="http://localhost:8080/HISUtilities/dashboard/images/Icon_images/default-icon.png" alt="Kpi Image" className='dropdown-gear-icon' />
+                        <img src="https://uatcdash.dcservices.in/HISUtilities/dashboard/images/Icon_images/default-icon.png" alt="image" className='dropdown-gear-icon' />
                         :
                         <FontAwesomeIcon icon={getDynamicIcon(widgetData?.iconName)} color={widgetData?.widgetIconColour} />
                     }

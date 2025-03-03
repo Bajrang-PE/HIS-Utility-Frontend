@@ -980,7 +980,7 @@ const ParameterMaster = () => {
                     <div className='col-2'>
                       <button
                         className="btn btn-outline-secondary btn-sm me-1 p-1"
-                        onClick={handleAddRow}
+                        onClick={()=>handleAddRow()}
                       >
                         <FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />
                       </button>

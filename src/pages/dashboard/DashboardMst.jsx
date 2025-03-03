@@ -7,17 +7,15 @@ import { fetchData } from "../../utils/ApiHooks";
 import TopBar from "../../components/sidebar/TopBar";
 
 const DashboardMst = () => {
-    const { getAllTabsData, allTabsData, activeTab, setActiveTab, theme, setTheme } = useContext(HISContext);
+    const { getAllTabsData, getAllWidgetData, allTabsData, activeTab, setActiveTab, theme, setTheme, mainDashData, setMainDashData, setLoading, loading } = useContext(HISContext);
     const [searchParams] = useSearchParams();
-    const [dashboardData, setDashboardData] = useState(null);
-
     const groupId = searchParams.get("groupId");
     const dashboardFor = searchParams.get("dashboardFor");
 
     const getDashboardData = useCallback((groupId, dashFor) => {
         fetchData(`hisutils/singleDashboard/${groupId}/${dashFor}/DashboardGroupingMst`)
             .then((data) => {
-                if (data) setDashboardData(data);
+                if (data) setMainDashData(data);
             });
     }, []);
 
@@ -25,54 +23,79 @@ const DashboardMst = () => {
         if (dashboardFor && groupId) {
             getAllTabsData(dashboardFor);
             getDashboardData(groupId, dashboardFor);
+            getAllWidgetData(dashboardFor);
         }
-    }, [dashboardFor, groupId]);
+    }, [searchParams]);
 
     const presentTabs = useMemo(() => {
-        if (!dashboardData || !allTabsData?.length) return [];
-        const dashboardIdsArray = dashboardData?.jsonData?.dashboardIds?.split(',').map(Number) || [];
-        const themes = dashboardData?.jsonData?.dashboardTheme || 'Default'
-        setTheme(themes);
+        if (!mainDashData || !allTabsData?.length) return [];
+        const dashboardIdsArray = mainDashData?.jsonData?.dashboardIds?.split(',').map(Number) || [];
+        const themes = mainDashData?.jsonData?.dashboardTheme || 'Default'
+        // setTheme(themes);
         return dashboardIdsArray
             .map(id => allTabsData.find(tab => tab.id === id))
             .filter(Boolean);
-    }, [allTabsData, dashboardData]);
+    }, [allTabsData, mainDashData]);
 
-    // Set active tab handler
-    const handleSetActiveTab = useCallback((tab) => {
-        setActiveTab(tab);
-    }, [setActiveTab]);
 
-    const isTopBarLayout = dashboardData?.jsonData?.tabDisplayStyle === 'TOP';
+    const isTopBarLayout = mainDashData?.jsonData?.tabDisplayStyle === 'TOP';
 
-    console.log(dashboardData, 'dashb')
+    // useEffect(() => {
+    //     if(activeTab){
+    //         console.log(activeTab, 'bajrang')
+    //     }
+    // }, [activeTab])
+
+    useEffect(() => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+    }, [])
+
+    // useEffect(() => {
+    //     if (activeTab) {
+    //         setLoading(true);
+    //         setTimeout(() => {
+    //             setLoading(false);
+    //         }, 1000);
+    //     }
+    // }, [activeTab])
+
+
 
     return (
-        <div className={`${theme === 'Dark' ? 'dark-theme' : ''}`} style={{
-            display: isTopBarLayout ? "block" : 'flex',
-            backgroundColor: "#f4f4f4",
-            minHeight: "100vh"
-        }}>
-            {isTopBarLayout ? (
-                <TopBar
-                    data={presentTabs}
-                    setActiveTab={handleSetActiveTab}
-                    activeTab={activeTab}
-                    dashboardData={dashboardData}
-                />
-            ) : (
-                <DashSidebar
-                    data={presentTabs}
-                    setActiveTab={handleSetActiveTab}
-                    activeTab={activeTab}
-                    dashboardData={dashboardData}
-                />
-            )}
+        <>
+            {loading ? null : (
+                <div className={`${theme === 'Dark' ? 'dark-theme' : ''}`} style={{
+                    display: isTopBarLayout ? "block" : 'flex',
+                    backgroundColor: "#f4f4f4",
+                    minHeight: "100vh"
+                }}>
+                    {isTopBarLayout ? (
+                        <TopBar
+                            data={presentTabs}
+                            setActiveTab={setActiveTab}
+                            activeTab={activeTab}
+                            dashboardData={mainDashData}
+                        />
+                    ) : (
+                        <DashSidebar
+                            data={presentTabs}
+                            setActiveTab={setActiveTab}
+                            activeTab={activeTab}
+                            dashboardData={mainDashData}
+                        />
+                    )}
 
-            <main style={{ padding: "10px 20px", flex: 1 }}>
-                <TabDash tabData={activeTab} dashboardFor={dashboardFor} />
-            </main>
-        </div>
+                    <main style={{ padding: "10px 20px", flex: 1 }}>
+                        {activeTab &&
+                            <TabDash tabData={activeTab} />
+                        }
+                    </main>
+                </div>
+            )}
+        </>
     );
 };
 

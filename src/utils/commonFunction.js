@@ -70,7 +70,7 @@ export const fetchQueryData = async (queryVO = []) => {
       }
 
       const requestBody = { query, params: {} };
-      const response = await fetchPostData("/hisutils/GenericApi", requestBody);
+      const response = await fetchPostData("/hisutils/GenericApiQry", requestBody);
 
       return response || [];
   } catch (error) {

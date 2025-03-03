@@ -10,13 +10,12 @@ import { fetchQueryData } from "../../utils/commonFunction";
 import { HISContext } from "../../contextApi/HISContext";
 
 
-const GraphDash = ({ widgetData, graphData }) => {
-
+const GraphDash = ({ widgetData }) => {
   const { theme } = useContext(HISContext);
-
   const [paramsValues, setParamsValues] = useState();
   const [chartData, setChartData] = useState([]);
   const [chartType, setChartType] = useState('BAR_GRAPH');
+  const [graphData, setGraphData] = useState([]);
 
 
   Highcharts.setOptions({
@@ -30,32 +29,44 @@ const GraphDash = ({ widgetData, graphData }) => {
     }
   });
 
-  useEffect(() => {
-    Promise.all([
-      import("highcharts/modules/offline-exporting"),
-      import("highcharts/modules/exporting"),
-      import("highcharts/modules/export-data"),
-      import('highcharts/modules/no-data-to-display')
-    ])
-      .then(([OfflineExporting, exportingModule, exportDataModule, HighchartsNoData]) => {
-        [OfflineExporting, exportingModule, exportDataModule, HighchartsNoData].forEach(
-          (mod) => (mod.default || mod)(Highcharts)
-        );
-      })
-      .catch((error) => {
-        console.error("Error loading Highcharts modules:", error);
-      });
-  }, []);
 
   useEffect(() => {
-    if (graphData?.length > 0) {
-      setChartData(
-        graphData.map((item) => ({
-          name: item.column_1,
-          y: item.column_2,
-        })));
-    }
-  }, [graphData])
+    const timeout = setTimeout(() => {
+      Promise.all([
+        import("highcharts/modules/offline-exporting"),
+        import("highcharts/modules/exporting"),
+        import("highcharts/modules/export-data"),
+        import('highcharts/modules/no-data-to-display')
+      ])
+        .then(([OfflineExporting, exportingModule, exportDataModule, HighchartsNoData]) => {
+          const modules = [OfflineExporting, exportingModule, exportDataModule, HighchartsNoData];
+
+          const applyModule = (mod) => {
+            if (typeof mod === 'function') {
+              mod(Highcharts);
+            } else if (mod && typeof mod.default === 'function') {
+              mod.default(Highcharts);
+            }
+          };
+
+          try {
+            modules.forEach((mod, index) => {
+              applyModule(mod);
+            });
+          } catch (error) {
+            console.error('Error during module initialization:', error);
+          }
+        })
+        .catch((error) => {
+          console.error('Error loading Highcharts modules:', error);
+        });
+    }, 2000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
+
 
   const chartTypeMapping = {
     BAR_GRAPH: "bar",
@@ -81,32 +92,30 @@ const GraphDash = ({ widgetData, graphData }) => {
     }
   }, [widgetData])
 
-  // const processedQueryData = useMemo(() => {
-  //   return widgetData?.queryVO?.length > 0 ? widgetData.queryVO : [];
-  // }, [widgetData?.queryVO]);
 
-  // const fetchData = useCallback(async () => {
-  //   if (!processedQueryData.length) return;
-  //   try {
-  //     setLoading(true);
-  //     const data = await fetchQueryData(processedQueryData);
-  //     console.log(data, 'datatatatd')
-  //     // setGraphData(data);
-  //     setGraphData(
-  //       data.map((item) => ({
-  //         name: item.column_1,
-  //         y: item.column_2,
-  //       })));
-  //   } catch (error) {
-  //     console.error("Error loading query data:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [processedQueryData, setLoading]);
+  const fetchData = async (query) => {
+    if (!query) return;
+    try {
+      // setLoading(true);
+      const data = await fetchQueryData(query);
+      setGraphData(
+        data.map((item) => ({
+          name: item.column_1,
+          y: item.column_2,
+        })));
+    } catch (error) {
+      console.error("Error loading query data:", error);
+    } finally {
+      // setLoading(false);
+    }
+  }
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, [fetchData]);
+  useEffect(() => {
+    if (widgetData?.queryVO?.length > 0) {
+      // alert('bgbg')
+      fetchData(widgetData?.queryVO);
+    }
+  }, []);
 
   const is3D = widgetData.is3d === "true";
   const xAxisLabel = widgetData.xAxisLabel || "X Axis";
@@ -131,7 +140,12 @@ const GraphDash = ({ widgetData, graphData }) => {
   const isScrollbarRequired = widgetData.isScrollbarRequired === "Yes";
   const paramsData = widgetData.selFilterIds || "";
   const footerText = widgetData.footerText || "";
-
+  const headingAlign = widgetData?.tableHeadingAlignment === '1' ? 'center' : 'left';
+  const borderReq = widgetData?.isTableBorderRequired || '';
+  const headingReq = widgetData?.tableHeadingRequired === 'yes' || widgetData?.tableHeadingRequired === 'Yes';
+  const headingBgClr = widgetData?.headingBackgroundColour || '#000000';
+  const headingFontClr = widgetData?.headingFontColour || '#ffffff';
+  const widgetTopMargin = widgetData.widgetTopMargin || "";
 
   const exportingOptions = {
     enabled: isActionButtonReq !== "No" && isActionButtonReq !== "None",
@@ -403,11 +417,11 @@ const GraphDash = ({ widgetData, graphData }) => {
       },
     },
     exporting: exportingOptions,
-    series: chartData.length > 0
+    series: graphData.length > 0
       ? [
         {
           name: yAxisLabel || "Value",
-          data: chartData,
+          data: graphData,
           colorByPoint: true,
         },
       ]
@@ -433,7 +447,7 @@ const GraphDash = ({ widgetData, graphData }) => {
 
 
   return (
-    <div className={`high-chart-main ${theme === 'Dark' ? 'dark-theme' : ""}`} style={{ border: `7px solid ${theme === 'Dark' ? 'white' : 'black'}` }}>
+    <div className={`high-chart-main ${theme === 'Dark' ? 'dark-theme' : ""} ${borderReq === 'No' ? '' : 'tabular-box-border'}`} style={{ border: `7px solid ${theme === 'Dark' ? 'white' : 'black'}` }}>
       {paramsData && (
         <div className='parameter-box'>
           <Parameters params={paramsData} setParamsValues={setParamsValues} />
@@ -442,9 +456,12 @@ const GraphDash = ({ widgetData, graphData }) => {
 
       {isDirectDownloadRequired === 'Yes' &&
         <div className="row px-2 py-2 border-bottom">
-          <div class="col-md-8 col-xs-7 fw-medium fs-6 pe-0">
-            {widgetData?.rptDisplayName}
-          </div>
+          {headingReq &&
+            <div className={` ${isDirectDownloadRequired === 'Yes' ? 'col-md-7' : 'col-md-12'} fw-medium fs-6`}
+              style={{ textAlign: headingAlign, backgroundColor: headingBgClr, color: headingFontClr }}>
+              {widgetData?.rptDisplayName}
+            </div>
+          }
           <div className="col-md-4">
             <button
               type="button"
@@ -471,7 +488,7 @@ const GraphDash = ({ widgetData, graphData }) => {
         </div>
       }
 
-      <div className="px-2 py-2">
+      <div className="px-2 py-2" style={{marginTop:`${widgetTopMargin}px`}}>
         <h4 style={{ fontWeight: "500", fontSize: "20px" }}>Query :{widgetData?.rptId}</h4>
         <span>{mainQuery}</span>
       </div>

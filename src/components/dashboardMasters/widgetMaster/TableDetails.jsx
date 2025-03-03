@@ -1307,7 +1307,7 @@ const TableDetails = (props) => {
                                         />
                                     </td>
                                     <td className='px-0 action-buttons'>
-                                        <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={handleAddRow}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />Add</button>
+                                        <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={()=>handleAddRow()}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />Add</button>
                                     </td>
                                 </tr>
                                 {rows.map((row, index) => (

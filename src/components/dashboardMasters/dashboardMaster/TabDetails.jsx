@@ -433,14 +433,14 @@ const TabDetails = (props) => {
                 <div className='align-self-center' style={{ marginLeft: "2%", marginRight: "2%" }}>
 
                     <div className='d-flex justify-content-center'>
-                        <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={availableOptions?.length > 0 ? false : true} onClick={moveRight}>
+                        <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={availableOptions?.length > 0 ? false : true} onClick={()=>moveRight()}>
                             <svg dangerouslySetInnerHTML={{ __html: rightCaret }} height={16} width={16} />
                         </button>
 
                     </div>
 
                     <div className='d-flex justify-content-center'>
-                        <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={selectedOptions?.length > 0 ? false : true} onClick={moveLeft}>
+                        <button type='button' className='btn btn-outline-secondary btn-sm m-1' disabled={selectedOptions?.length > 0 ? false : true} onClick={()=>moveLeft()}>
                             <svg dangerouslySetInnerHTML={{ __html: leftCaret }} height={16} width={16} />
                         </button>
                     </div>
@@ -457,22 +457,22 @@ const TabDetails = (props) => {
 
                 <div className='align-self-center' style={{ marginLeft: "2%", marginRight: "2%",marginTop:"auto" }}>
                     <div className='d-flex justify-content-center'>
-                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={moveTop} disabled={selectedIndex === 0 || selectedIndex === null} style={{ padding: "2px 8px" }}>
+                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={()=>moveTop()} disabled={selectedIndex === 0 || selectedIndex === null} style={{ padding: "2px 8px" }}>
                             <FontAwesomeIcon icon={faAngleDoubleUp} className="dropdown-gear-icon" />
                         </button>
                     </div>
                     <div className='d-flex justify-content-center'>
-                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={moveSingleUp} disabled={selectedIndex === 0 || selectedIndex === null} style={{ padding: "2px 8px" }}>
+                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={()=>moveSingleUp()} disabled={selectedIndex === 0 || selectedIndex === null} style={{ padding: "2px 8px" }}>
                             <FontAwesomeIcon icon={faAngleUp} className="dropdown-gear-icon" />
                         </button>
                     </div>
                     <div className='d-flex justify-content-center'>
-                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={moveSingleDown} disabled={selectedIndex === null || selectedIndex === selectedOptions.length - 1} style={{ padding: "2px 8px" }}>
+                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={()=>moveSingleDown()} disabled={selectedIndex === null || selectedIndex === selectedOptions.length - 1} style={{ padding: "2px 8px" }}>
                             <FontAwesomeIcon icon={faAngleDown} className="dropdown-gear-icon" />
                         </button>
                     </div>
                     <div className='d-flex justify-content-center'>
-                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={moveBottom} disabled={selectedIndex === null || selectedIndex === selectedOptions.length - 1} style={{ padding: "2px 8px" }}>
+                        <button type='button' className='btn btn-outline-secondary btn-sm mb-1' onClick={()=>moveBottom()} disabled={selectedIndex === null || selectedIndex === selectedOptions.length - 1} style={{ padding: "2px 8px" }}>
                             <FontAwesomeIcon icon={faAngleDoubleDown} className="dropdown-gear-icon" />
                         </button>
                     </div>

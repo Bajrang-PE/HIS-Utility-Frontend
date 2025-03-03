@@ -59,7 +59,7 @@ const WidgetMapping = (props) => {
                             <th >
                                 <button
                                     className="btn btn-secondary btn-sm"
-                                    onClick={handleAddRow}
+                                    onClick={()=>handleAddRow()}
                                     style={{ padding: "0 4px" }}
                                 >
                                     <FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />

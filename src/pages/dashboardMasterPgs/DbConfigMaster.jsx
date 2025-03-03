@@ -954,9 +954,9 @@ const DbConfigMaster = () => {
                                             />
                                         </td>
                                         <td className='px-0 action-buttons'>
-                                            <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={handleAddRow}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />{isEditing !== null ? "Modify" : "Add"}</button>
+                                            <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={()=>handleAddRow()}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />{isEditing !== null ? "Modify" : "Add"}</button>
 
-                                            <button className='btn btn-sm ms-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={clearRow}><FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon" size='sm' />Clear</button>
+                                            <button className='btn btn-sm ms-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={()=>clearRow()}><FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon" size='sm' />Clear</button>
                                         </td>
                                     </tr>
                                     {rows?.map((row, index) => (
@@ -990,8 +990,8 @@ const DbConfigMaster = () => {
                     </div>
                     {/* </form> */}
                     <div className='text-center py-1 rounded-2 configuration-buttons'>
-                        <button className='btn btn-sm me-1' onClick={handleSaveConfig}><FontAwesomeIcon icon={faFile} className="dropdown-gear-icon me-1" />Save</button>
-                        <button className='btn btn-sm ms-1 me-1' onClick={checkDatabaseConnection}><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Test DB Connection</button>
+                        <button className='btn btn-sm me-1' onClick={()=>handleSaveConfig()}><FontAwesomeIcon icon={faFile} className="dropdown-gear-icon me-1" />Save</button>
+                        <button className='btn btn-sm ms-1 me-1' onClick={()=>checkDatabaseConnection()}><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Test DB Connection</button>
                         <button className='btn btn-sm ms-1 me-1'><FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon me-1" />Reset</button>
                         <button className='btn btn-sm ms-1 me-1'><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Port Xml Data</button>
                         <button className='btn btn-sm ms-1'><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Clear All Cached Data</button>

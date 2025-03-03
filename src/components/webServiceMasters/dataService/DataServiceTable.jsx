@@ -132,9 +132,9 @@ const DataServiceTable = (props) => {
                     <div className='col-6 m-0 p-0 align-content-center'>
                         {isShowBtn &&
                             <>
-                                <button className='btn btn-sm me-1' onClick={onModify}><FontAwesomeIcon icon={faEdit}
+                                <button className='btn btn-sm me-1' onClick={()=>onModify()}><FontAwesomeIcon icon={faEdit}
                                     className="dropdown-gear-icon me-1" />Modify</button>
-                                <button className='btn btn-sm ms-1' onClick={onDelete}><FontAwesomeIcon icon={faRemove}
+                                <button className='btn btn-sm ms-1' onClick={()=>onDelete()}><FontAwesomeIcon icon={faRemove}
                                     className="dropdown-gear-icon me-1" />Delete</button>
                             </>
                         }

@@ -54,8 +54,8 @@ const IconPicker = ({ setTabIcon, tabIcon, setValues,values }) => {
     return (
         <div style={{ position: "relative" }} ref={modalRef}>
             {/* Input Field */}
-            <div class="input-group flex-nowrap">
-                <span class="input-group-text backcolorinput-icon" id="addon-wrapping">
+            <div className="input-group flex-nowrap">
+                <span className="input-group-text backcolorinput-icon" id="addon-wrapping">
                     {(selectedIcon && SelectedIconComponent) && (
                         <SelectedIconComponent />
                     )}
@@ -65,7 +65,7 @@ const IconPicker = ({ setTabIcon, tabIcon, setValues,values }) => {
                     placeholder="Select an icon"
                     value={selectedIcon}
                     readOnly
-                    onClick={onOpenBox}
+                    onClick={()=>onOpenBox()}
                     className='backcolorinput-icons form-select form-select-sm'
                     style={{ cursor: "pointer" }}
                 />

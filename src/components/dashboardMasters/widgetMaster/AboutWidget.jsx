@@ -174,7 +174,7 @@ const AboutWidget = (props) => {
                                     />
                                 </td>
                                 <td className='px-0 action-buttons'>
-                                    <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={handleAddRow}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />Add</button>
+                                    <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={()=>handleAddRow()}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />Add</button>
                                 </td>
                             </tr>
                             {rows.map((row, index) => (
@@ -202,7 +202,8 @@ const AboutWidget = (props) => {
                         </tbody>
                     </table>
                     <b><h6 className='header-devider mt-1'></h6></b>
-                </div>}
+                </div>
+                }
 
             {/* SECTION DEVIDER widget viewed and is visible*/}
             <div className='row role-theme user-form' style={{ paddingBottom: "1px" }}>

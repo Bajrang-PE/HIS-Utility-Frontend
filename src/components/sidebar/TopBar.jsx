@@ -45,7 +45,7 @@ const TopBar = ({ data, setActiveTab, activeTab, dashboardData }) => {
             setActiveTab(rootTabs[0]);
             setOpenSubMenu(rootTabs[0]?.id);
         }
-    }, [rootTabs, setActiveTab]);
+    }, [rootTabs]);
 
     // Scroll logic
     const checkScroll = useCallback(() => {
@@ -78,7 +78,7 @@ const TopBar = ({ data, setActiveTab, activeTab, dashboardData }) => {
                 </button>
 
                 {canScrollLeft && (
-                    <button className="scroll-button left" onClick={scrollLeft}>
+                    <button className="scroll-button left" onClick={()=>scrollLeft()}>
                         <FontAwesomeIcon icon={SolidIcons.faChevronLeft} />
                     </button>
                 )}
@@ -126,7 +126,7 @@ const TopBar = ({ data, setActiveTab, activeTab, dashboardData }) => {
                 </div>
 
                 {canScrollRight && (
-                    <button className="scroll-button right" onClick={scrollRight}>
+                    <button className="scroll-button right" onClick={()=>scrollRight()}>
                         <FontAwesomeIcon icon={SolidIcons.faChevronRight} />
                     </button>
                 )}

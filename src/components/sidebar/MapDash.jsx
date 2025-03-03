@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { lazy, useEffect, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import RajasthanMap from '../../localData/mapJson/rajasthan.json';
+import UpMap from '../../localData/mapJson/uttarpradesh.json';
 
 
 const MapDash = ({ widgetData }) => {
@@ -67,25 +68,55 @@ const MapDash = ({ widgetData }) => {
         return <div>Loading Chart...</div>
     }
 
+
     const transformMapData = (mapData) => {
-        if (!mapData?.objects?.rajasthan?.geometries) return mapData;
+        if (!mapData?.objects) return mapData;
+
+        const stateKey = Object.keys(mapData.objects)[0];
+        if (!stateKey || !mapData.objects[stateKey]?.geometries) return mapData;
 
         return {
             ...mapData,
             objects: {
-                rajasthan: {
-                    ...mapData.objects.rajasthan,
-                    geometries: mapData.objects.rajasthan.geometries.map((geo) => ({
-                        ...geo,
-                        properties: {
-                            ...geo.properties,
-                            "hc-key": `ra-${geo.properties.district.toLowerCase().replace(/\s+/g, "-")}`,
-                            name: geo.properties.district,
-                        },
-                    })),
+                [stateKey]: {
+                    ...mapData.objects[stateKey],
+                    geometries: mapData.objects[stateKey].geometries.map((geo) => {
+                        const districtName = geo.properties.district || geo.properties.name || geo.properties.district_name;
+                        const hcKey = districtName?.toLowerCase().replace(/\s+/g, "-");
+                        // console.log(`Generated hc-key for ${districtName}: ${hcKey}`);
+
+                        return {
+                            ...geo,
+                            properties: {
+                                ...geo.properties,
+                                "hc-key": hcKey,
+                                name: districtName,
+                            },
+                        };
+                    }),
                 },
             },
         };
+    };
+
+    const getStateMatDt = async (name) => {
+        if (!name) return null;
+
+        const ftName = name.replace(/\s+/g, "").toLowerCase();
+
+        try {
+            const mapModule = await import(`../../localData/mapJson/${ftName}.json`);
+            const mapData = transformMapData(mapModule.default);
+
+            return {
+                name: name,
+                mapData: mapData,
+                data: []
+            };
+        } catch (error) {
+            console.error(`Error loading map for ${name}:`, error);
+            return null;
+        }
     };
 
 
@@ -94,23 +125,36 @@ const MapDash = ({ widgetData }) => {
             name: "Rajasthan",
             mapData: transformMapData(RajasthanMap),
             data: [
-                ["ra-churu", 80],
-                ["ra-jhunjhunu", 60],
-                ["ra-jaipur", 90],
-                ["ra-udaipur", 50],
+                ["churu", 80],
+                ["jhunjhunu", 60],
+                ["jaipur", 90],
+                ["udaipur", 50],
+                ["jhalawar", 70],
             ],
+        },
+        "in-up": {
+            name: "Uttar Pradesh",
+            mapData: transformMapData(UpMap),
+            data: [
+                ["prayagraj", 80],
+                ["varanasi", 70],
+                ["gautam-buddha-nagar", 40],
+                ["gorakhpur", 50],
+            ]
         }
     };
+
 
     const chartOptions = {
         chart: {
             type: "map",
             map: mapData,
             events: {
-                drilldown: function (e) {
+                drilldown: async function (e) {
                     if (!e.seriesOptions) {
                         const chart = this;
-                        const state = stateMapData[e.point.drilldown];
+                        const state = await getStateMatDt(e.point.name);
+                        console.log(state, 'state key')
 
                         if (state) {
                             chart.showLoading("Loading...");
@@ -241,8 +285,6 @@ const MapDash = ({ widgetData }) => {
             },
         },
     };
-
-
 
     return (
         <div style={{ width: "100%", height: "600px" }}>

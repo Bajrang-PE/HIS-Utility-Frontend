@@ -420,7 +420,7 @@ const ServiceUserMaster = () => {
                       <th style={{ width: "10%" }}>
                         <button
                           className="btn btn-outline-secondary btn-sm"
-                          onClick={handleAddRow}
+                          onClick={()=>handleAddRow()}
                           style={{ padding: "0 4px" }}
                         >
                           <FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />
