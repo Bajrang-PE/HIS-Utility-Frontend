@@ -154,7 +154,7 @@ const MapDash = ({ widgetData }) => {
                     if (!e.seriesOptions) {
                         const chart = this;
                         const state = await getStateMatDt(e.point.name);
-                        console.log(state, 'state key')
+                        console.log(e.point.name, 'state key')
 
                         if (state) {
                             chart.showLoading("Loading...");

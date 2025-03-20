@@ -79,6 +79,24 @@ export const fetchQueryData = async (queryVO = []) => {
   }
 };
 
+export const fetchProcedureData = async (procedure) => {
+  if (!procedure) {
+      return [];
+  }
+
+  try {
+      const requestBody = { params: [] };
+      const response = await fetchPostData(`api/procedures/execute-function?functionName=${procedure}`, requestBody);
+
+      return response || [];
+  } catch (error) {
+      console.error("Error fetching query data:", error);
+      return [];
+  }
+};
+
+
+
 export const fetchLogoAsBase64 = async (url) => {
   const response = await fetch(url);
   const blob = await response.blob();

@@ -56,7 +56,7 @@ const TableDetails = (props) => {
         setValues({ ...values, ['popUpDetails']: updatedRows })
     };
 
-
+console.log(values?.linkedWidget,'linkwd')
     return (
         <>
             <b><h6 className='header-devider m-0'>Table Heading Related Details</h6></b>

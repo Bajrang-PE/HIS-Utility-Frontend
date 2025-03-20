@@ -5,34 +5,43 @@ import React, { useContext, useEffect, useState } from 'react'
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
 import { HISContext } from '../../contextApi/HISContext';
 import { useLocation } from 'react-router-dom';
-import { fetchQueryData } from '../../utils/commonFunction';
+import { fetchProcedureData, fetchQueryData } from '../../utils/commonFunction';
 
 const KpiDash = ({ widgetData }) => {
     const { setActiveTab, allTabsData, setLoading } = useContext(HISContext);
     const [kpiData, setKpiData] = useState([]);
 
-    const fetchData = async (query) => {
-        if (!query) return;
-        try {
-            // setLoading(true);
-            const data = await fetchQueryData(query);
-            console.log(data, 'bajrang')
-            setKpiData(
-                data.map((item) => ({
-                    name: item.column_1,
-                    y: item.column_2,
-                })));
-        } catch (error) {
-            console.error("Error loading query data:", error);
-        } finally {
-            // setLoading(false);
+    const fetchData = async (widget) => {
+        if (widget?.modeOfQuery === "Procedure") {
+            if (!widget?.procedureMode) return;
+            try {
+                const data = await fetchProcedureData(widget?.procedureMode);
+                setKpiData(
+                    data.map((item) => ({
+                        name: item.column_1,
+                        y: item.column_2,
+                    })));
+            } catch (error) {
+                console.error("Error loading query data:", error);
+            }
+        } else {
+            if (!widget?.queryVO?.length > 0) return;
+            try {
+                const data = await fetchQueryData(widget?.queryVO);
+                setKpiData(
+                    data.map((item) => ({
+                        name: item.column_1,
+                        y: item.column_2,
+                    })));
+            } catch (error) {
+                console.error("Error loading query data:", error);
+            }
         }
     }
 
     useEffect(() => {
-        if (widgetData?.queryVO?.length > 0) {
-            // alert('bgbg')
-            fetchData(widgetData?.queryVO);
+        if (widgetData) {
+            fetchData(widgetData);
         }
     }, []);
 

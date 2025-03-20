@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from "re
 import Tabular from "./Tabular";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleLeft, faBarChart, faCog, faFileCsv, faFileExcel, faFilePdf, faRefresh, faSortAmountDesc } from "@fortawesome/free-solid-svg-icons";
-import { fetchQueryData } from "../../utils/commonFunction";
+import { fetchProcedureData, fetchQueryData } from "../../utils/commonFunction";
 import { HISContext } from "../../contextApi/HISContext";
 import InputField from "../commons/InputField";
 import { generateCSV, generatePDF } from "../commons/advancedPdf";
@@ -95,32 +95,41 @@ const TabularDash = ({ widgetData }) => {
     }
   }, [previousData]);
 
-  const fetchData = async (query) => {
-    if (!query) return;
-    try {
-      // setLoading(true);
-      const data = await fetchQueryData(query);
-      // console.log(data, 'bajrang')
-      setTableData(
-        data.map((item) => ({
-          name: item.column_1,
-          y: item.column_2,
-        })));
-    } catch (error) {
-      console.error("Error loading query data:", error);
-    } finally {
-      // setLoading(false);
+  const fetchData = async (widget) => {
+    if (widget?.modeOfQuery === "Procedure") {
+      if (!widget?.procedureMode) return;
+      try {
+        const data = await fetchProcedureData(widget?.procedureMode);
+        setTableData(
+          data.map((item) => ({
+            name: item.column_1,
+            y: item.column_2,
+          })));
+      } catch (error) {
+        console.error("Error loading query data:", error);
+      }
+    } else {
+      if (!widget?.queryVO?.length > 0) return;
+      try {
+        const data = await fetchQueryData(widget?.queryVO);
+        setTableData(
+          data.map((item) => ({
+            name: item.column_1,
+            y: item.column_2,
+          })));
+      } catch (error) {
+        console.error("Error loading query data:", error);
+      }
     }
   }
 
   useEffect(() => {
-    if (widgetData?.queryVO?.length > 0) {
+    if (widgetData) {
       // alert('bgbg')
-      fetchData(widgetData?.queryVO);
+      fetchData(widgetData);
     }
   }, []);
 
-  console.log(widgetData, 'bajrang')
 
   const headingAlign = widgetData?.tableHeadingAlignment === '1' ? 'center' : 'left';
   const borderReq = widgetData?.isTableBorderRequired || '';
@@ -224,8 +233,8 @@ const TabularDash = ({ widgetData }) => {
         }
 
       </div>
-      <div className="px-2 py-2" style={{marginTop:`${widgetTopMargin}px`}}>
-        <h4 style={{ fontWeight: "500", fontSize: "20px" }}>Query :</h4>
+      <div className="px-2 py-2" style={{ marginTop: `${widgetTopMargin}px` }}>
+        <h4 style={{ fontWeight: "500", fontSize: "20px" }}>Query : {widgetData?.rptId}</h4>
         <span>{widgetData?.procedureMode}</span>
         {isDataSearchReq &&
           <div className="d-flex align-items-center">

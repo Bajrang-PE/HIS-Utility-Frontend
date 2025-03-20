@@ -109,7 +109,6 @@ const WidgetMaster = () => {
     }
   }, [values?.selFilterIds, parameterDrpData]);
 
-  console.log(singleData, 'val')
 
   useEffect(() => {
     if (selectedOptions?.length > 0) {
@@ -350,6 +349,14 @@ const WidgetMaster = () => {
     }
   }
 
+  const returnLinkedData=(linkedWidgetRptId)=>{
+    if (!linkedWidgetRptId || !widgetDrpData) return []; 
+
+    const ids = linkedWidgetRptId.split(",").map(id => id.trim());
+  
+    return widgetDrpData.filter(item => ids.includes(item.value));
+  }
+
   useEffect(() => {
     if (singleData?.length > 0) {
       setLoading(true)
@@ -377,7 +384,7 @@ const WidgetMaster = () => {
         columnNoToDisplay: singleData[0]?.parentDisplaycolumnno,//
         leftClmNoToFixed: singleData[0]?.leftColumnsToBeFixed,//
         rightClmNoToFixed: singleData[0]?.rightColumnsToBeFixed,//
-        linkedWidget: singleData[0]?.linkWidget,//
+        linkedWidget: returnLinkedData(singleData[0]?.linkedWidgetRptId),//
         actionBtnReq: singleData[0]?.isActionButtonReq,//
         pdfTableFontSize: singleData[0]?.pdfTableFontSize,//
         pdfTableHeadBarClr: singleData[0]?.pdfTableheaderBarColor,//
@@ -1008,8 +1015,8 @@ const WidgetMaster = () => {
         //iframe
         isSSOUrl: isSsoUrl
       }
-    };
-    fetchUpdateData("http://10.226.29.211:8025/hisutils/modifyWidget", val).then((data) => {
+    }
+    fetchUpdateData("/hisutils/updateWidget", val).then((data) => {
       if (data) {
         ToastAlert("Data Updated Successfully", "success");
         getAllWidgetData(values?.widgetFor)

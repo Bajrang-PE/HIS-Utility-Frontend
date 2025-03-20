@@ -9,13 +9,14 @@ const HISContextData = ({ children }) => {
   const [showDataTable, setShowDataTable] = useState(false);
   const [selectedOption, setSelectedOption] = useState([]);
   const [actionMode, setActionMode] = useState('home');
-   const [activeTab,setActiveTab] = useState();
-   const [theme, setTheme] = useState('Default');
-   const [mainDashData, setMainDashData] = useState(null);
+  const [activeTab, setActiveTab] = useState();
+  const [theme, setTheme] = useState('Default');
+  const [mainDashData, setMainDashData] = useState(null);
 
   const [confirmSave, setConfirmSave] = useState(false);
   const [showConfirmSave, setShowConfirmSave] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [singleConfigData, setSingleConfigData] = useState();
 
   // ALL DATA
   const [parameterData, setParameterData] = useState([]);
@@ -142,6 +143,16 @@ const HISContextData = ({ children }) => {
     })
   }
 
+  const getDashConfigData = () => {
+    fetchData("/hisutils/dashboard-configurations").then((data) => {
+      if (data) {
+        setSingleConfigData(data)
+      } else {
+        setSingleConfigData(null)
+      }
+    })
+  }
+
   return (
     <HISContext.Provider value={{
       //GLOBALS-----------------------------------
@@ -151,9 +162,10 @@ const HISContextData = ({ children }) => {
       actionMode, setActionMode,
       showConfirmSave, setShowConfirmSave, confirmSave, setConfirmSave,
       loading, setLoading,
-      activeTab,setActiveTab,
+      activeTab, setActiveTab,
       theme, setTheme,
       mainDashData, setMainDashData,
+      singleConfigData, getDashConfigData,
 
       // DROP DOWNS-------------------------------
       // DASHBOARD FOR

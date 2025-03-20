@@ -10,11 +10,12 @@ import { ToastAlert } from '../../utils/commonFunction'
 import { HISContext } from '../../contextApi/HISContext'
 
 const DbConfigMaster = () => {
-    const { dashboardForDt, getDashboardForDrpData, setSelectedOption, setLoading, setShowConfirmSave, confirmSave, setConfirmSave } = useContext(HISContext);
+    const { dashboardForDt, getDashboardForDrpData, setSelectedOption, setLoading, setShowConfirmSave, confirmSave, setConfirmSave, singleConfigData, getDashConfigData, } = useContext(HISContext);
 
     const [values, setValues] = useState({
         "configurationFor": '', "serverName": "WEBSPHERE", "jndiServer": '', "jndiServer1": '', "jndiServer2": '', "jndiServer3": '', "driverClass": "", "userName": "", "connectionURL": "", "password": "", "staticReportHead1": "", "staticReportHead2": "", "staticReportHead3": "", "reportHeaderByQuery": "", "logoImageUrl": "", "staticDefaultLimit": ""
     })
+
     const [rows, setRows] = useState([]);
     const [newRow, setNewRow] = useState({
         "serviceReferenceNo": '',
@@ -43,7 +44,43 @@ const DbConfigMaster = () => {
 
     useEffect(() => {
         if (dashboardForDt?.length === 0) { getDashboardForDrpData(); }
+        getDashConfigData();
     }, [])
+
+    useEffect(() => {
+        if (singleConfigData) {
+            const dtd = singleConfigData?.databaseConfigVO;
+            setValues({
+                ...values,
+                configurationFor: dtd?.dashboardFor,
+                serverName: dtd?.serverName,
+                jndiServer: dtd?.jndiForPrimaryServer,
+                jndiServer1: dtd?.jndiForSecondaryServer1,
+                jndiServer2: dtd?.jndiForSecondaryServer2,
+                jndiServer3: dtd?.jndiForSecondaryServer3,
+                driverClass: dtd?.driverClassName,
+                userName: dtd?.userName,
+                connectionURL: dtd?.url,
+                password: dtd?.password,
+                staticReportHead1: dtd?.reportHeader1,
+                staticReportHead2: dtd?.reportHeader2,
+                staticReportHead3: dtd?.reportHeader3,
+                reportHeaderByQuery: dtd?.reportHeaderByQuery,
+                logoImageUrl: dtd?.logoImage,
+                staticDefaultLimit: dtd?.setDefaultLimit,
+            })
+            setIsDbConnReq(dtd?.isDbConnectionReq);
+            setIsDashboardCached(dtd?.isDashboardConfigurationCached);
+            setIsConsoleReq(dtd?.isLogAllMsgs);
+            setIsAccessReq(dtd?.isLogAllAccess);
+            setIsErrorReq(dtd?.isLogAllError);
+            setIsLogoReq(dtd?.isLogoRequired);
+            setLogoPosition(dtd?.logoPosition);
+            setHeadingAlignment(dtd?.headingAlignment);
+            setIsLimitRecReq(dtd?.isLimitRequired);
+            setRows(dtd?.lstWebServiceClientConfigVO)
+        }
+    }, [singleConfigData])
 
     const handleValueChange = (e) => {
         const { name, value } = e.target;
@@ -94,7 +131,7 @@ const DbConfigMaster = () => {
 
 
     const checkDatabaseConnection = () => {
-        fetchData("http://10.226.29.211:8025/hisutils/check-db-connection").then((data) => {
+        fetchData("/hisutils/check-db-connection").then((data) => {
             if (data) {
                 ToastAlert(data)
             } else {
@@ -102,6 +139,7 @@ const DbConfigMaster = () => {
             }
         })
     }
+
 
     const saveConfiguration = () => {
         setLoading(true);
@@ -139,13 +177,14 @@ const DbConfigMaster = () => {
             }
         }
 
-        fetchUpdateData("http://10.226.29.211:8025/hisutils/dashboard-config-save", val).then((data) => {
+        fetchUpdateData("/hisutils/dashboard-config-save", val).then((data) => {
             if (data) {
                 ToastAlert("Data saved Successfully", "success");
                 reset();
                 setConfirmSave(false);
                 setSelectedOption([])
                 setLoading(false)
+                getDashConfigData()
             } else {
                 ToastAlert("Internal Error!", "error");
                 setConfirmSave(false);
@@ -606,7 +645,7 @@ const DbConfigMaster = () => {
                                                 id="isErrorReqNo"
                                                 name="isErrorReq"
                                                 value={isErrorReq}
-                                                onChange={(e) => setIsErrorReq('Yes')}
+                                                onChange={(e) => setIsErrorReq('No')}
                                                 checked={isErrorReq === 'No'}
                                             />
                                             <label className="form-check-label" htmlFor="dbNo">
@@ -954,9 +993,9 @@ const DbConfigMaster = () => {
                                             />
                                         </td>
                                         <td className='px-0 action-buttons'>
-                                            <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={()=>handleAddRow()}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />{isEditing !== null ? "Modify" : "Add"}</button>
+                                            <button className='btn btn-sm me-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={() => handleAddRow()}><FontAwesomeIcon icon={faAdd} className="dropdown-gear-icon" size='sm' />{isEditing !== null ? "Modify" : "Add"}</button>
 
-                                            <button className='btn btn-sm ms-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={()=>clearRow()}><FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon" size='sm' />Clear</button>
+                                            <button className='btn btn-sm ms-1 py-0 px-0' style={{ background: "#34495e", color: "white" }} onClick={() => clearRow()}><FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon" size='sm' />Clear</button>
                                         </td>
                                     </tr>
                                     {rows?.map((row, index) => (
@@ -990,8 +1029,8 @@ const DbConfigMaster = () => {
                     </div>
                     {/* </form> */}
                     <div className='text-center py-1 rounded-2 configuration-buttons'>
-                        <button className='btn btn-sm me-1' onClick={()=>handleSaveConfig()}><FontAwesomeIcon icon={faFile} className="dropdown-gear-icon me-1" />Save</button>
-                        <button className='btn btn-sm ms-1 me-1' onClick={()=>checkDatabaseConnection()}><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Test DB Connection</button>
+                        <button className='btn btn-sm me-1' onClick={() => handleSaveConfig()}><FontAwesomeIcon icon={faFile} className="dropdown-gear-icon me-1" />Save</button>
+                        <button className='btn btn-sm ms-1 me-1' onClick={() => checkDatabaseConnection()}><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Test DB Connection</button>
                         <button className='btn btn-sm ms-1 me-1'><FontAwesomeIcon icon={faRefresh} className="dropdown-gear-icon me-1" />Reset</button>
                         <button className='btn btn-sm ms-1 me-1'><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Port Xml Data</button>
                         <button className='btn btn-sm ms-1'><FontAwesomeIcon icon={faDatabase} className="dropdown-gear-icon me-1" />Clear All Cached Data</button>

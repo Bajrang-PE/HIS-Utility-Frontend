@@ -15,6 +15,7 @@ const TabDash = React.memo(({ tabData }) => {
         setParamsValues(values);
     }, []);
 
+
     useEffect(() => {
         if (tabData?.jsonData?.lstDashboardWidgetMapping?.length > 0) {
             const widgetIds = tabData?.jsonData?.lstDashboardWidgetMapping;
@@ -23,18 +24,43 @@ const TabDash = React.memo(({ tabData }) => {
                 .map(wid => allWidgetData.find(widget => widget?.rptId == wid?.rptId))
                 .filter(widget => widget);
 
-            setPresentWidgets(availableWidgets);
+            let finalWidgets = [];
+
+            sortedWidgets.forEach(wid => {
+                const parentWidget = availableWidgets?.find(widget => widget?.rptId === wid?.rptId);
+                if (parentWidget) {
+                    finalWidgets.push(parentWidget);
+                    if (parentWidget?.linkedWidgetRptId) {
+                        const linkedWidgetIds = parentWidget.linkedWidgetRptId.split(',');
+                        linkedWidgetIds.forEach(linkedId => {
+                            const linkedWidget = availableWidgets?.find(widget => widget?.rptId === linkedId);
+                            if (linkedWidget) {
+                                finalWidgets.push(linkedWidget);
+                            }
+                        });
+                    }
+                }
+            });
+            
+            let seen = new Set();
+            let uniqueWidgets = finalWidgets.filter(widget => {
+                if (!seen.has(widget.rptId)) {
+                    seen.add(widget.rptId);
+                    return true;
+                }
+                return false;
+            });
+
+            setPresentWidgets(uniqueWidgets);
             setPresentTabs(sortedWidgets)
         }
     }, [tabData, allWidgetData]);
-
-    console.log(JSON.parse(activeTab?.jsonData?.docJsonString), 'presentWidgets')
 
     return (
         <>
             {loading ? null : (
                 <div>
-                    {JSON.parse(activeTab?.jsonData?.docJsonString)?.length > 0 && (
+                    {activeTab?.jsonData?.docJsonString && (
                         <div className='help-docs'>
                             <PdfDownload docJsonString={activeTab?.jsonData?.docJsonString} />
                         </div>
@@ -50,7 +76,7 @@ const TabDash = React.memo(({ tabData }) => {
                         {presentWidgets?.length > 0 && presentWidgets.map((widget, index) => (
                             <React.Fragment key={index}>
                                 {widget &&
-                                    <div className={`col-sm-${presentTabs[index]?.widgetWidth}`} style={{ padding: "5px 3px" }}>
+                                    <div className={`col-sm-${presentTabs.filter(dt => dt?.rptId === widget?.rptId)[0]?.widgetWidth}`} style={{ padding: "5px 3px" }}>
                                         <WidgetDash widgetDetail={widget} />
                                     </div>
                                 }

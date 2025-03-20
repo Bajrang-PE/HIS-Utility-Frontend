@@ -31,7 +31,7 @@ const DashboardMst = () => {
         if (!mainDashData || !allTabsData?.length) return [];
         const dashboardIdsArray = mainDashData?.jsonData?.dashboardIds?.split(',').map(Number) || [];
         const themes = mainDashData?.jsonData?.dashboardTheme || 'Default'
-        // setTheme(themes);
+        setTheme(themes);
         return dashboardIdsArray
             .map(id => allTabsData.find(tab => tab.id === id))
             .filter(Boolean);
